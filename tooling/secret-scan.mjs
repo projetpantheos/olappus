@@ -40,6 +40,22 @@ const PATTERNS = [
 const PLACEHOLDER =
   /(YOUR|EXAMPLE|PLACEHOLDER|CHANGEME|CHANGE_ME|XXXX|<[^>]+>|\.\.\.|TODO|FIXME|REDACTED|A_REMPLIR|VOTRE)/i;
 
+/**
+ * Référence à une variable d'environnement : `env(NOM)`, `${NOM}`, `process.env.NOM`.
+ * Ce n'est pas une valeur, c'est un pointeur vers une valeur tenue ailleurs.
+ */
+const ENV_REFERENCE = /(\benv\([A-Z0-9_]+\)|\$\{[A-Z0-9_]+\}|process\.env)/;
+
+/**
+ * Dérogation explicite : `secret-scan:allow <justification>` sur la ligne
+ * ou sur la précédente. La justification est obligatoire — une dérogation
+ * sans motif est traitée comme une détection.
+ *
+ * Ce mécanisme existe pour que les exceptions soient visibles et relues,
+ * jamais pour abaisser le seuil de détection globalement.
+ */
+const ALLOW = /secret-scan:allow\s+(\S.*)$/;
+
 /** Extensions binaires ou non pertinentes. */
 const SKIP_EXT =
   /\.(png|jpe?g|gif|webp|svg|ico|pdf|zip|gz|tgz|7z|rar|mp4|mp3|wav|woff2?|ttf|eot|otf|lock)$/i;
@@ -57,6 +73,7 @@ function listFiles() {
 }
 
 const findings = [];
+const allowances = [];
 let scanned = 0;
 
 for (const file of listFiles()) {
@@ -81,15 +98,35 @@ for (const file of listFiles()) {
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
     if (line.length > 3000) continue;
+
     for (const { name, re } of PATTERNS) {
       if (!re.test(line)) continue;
       if (PLACEHOLDER.test(line)) continue;
+      if (ENV_REFERENCE.test(line)) continue;
+
+      // La dérogation ne vaut que si un motif a réellement été détecté, et
+      // seulement si elle est portée par la ligne précédente. Sans cette
+      // double condition, la simple mention du marqueur dans un commentaire
+      // suffirait à faire taire le scanner.
+      const justification = i > 0 ? ALLOW.exec(lines[i - 1]) : null;
+      if (justification) {
+        allowances.push({ file, line: i + 1, name, reason: justification[1].trim() });
+        continue;
+      }
+
       findings.push({ file, line: i + 1, name, excerpt: line.trim().slice(0, 120) });
     }
   }
 }
 
 console.log(`Scan de secrets — ${scanned} fichier(s) analysé(s).`);
+
+if (allowances.length > 0) {
+  console.log(`${allowances.length} dérogation(s) explicite(s) :`);
+  for (const a of allowances) {
+    console.log(`  ${a.file}:${a.line} — ${a.reason}`);
+  }
+}
 
 if (findings.length === 0) {
   console.log('✔ Aucun secret détecté.');

@@ -200,6 +200,39 @@ entities:
         rls_scope: self
 
   # --- core ------------------------------------------------------------------
+  - id: core.user
+    schema: core
+    owner: Core
+    access: owner_only
+    status: SPECIFIED
+    source_doc: DAT-08
+    note: >-
+      Identifiant metier opaque de l'utilisateur. Le domaine n'utilise jamais
+      l'email comme cle. Clef de cloisonnement de toutes les politiques RLS.
+    fields:
+      - name: user_id
+        classification: L1
+        purpose: Identifiant metier opaque, cle de cloisonnement RLS.
+        source: system
+        normalized_form: opaque_id
+        retention: account_lifetime
+        export: true
+        delete: cascade
+        ai_policy: AI_FORBIDDEN
+        provenance: false
+        rls_scope: self
+      - name: created_at
+        classification: L1
+        purpose: Date de creation du compte metier.
+        source: system
+        normalized_form: timestamp_utc
+        retention: account_lifetime
+        export: true
+        delete: cascade
+        ai_policy: AI_FORBIDDEN
+        provenance: false
+        rls_scope: self
+
   - id: core.case
     schema: core
     owner: Core
@@ -770,7 +803,6 @@ entities:
 # Elles sont listées pour que l'oubli soit visible, et NON remplies au jugé.
 # =============================================================================
 unspecified_entities:
-  - { id: core.user, gate: G2 }
   - { id: core.permission, gate: G2 }
   - { id: core.module, gate: G3 }
   - { id: core.capability, gate: G3 }
