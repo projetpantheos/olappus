@@ -168,3 +168,22 @@ describe('Provenance', () => {
     expect(fact?.confidence).toBe('PROBABLE');
   });
 });
+
+describe('Montants — espacement issu d’une extraction abîmée', () => {
+  it('refuse un montant aux chiffres disloqués', () => {
+    // Cas adverse OCR_MALFORME de RUN-25. Sans cette garde, « 1 2,9 9 € »
+    // devenait 12,99 € : une valeur fausse portant l'apparence d'une certitude.
+    expect(normalizeMoney('1 2,9 9 €')).toMatchObject({ ok: false, reason: 'MALFORMED' });
+  });
+
+  it('accepte un séparateur de milliers correctement groupé', () => {
+    expect(normalizeMoney('1 234,56 €')).toMatchObject({
+      ok: true,
+      value: { amount_minor: 123456 },
+    });
+  });
+
+  it('refuse un groupement de milliers incohérent', () => {
+    expect(normalizeMoney('1 23 456,00 €')).toMatchObject({ ok: false, reason: 'MALFORMED' });
+  });
+});

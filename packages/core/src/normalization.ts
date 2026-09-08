@@ -116,7 +116,25 @@ export function normalizeMoney(input: string, currencyHint?: string): Normalized
     };
   }
 
-  const digits = raw.replace(/[^\d.,-]/g, '');
+  // Partie numérique, espaces conservés : ce sont eux qui trahissent un OCR
+  // abîmé. Les retirer d'emblée transformerait « 1 2,9 9 » en « 12,99 » —
+  // une valeur fausse portant l'apparence d'une certitude.
+  const numericPart = raw.replace(/[^\d.,\s-]/g, '').trim();
+
+  if (/[\s\u00A0\u202F]/.test(numericPart)) {
+    // Un espace n'est légitime qu'en séparateur de milliers, par groupes de
+    // trois chiffres. Toute autre disposition est une lecture douteuse.
+    const wellGrouped = /^-?\d{1,3}(?:[\s\u00A0\u202F]\d{3})+(?:[.,]\d{1,2})?$/.test(numericPart);
+    if (!wellGrouped) {
+      return {
+        ok: false,
+        reason: 'MALFORMED',
+        detail: `« ${raw} » comporte un espacement incohérent : lecture douteuse, probablement issue d’une extraction abîmée.`,
+      };
+    }
+  }
+
+  const digits = numericPart.replace(/[^\d.,-]/g, '');
   if (digits === '' || !/\d/.test(digits)) {
     return { ok: false, reason: 'MALFORMED', detail: 'Aucun chiffre exploitable.' };
   }
