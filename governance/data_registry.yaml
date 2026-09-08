@@ -78,6 +78,8 @@ retention_vocabulary:
   versioned: Conservé sous forme versionnée, jamais écrasé.
   not_retained: Jamais conservé durablement.
   OPEN: Durée non encore décidée — bloquant pour la sortie de G2.
+  days_7: "7 jours. Charge brute de quarantaine : delai de rejeu d'une extraction corrigee."
+  months_24: '24 mois. Audit des actions externes : horizon de la garantie legale de conformite.'
 
 # =============================================================================
 # ENTITÉS
@@ -207,8 +209,7 @@ entities:
     status: SPECIFIED
     source_doc: DAT-08
     note: >-
-      Identifiant metier opaque de l'utilisateur. Le domaine n'utilise jamais
-      l'email comme cle. Clef de cloisonnement de toutes les politiques RLS.
+      Identifiant metier opaque de l'utilisateur. Le domaine n'utilise jamais l'email comme cle. Clef de cloisonnement de toutes les politiques RLS.
     fields:
       - name: user_id
         classification: L1
@@ -265,8 +266,7 @@ entities:
       - name: module_id
         classification: L2
         purpose: >-
-          Module ayant produit le dossier. Métadonnée métier, et non identifiant
-          d'utilisateur : d'où L2 et non L1, qui interdirait toute exposition IA.
+          Module ayant produit le dossier. Métadonnée métier, et non identifiant d'utilisateur : d'où L2 et non L1, qui interdirait toute exposition IA.
         source: system
         normalized_form: enum
         retention: case_lifetime
@@ -415,9 +415,7 @@ entities:
       - name: prepared_payload
         classification: L3
         purpose: >-
-          Contenu exact de l'action préparée, y compris le destinataire.
-          Aucune de ces valeurs ne peut provenir de contenu non fiable
-          (invariant untrusted_content_cannot_parameterize_external_actions).
+          Contenu exact de l'action préparée, y compris le destinataire. Aucune de ces valeurs ne peut provenir de contenu non fiable (invariant untrusted_content_cannot_parameterize_external_actions).
         source: derived
         normalized_form: structured_json
         retention: case_lifetime
@@ -517,15 +515,14 @@ entities:
     status: SPECIFIED
     source_doc: DAT-05
     note: >-
-      Zone de quarantaine. Rien ne sort d'ici sans passer par extraction,
-      normalisation et minimisation. Aucune exposition au client.
+      Zone de quarantaine. Rien ne sort d'ici sans passer par extraction, normalisation et minimisation. Aucune exposition au client.
     fields:
       - name: source_id
         classification: L1
         purpose: Identifiant de la charge brute reçue.
         source: connector
         normalized_form: opaque_id
-        retention: OPEN
+        retention: connection_lifetime
         export: true
         delete: cascade
         ai_policy: AI_FORBIDDEN
@@ -536,7 +533,7 @@ entities:
         purpose: Charge brute non normalisée. Jamais durable par défaut.
         source: connector
         normalized_form: none
-        retention: OPEN
+        retention: days_7
         export: true
         delete: cascade
         ai_policy: AI_FORBIDDEN
@@ -547,7 +544,7 @@ entities:
         purpose: Empreinte permettant la déduplication sans conserver le contenu.
         source: system
         normalized_form: sha256
-        retention: OPEN
+        retention: connection_lifetime
         export: false
         delete: cascade
         ai_policy: AI_FORBIDDEN
@@ -558,7 +555,7 @@ entities:
         purpose: Date d'observation par le connecteur.
         source: connector
         normalized_form: timestamp_utc
-        retention: OPEN
+        retention: connection_lifetime
         export: true
         delete: cascade
         ai_policy: AI_FORBIDDEN
@@ -577,7 +574,7 @@ entities:
         purpose: Identifiant de l'extraction.
         source: system
         normalized_form: opaque_id
-        retention: OPEN
+        retention: case_lifetime
         export: true
         delete: cascade
         ai_policy: AI_FORBIDDEN
@@ -599,7 +596,7 @@ entities:
         purpose: Confiance de l'extraction.
         source: derived
         normalized_form: confidence_enum
-        retention: OPEN
+        retention: case_lifetime
         export: true
         delete: cascade
         ai_policy: AI_ALLOWED
@@ -656,9 +653,7 @@ entities:
     status: SPECIFIED
     source_doc: ADR-0003
     note: >-
-      Connaissance collective, sans donnée personnelle. Une règle expirée,
-      hors juridiction ou sous le seuil de confiance ne produit jamais
-      d'affirmation : la sortie est INSUFFICIENT_DATA.
+      Connaissance collective, sans donnée personnelle. Une règle expirée, hors juridiction ou sous le seuil de confiance ne produit jamais d'affirmation : la sortie est INSUFFICIENT_DATA.
     fields:
       - name: rule_id
         classification: PUBLIC
@@ -735,15 +730,14 @@ entities:
     status: SPECIFIED
     source_doc: DAT-08
     note: >-
-      Journal des actions externes. Aucune valeur interdite par SEC-34
-      ne doit y figurer : ni jeton, ni corps brut, ni adresse.
+      Journal des actions externes. Aucune valeur interdite par SEC-34 ne doit y figurer : ni jeton, ni corps brut, ni adresse.
     fields:
       - name: actor_id
         classification: L1
         purpose: Acteur de l'action, présent nativement dans l'enveloppe (ADR-0006).
         source: system
         normalized_form: opaque_id
-        retention: OPEN
+        retention: months_24
         export: true
         delete: anonymize
         ai_policy: AI_FORBIDDEN
@@ -754,7 +748,7 @@ entities:
         purpose: Action journalisée.
         source: system
         normalized_form: opaque_id
-        retention: OPEN
+        retention: months_24
         export: true
         delete: anonymize
         ai_policy: AI_FORBIDDEN
@@ -765,7 +759,7 @@ entities:
         purpose: Horodatage de l'action.
         source: system
         normalized_form: timestamp_utc
-        retention: OPEN
+        retention: months_24
         export: true
         delete: keep
         ai_policy: AI_FORBIDDEN
@@ -780,10 +774,7 @@ entities:
     status: CONTROL
     source_doc: SEC-23
     note: >-
-      Entrée de contrôle, pas de stockage. Elle matérialise l'invariant
-      no_durable_third_party_identity : hors entité canonique résolue via un
-      référentiel officiel, aucune identité de tiers n'est conservée.
-      Les expéditeurs non résolus sont réduits à un pseudonyme et un domaine.
+      Entrée de contrôle, pas de stockage. Elle matérialise l'invariant no_durable_third_party_identity : hors entité canonique résolue via un référentiel officiel, aucune identité de tiers n'est conservée. Les expéditeurs non résolus sont réduits à un pseudonyme et un domaine.
     fields:
       - name: third_party_identity
         classification: L3

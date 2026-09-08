@@ -76,24 +76,11 @@ describe('Data Registry — invariants de confidentialité', () => {
 });
 
 describe('Data Registry — dette déclarée', () => {
-  it('rend visibles les rétentions non chiffrées, sans les masquer', () => {
-    const open = openRetentions(registry);
-    // Ces champs sont connus et assumés : la quarantaine et l'audit attendent
-    // une durée décidée. Le test échouera si de nouvelles dettes apparaissent
-    // sans décision, ou si celles-ci sont résolues sans mise à jour ici.
-    expect(open.sort()).toEqual(
-      [
-        'audit.action_log.action_id',
-        'audit.action_log.actor_id',
-        'audit.action_log.occurred_at',
-        'extraction.record.confidence',
-        'extraction.record.extraction_id',
-        'source.raw_quarantine.content_hash',
-        'source.raw_quarantine.observed_at',
-        'source.raw_quarantine.payload_raw',
-        'source.raw_quarantine.source_id',
-      ].sort(),
-    );
+  it('ne laisse aucune rétention non chiffrée', () => {
+    // Les neuf rétentions OPEN de la première version du registre ont été
+    // chiffrées par ADR-0015. Ce test interdit désormais toute réapparition :
+    // « court » ou « nécessaire » ne sont pas des durées testables.
+    expect(openRetentions(registry)).toEqual([]);
   });
 
   it('déclare une gate pour chaque entité aux champs non spécifiés', () => {

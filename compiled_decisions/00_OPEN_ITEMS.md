@@ -67,4 +67,5 @@ ADR-0006 retire `tenantId` de l'enveloppe d'événement.
 - Matching flou des rappels produit — fermé par **ADR-0013**.
 - Envoi d'une adresse email complète à une IA — fermé par **ADR-0012**.
 - Upload de documents en P0 — fermé par **ADR-0004**.
+- Rétentions indéterminées de la quarantaine, de l'extraction et de l'audit — fermées par **ADR-0015**.
 - Dépendance directe module → module — fermé par le ledger (invariant dur).
