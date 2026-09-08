@@ -35,6 +35,10 @@ jobs:
       - name: Scan de secrets
         run: npm run secret-scan
 
+      # SEC-23 — « No direct module access », preuve : architecture lint.
+      - name: Isolation des modules
+        run: npm run lint:architecture
+
       - name: Typecheck
         run: npm run typecheck
 

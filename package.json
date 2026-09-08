@@ -22,7 +22,8 @@
     "test:watch": "vitest",
     "secret-scan": "node tooling/secret-scan.mjs",
     "audit:deps": "npm audit --audit-level=high",
-    "ci": "npm run secret-scan && npm run typecheck && npm run lint && npm run format:check && npm run test"
+    "ci": "npm run secret-scan && npm run lint:architecture && npm run typecheck && npm run lint && npm run format:check && npm run test",
+    "lint:architecture": "node tooling/module-isolation.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

@@ -15,7 +15,7 @@ Mise à jour : 2026-09-08 (étape 0). Deux contrôles ajoutés, colonne « Spec 
 | Command idempotence                                        | Yes      | contract test                            | `ARC-42` ✅                         | G3          |
 | Sensitive fields encrypted                                 | Yes      | architecture/test evidence               | `SEC-31` ✅ (ADR-0008)              | G2          |
 | Audit for external actions                                 | Yes      | audit test                               | ADR-0006 (`actor_id`)               | G3          |
-| Safe Mode                                                  | Yes      | integration test                         | **`SEC-32` à écrire**               | G3          |
+| Safe Mode                                                  | Yes      | integration test                         | `SEC-32` ✅                         | G3          |
 | Backup restore test                                        | Yes      | runbook evidence                         | **runbook à écrire** (OPEN-06)      | G9          |
 | Deletion verification                                      | Yes      | test/audit evidence                      | `SEC-33` ✅ (inventaire des copies) | G2          |
 | Privacy leakage test                                       | Yes      | adversarial fixtures                     | fixtures à produire                 | G4          |
