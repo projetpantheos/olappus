@@ -1,0 +1,85 @@
+{
+  "type": "object",
+  "required": [
+    "id",
+    "version",
+    "status",
+    "risk_level",
+    "permissions",
+    "commands",
+    "queries",
+    "events",
+    "data_access",
+    "ai_policy"
+  ],
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "INTERNAL",
+        "ALPHA",
+        "BETA",
+        "ACTIVE",
+        "SUSPENDED",
+        "RETIRED"
+      ]
+    },
+    "risk_level": {
+      "enum": [
+        "LOW",
+        "MEDIUM",
+        "HIGH",
+        "CRITICAL"
+      ]
+    },
+    "permissions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "commands": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "queries": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "events": {
+      "type": "object"
+    },
+    "data_access": {
+      "type": "array"
+    },
+    "knowledge_dependencies": {
+      "type": "array"
+    },
+    "rule_dependencies": {
+      "type": "array"
+    },
+    "ai_policy": {
+      "enum": [
+        "AI_ALLOWED",
+        "AI_MINIMIZED_ONLY",
+        "AI_LOCAL_ONLY",
+        "AI_FORBIDDEN"
+      ]
+    },
+    "external_actions": {
+      "type": "array"
+    },
+    "retention_policy": {
+      "type": "string"
+    }
+  }
+}

@@ -1,0 +1,97 @@
+{
+  "project": "Olappus",
+  "version": "1.1-g0-approved",
+  "date": "2026-09-08",
+  "status": "G0_APPROVED",
+  "authority": "docs/ADR/INDEX.md",
+  "authority_condensed_view": "DECISION_LEDGER_COMPILED.md",
+  "open_items": "compiled_decisions/00_OPEN_ITEMS.md",
+  "gate_map": "compiled_decisions/runbooks/RUN-42_GATE_MAP.md",
+  "hard_invariants": [
+    "raw_data_is_not_domain_data",
+    "identity_is_not_domain_data",
+    "minimize_before_ai",
+    "core_owns_business_state",
+    "no_direct_module_to_module_dependencies",
+    "typed_idempotent_commands",
+    "immutable_versioned_events",
+    "privacy_by_design_and_default",
+    "synthetic_data_by_default",
+    "absence_of_instruction_is_not_authorization",
+    "untrusted_content_cannot_parameterize_external_actions",
+    "no_durable_third_party_identity"
+  ],
+  "p0": [
+    "Core",
+    "Muses",
+    "Hermes",
+    "Helios",
+    "Hades",
+    "Argos",
+    "Themis",
+    "Demo Mode"
+  ],
+  "p0_scope_notes": {
+    "Themis": "Étendu par ADR-0003 : porte knowledge.legal_rule et le calcul de délais. Périmètre juridique fixé par ADR-0007 (France, 3 droits).",
+    "Muses": "Périmètre minimal + License Gate uniquement (ADR-0011). Réputation, anti-Sybil et quorum étendu hors P0.",
+    "Mnemosyne": "Hors P0 (ADR-0004). Aucun upload utilisateur ; l'onglet Mémoire est en lecture seule sur les evidences d'Hermès.",
+    "Web": "Hors P0. apps/web n'est pas créé (ADR-0002)."
+  },
+  "gates": [
+    "G0 Audit",
+    "G1 Foundation",
+    "G2 Privacy/Security baseline",
+    "G3 Core contracts",
+    "G4 Demo Mode + Helios",
+    "G5 Muses minimal + License Gate",
+    "G6 Connecteur externe (Hermes/OAuth)",
+    "G7 Modules domaine + protection",
+    "G8 Offline/Outbox",
+    "G9 Release/Beta"
+  ],
+  "thematic_gates": [
+    "DATA",
+    "TRUST",
+    "ACTION",
+    "CHANGE",
+    "RELEASE"
+  ],
+  "runtime": {
+    "node": "24 LTS (épinglé via .nvmrc + engines, à revérifier contre l exigence Expo au bootstrap)",
+    "package_manager": "npm workspaces",
+    "repo_layout": "monorepo",
+    "local_test_stack": "Docker Desktop + Supabase CLI"
+  },
+  "data_conventions": {
+    "db_schemas": [
+      "identity",
+      "core",
+      "source",
+      "extraction",
+      "domain",
+      "knowledge",
+      "audit"
+    ],
+    "entity_naming": "singular",
+    "event_envelope": [
+      "event_id",
+      "aggregate_id",
+      "event_type",
+      "occurred_at",
+      "schema_version",
+      "causation_id",
+      "correlation_id",
+      "actor_id",
+      "payload"
+    ],
+    "command_envelope": [
+      "command_id",
+      "actor_id",
+      "device_id",
+      "correlation_id",
+      "created_at",
+      "schema_version",
+      "payload"
+    ]
+  }
+}

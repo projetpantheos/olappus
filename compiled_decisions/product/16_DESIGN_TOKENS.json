@@ -1,0 +1,105 @@
+{
+  "color": {
+    "surface": {
+      "ivory": "#F7F4EC",
+      "white": "#FFFDFC"
+    },
+    "text": {
+      "primary": "#17252A",
+      "secondary": "#53636A"
+    },
+    "border": {
+      "default": "#D9D5CC"
+    },
+    "health": {
+      "primary": "#526B4A",
+      "dark": "#3F5439",
+      "soft": "#DCE5D7"
+    },
+    "finance": {
+      "primary": "#7A4E22",
+      "copper": "#A86F45",
+      "gold": "#B28A4A",
+      "silver": "#5F666B",
+      "soft": "#EEE1D2"
+    },
+    "protection": {
+      "primary": "#24556A",
+      "dark": "#163E4E",
+      "soft": "#DCE9ED"
+    },
+    "organization": {
+      "primary": "#655B7A",
+      "dark": "#4E465F",
+      "soft": "#E8E3ED"
+    },
+    "home": {
+      "primary": "#7C4332",
+      "accent": "#9A553E",
+      "soft": "#F0DED7"
+    },
+    "travel": {
+      "primary": "#2E6F82",
+      "dark": "#1F5667",
+      "soft": "#DDECEF"
+    }
+  },
+  "typography": {
+    "display": "Serif display family, Greek heritage inspired",
+    "body": "Inter-like sans",
+    "scale": [
+      "12",
+      "14",
+      "16",
+      "18",
+      "20",
+      "24",
+      "28",
+      "34"
+    ],
+    "weights": [
+      "400",
+      "500",
+      "600",
+      "700"
+    ]
+  },
+  "spacing": {
+    "unit": 4,
+    "scale": [
+      "4",
+      "8",
+      "12",
+      "16",
+      "20",
+      "24",
+      "32",
+      "40",
+      "48"
+    ]
+  },
+  "radius": {
+    "sm": 8,
+    "md": 12,
+    "lg": 16,
+    "xl": 24
+  },
+  "motion": {
+    "duration_fast": "120ms",
+    "duration_normal": "200ms",
+    "duration_slow": "320ms",
+    "reduce_motion": "respect OS setting"
+  },
+  "semantic": {
+    "success": "health.primary",
+    "warning": "finance.primary",
+    "attention": "protection.primary",
+    "critical": "home.primary",
+    "neutral": "text.secondary"
+  },
+  "rules": [
+    "Do not use #9A553E as normal-size body text on #F7F4EC when contrast fails WCAG target; use #7C4332.",
+    "Colors must encode semantics, not modules alone.",
+    "Never rely only on color."
+  ]
+}
