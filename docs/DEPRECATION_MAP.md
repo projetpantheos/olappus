@@ -50,6 +50,20 @@ En cas de conflit non résolu par cette carte : **STOP et DECISION REQUIRED**.
 | `26_PRODUCT_REVIEW_CTO.md`        | HISTORIQUE       | Points de vigilance produit, toujours pertinents                                                                                                                                                                                    |
 | `27_LEGAL_DATA_AI_CHECKPOINTS.md` | NORMATIF         | Checkpoints avant pilote public. Dates et obligations citées à revérifier                                                                                                                                                           |
 
+## Références visuelles
+
+`references/olappus_da_light_reference.png` — **MOODBOARD** (ADR-0016).
+
+Fait foi sur : ambiance, matières et textures, identité (logo, signature), familles typographiques.
+
+Ne fait foi ni sur la navigation, ni sur les modules, ni sur la palette fonctionnelle, ni sur le périmètre.
+Elle est antérieure à la compilation des décisions : ses maquettes montrent une navigation à cinq entrées,
+des modules hors P0 (Chronos, Déméter, Apollon, Hygie) et un **Argos-budget** alors que `PRD-02` lui
+attribue les variations de prix.
+
+`references/poseidon_dark_reference.png` — **HISTORIQUE**. Ancienne direction sombre ; le thème sombre
+est `OPEN` (OPEN-01).
+
 ## Note sur les références externes
 
 42 marqueurs de citation non résolubles ont été remplacés par `[réf. non résolue — à revérifier]` dans 12 fichiers (D14). Toute licence, tout quota et toute date cités dans `docs/` sont donc **non vérifiés** : re-vérification obligatoire à la source primaire avant ingestion d'une source et avant tout texte affiché à l'utilisateur.
