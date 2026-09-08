@@ -6,7 +6,7 @@
 
 Statuts : **COUVERT** — une suite le vérifie · **PARTIEL** — vérifié en partie, la limite est dite · **À VENIR** — dépend d'une gate ultérieure · **NON COUVERT** — aucun plan à ce jour.
 
-Dernière mise à jour : 2026-09-08 (fin de G3) · 123 tests exécutés.
+Dernière mise à jour : 2026-09-08 (G4 en cours) · 146 tests exécutés.
 
 ## Produit
 
@@ -71,12 +71,12 @@ Dernière mise à jour : 2026-09-08 (fin de G3) · 123 tests exécutés.
 
 ## UX
 
-| #   | Test                                                                 | Statut          | Où                                                          | Gate |
-| --- | -------------------------------------------------------------------- | --------------- | ----------------------------------------------------------- | ---- |
-| 32  | Chaque écran définit ses états                                       | À VENIR         | `capability.ts` fournit le moteur                           | G4   |
-| 33  | La feuille d'action énonce destinataire, données, impact, permission | **PARTIEL**     | contrat et machine à états en place ; l'écran reste à faire | G4   |
-| 34  | Libellés d'accessibilité sur les contrôles                           | **NON COUVERT** | outillage de test RN non choisi                             | G4   |
-| 35  | La couleur n'est jamais le seul porteur d'état                       | **NON COUVERT** | idem                                                        | G4   |
+| #   | Test                                                                 | Statut      | Où                                                                                                              | Gate |
+| --- | -------------------------------------------------------------------- | ----------- | --------------------------------------------------------------------------------------------------------------- | ---- |
+| 32  | Chaque écran définit ses états                                       | À VENIR     | `capability.ts` fournit le moteur                                                                               | G4   |
+| 33  | La feuille d'action énonce destinataire, données, impact, permission | **PARTIEL** | contrat et machine à états en place ; l'écran reste à faire                                                     | G4   |
+| 34  | Libellés d'accessibilité sur les contrôles                           | **PARTIEL** | Outillage en place (jest-expo + RNTL 14), 3 tests de rendu ; les contrôles interactifs arrivent avec les écrans | G4   |
+| 35  | La couleur n'est jamais le seul porteur d'état                       | **PARTIEL** | Outillage en place ; vérifiable dès les premiers écrans                                                         | G4   |
 
 ## Release
 
@@ -93,10 +93,10 @@ Dernière mise à jour : 2026-09-08 (fin de G3) · 123 tests exécutés.
 | Statut          | Nombre |
 | --------------- | ------ |
 | COUVERT         | 15     |
-| PARTIEL         | 9      |
+| PARTIEL         | 11     |
 | À VENIR         | 14     |
-| **NON COUVERT** | **2**  |
+| **NON COUVERT** | **0**  |
 
-**Les deux tests non couverts sont les deux tests d'accessibilité** (34 et 35). Ils ne dépendent d'aucune gate ultérieure : ils dépendent d'un choix d'outillage de test pour React Native, signalé comme risque depuis le rapport de G1 et toujours ouvert.
+**Plus aucun test n'est sans plan.** Les deux tests d'accessibilité (34 et 35) étaient les seuls : ils ne dépendaient d'aucune gate, mais d'un choix d'outillage de test React Native, ouvert depuis G1 et tranché en G4 (jest-expo et la bibliotheque de test React Native).
 
-`PRD-14` §18 vise WCAG AA. Sans outillage, cette cible n'est pas vérifiable — et une cible d'accessibilité non vérifiée est une intention, pas un engagement. **À trancher avant G4**, où les premiers écrans réels apparaissent.
+PRD-14 section 18 vise WCAG AA. La cible est désormais **vérifiable** : elle cesse d'être une intention pour devenir un engagement testable dès que les premiers écrans réels existent.
