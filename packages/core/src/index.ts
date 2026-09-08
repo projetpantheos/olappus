@@ -32,3 +32,16 @@ export const DB_SCHEMAS = [
 ] as const;
 
 export type DbSchema = (typeof DB_SCHEMAS)[number];
+
+// =============================================================================
+// API publique du Core
+// =============================================================================
+// Ce qui est exporté ici est un contrat : les modules et l'application s'y
+// lient. Ce qui n'y figure pas reste interne et peut changer librement.
+// Les validateurs de gouvernance (registre, manifestes) ne sont pas exposés :
+// ils servent la CI, pas le produit.
+
+export * from './contracts.js';
+export * from './normalization.js';
+export * from './rules.js';
+export * from './capability.js';
