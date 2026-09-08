@@ -48,8 +48,11 @@ jobs:
       - name: Format
         run: npm run format:check
 
-      - name: Tests
+      - name: Tests (paquets)
         run: npm test
+
+      - name: Tests (application mobile)
+        run: npm run test:mobile
 
       # SEC-23 — « Dependency audit », preuve : CI.
       - name: Audit des dépendances
