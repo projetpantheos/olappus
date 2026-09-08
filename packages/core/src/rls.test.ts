@@ -34,7 +34,24 @@ const USER_A = '11111111-1111-4111-8111-111111111111';
 const USER_B = '22222222-2222-4222-8222-222222222222';
 
 let admin: Client | undefined;
-let available = false;
+
+/**
+ * La disponibilité est sondée au chargement du module, et non dans `beforeAll` :
+ * `describe.skipIf` est évalué à la collecte, donc avant l'exécution des hooks.
+ * Une variable renseignée dans `beforeAll` serait toujours fausse ici, et toute
+ * la suite se sauterait en silence en laissant croire à un vert.
+ */
+const available = await (async () => {
+  const probe = new Client(CONNECTION);
+  try {
+    await probe.connect();
+    await probe.query('select 1');
+    await probe.end();
+    return true;
+  } catch {
+    return false;
+  }
+})();
 
 /** Exécute une requête avec l'identité d'un utilisateur, comme PostgREST. */
 async function asUser<T = unknown>(
@@ -60,15 +77,9 @@ async function asUser<T = unknown>(
 }
 
 beforeAll(async () => {
-  try {
-    admin = new Client(CONNECTION);
-    await admin.connect();
-    await admin.query('select 1');
-    available = true;
-  } catch {
-    available = false;
-    return;
-  }
+  if (!available) return;
+  admin = new Client(CONNECTION);
+  await admin.connect();
 
   // Jeux d'essai synthétiques (RUN-25). Deux comptes, une affaire chacun.
   for (const id of [USER_A, USER_B]) {
@@ -95,6 +106,21 @@ afterAll(async () => {
 });
 
 describe.skipIf(!available)('RLS — isolation entre utilisateurs', () => {
+  // Contrôle négatif : sans données appartenant aux deux utilisateurs, tous les
+  // tests d'isolation qui suivent passeraient sur une base vide sans rien
+  // prouver. Ce test garantit qu'il y a bien quelque chose à isoler.
+  it('les données des deux utilisateurs existent réellement en base', async () => {
+    const rows = await admin!.query(
+      `select user_id, count(*)::int as n from core."case"
+        where user_id in ($1, $2) group by user_id`,
+      [USER_A, USER_B],
+    );
+    expect(rows.rows).toHaveLength(2);
+    for (const row of rows.rows as { n: number }[]) {
+      expect(row.n).toBeGreaterThan(0);
+    }
+  });
+
   it('un utilisateur ne voit que ses propres affaires', async () => {
     const rows = await asUser<{ user_id: string }>(USER_A, 'select user_id from core."case"');
     expect(rows.length).toBeGreaterThan(0);
