@@ -1,24 +1,25 @@
 # OLAPPUS — PROJECT STATE
 
-Dernière mise à jour : 2026-09-08 (fin de G3)
+Dernière mise à jour : 2026-09-08 (fin de G4)
 Ce fichier est le **seul** porteur de l'état d'avancement. `project.manifest.json` ne porte que les invariants et les conventions.
 
 ## Current phase
 
-G3 Core contracts terminée — en attente de revue fondateur.
+G4 Demo Mode + Hélios terminée sur sa partie vérifiable — **en attente du jugement de première valeur**, qui n’appartient pas à un agent.
 
 ## Current gate
 
-**G3 — PASSED**, sous réserve de revue. Prochaine : **G4 Demo Mode + Hélios déterministe**.
+**G4 — PASSED sur la partie vérifiable**, un point ouvert : le jugement de première valeur.
+Prochaine : **G5 Muses minimal + License Gate**.
 Taxonomie applicable : `compiled_decisions/runbooks/RUN-42_GATE_MAP.md` (G0–G9).
 
 ## Last successful checkpoint
 
-2026-09-08 — G3 : contrats CQE validés au runtime, idempotence, Safe Mode, machine à états, manifestes, lint d'isolation, moteur de capacités. 143 tests, 18 commits poussés.
+2026-09-08 — G4 : moteurs déterministes, Demo Mode, 14 catégories adverses, Hélios, parcours de Case, première valeur, typographies. 200 tests, 26 commits poussés.
 
 ## Status
 
-G3_COMPLETE / PENDING_FOUNDER_REVIEW
+G4_COMPLETE / PENDING_FOUNDER_JUDGEMENT
 
 ## Completed
 
@@ -36,7 +37,7 @@ G3_COMPLETE / PENDING_FOUNDER_REVIEW
 
 ## In progress
 
-Aucun travail en cours. En attente de la revue de G3 et du démarrage de G4.
+Aucun travail en cours. En attente du jugement de première valeur et du démarrage de G5.
 
 ## Blocked
 
@@ -76,8 +77,8 @@ Les deux non couverts sont les tests d'accessibilité (34, 35). Ils ne dépenden
 
 ## Next founder action
 
-Relire `docs/GATE_REPORTS/G3.md`. Deux points à trancher avant G4 : l'outillage de test React Native (sans lui, les deux tests d'accessibilité restent non couverts) et le choix des scénarios de démonstration.
+Ouvrir l’application (`npm run --workspace @olappus/mobile web`) et juger la première valeur : comprenez-vous ce qu’Olappus a vu, sur quoi il se fonde, et ce qu’il ne fera pas sans vous — en moins de cinq minutes ? Puis relire `docs/GATE_REPORTS/G4.md`.
 
 ## Next Claude action
 
-G4 Demo Mode + Hélios déterministe : fixtures synthétiques y compris adverses, moteurs déterministes, parcours WHY → PROOF → OPTIONS → ACTION, états d'écran complets. **Aucun appel externe, aucune IA.** C'est la gate où la première valeur doit être compréhensible en moins de cinq minutes.
+G5 Muses minimal + License Gate : source, fact, proposal, review, certification, versioning, validité temporelle, suspension gouvernée. Une source `blocked` doit rendre l’ingestion impossible même si l’endpoint répond. Écran de provenance (`PRD-14` Journey J).

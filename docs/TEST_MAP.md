@@ -6,18 +6,18 @@
 
 Statuts : **COUVERT** — une suite le vérifie · **PARTIEL** — vérifié en partie, la limite est dite · **À VENIR** — dépend d'une gate ultérieure · **NON COUVERT** — aucun plan à ce jour.
 
-Dernière mise à jour : 2026-09-08 (G4 en cours) · 146 tests exécutés.
+Dernière mise à jour : 2026-09-08 (fin de G4) · 200 tests exécutés.
 
 ## Produit
 
-| #   | Test                                                  | Statut      | Où                                                                                                                | Gate |
-| --- | ----------------------------------------------------- | ----------- | ----------------------------------------------------------------------------------------------------------------- | ---- |
-| 1   | Demo Mode sans permission externe                     | À VENIR     | —                                                                                                                 | G4   |
-| 2   | Premier insight rapide et compréhensible              | À VENIR     | —                                                                                                                 | G4   |
-| 3   | Hélios ne montre que le utile                         | À VENIR     | —                                                                                                                 | G4   |
-| 4   | L'absence de problème ne fabrique pas de notification | À VENIR     | —                                                                                                                 | G4   |
-| 5   | Chaque Case explique WHY et PROOF                     | À VENIR     | —                                                                                                                 | G4   |
-| 6   | Une détection peu fiable n'est pas surinterprétée     | **PARTIEL** | `normalization.test.ts` — la normalisation refuse l'ambiguïté et dégrade la confiance ; l'affichage reste à faire | G4   |
+| #   | Test                                                  | Statut      | Où                                                                                   | Gate |
+| --- | ----------------------------------------------------- | ----------- | ------------------------------------------------------------------------------------ | ---- |
+| 1   | Demo Mode sans permission externe                     | **COUVERT** | `bienvenue.test.tsx` — aucune permission, aucune connexion, vérifié par test         | G4   |
+| 2   | Premier insight rapide et compréhensible              | **PARTIEL** | L’écran existe et est mesurable ; le « moins de 5 min » relève du jugement fondateur | G4   |
+| 3   | Hélios ne montre que l’utile                          | **COUVERT** | `rules.test.ts` — filtrage du SILENCE, tri par priorité                              | G4   |
+| 4   | L’absence de problème ne fabrique pas de notification | **COUVERT** | `demo-mode.test.ts` — scénario délibérément muet                                     | G4   |
+| 5   | Chaque Case explique WHY et PROOF                     | **COUVERT** | Écran de Case + `rules.test.ts` : evidence_refs jamais vide                          | G4   |
+| 6   | Une détection peu fiable n’est pas surinterprétée     | **COUVERT** | `rules.test.ts` — sous le seuil, jamais de niveau ACTION                             | G4   |
 
 ## Privacy
 
@@ -71,12 +71,12 @@ Dernière mise à jour : 2026-09-08 (G4 en cours) · 146 tests exécutés.
 
 ## UX
 
-| #   | Test                                                                 | Statut      | Où                                                                                                              | Gate |
-| --- | -------------------------------------------------------------------- | ----------- | --------------------------------------------------------------------------------------------------------------- | ---- |
-| 32  | Chaque écran définit ses états                                       | À VENIR     | `capability.ts` fournit le moteur                                                                               | G4   |
-| 33  | La feuille d'action énonce destinataire, données, impact, permission | **PARTIEL** | contrat et machine à états en place ; l'écran reste à faire                                                     | G4   |
-| 34  | Libellés d'accessibilité sur les contrôles                           | **PARTIEL** | Outillage en place (jest-expo + RNTL 14), 3 tests de rendu ; les contrôles interactifs arrivent avec les écrans | G4   |
-| 35  | La couleur n'est jamais le seul porteur d'état                       | **PARTIEL** | Outillage en place ; vérifiable dès les premiers écrans                                                         | G4   |
+| #   | Test                                                                 | Statut      | Où                                                                | Gate |
+| --- | -------------------------------------------------------------------- | ----------- | ----------------------------------------------------------------- | ---- |
+| 32  | Chaque écran définit ses états                                       | **COUVERT** | `components.test.tsx` — les 7 états rendus et testés              | G4   |
+| 33  | La feuille d'action énonce destinataire, données, impact, permission | **PARTIEL** | contrat et machine à états en place ; l'écran reste à faire       | G4   |
+| 34  | Libellés d’accessibilité sur les contrôles                           | **COUVERT** | `components.test.tsx` — libellé accessible complet, hint d’action | G4   |
+| 35  | La couleur n’est jamais le seul porteur d’état                       | **COUVERT** | `components.test.tsx` — niveau écrit en toutes lettres            | G4   |
 
 ## Release
 
@@ -92,9 +92,9 @@ Dernière mise à jour : 2026-09-08 (G4 en cours) · 146 tests exécutés.
 
 | Statut          | Nombre |
 | --------------- | ------ |
-| COUVERT         | 15     |
-| PARTIEL         | 11     |
-| À VENIR         | 14     |
+| COUVERT         | 23     |
+| PARTIEL         | 8      |
+| À VENIR         | 9      |
 | **NON COUVERT** | **0**  |
 
 **Plus aucun test n'est sans plan.** Les deux tests d'accessibilité (34 et 35) étaient les seuls : ils ne dépendaient d'aucune gate, mais d'un choix d'outillage de test React Native, ouvert depuis G1 et tranché en G4 (jest-expo et la bibliotheque de test React Native).
