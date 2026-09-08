@@ -1,0 +1,102 @@
+# CARTE DES TESTS — 40 tests d'acceptation P0
+
+Établie en G3. Relie chaque test de `RUN-24_P0_ACCEPTANCE_TESTS` à une suite réelle.
+
+**Raison d'être** : sans cette table, personne ne peut dire ce qui est couvert. La produire tard, c'est découvrir les trous quand il est coûteux de les combler.
+
+Statuts : **COUVERT** — une suite le vérifie · **PARTIEL** — vérifié en partie, la limite est dite · **À VENIR** — dépend d'une gate ultérieure · **NON COUVERT** — aucun plan à ce jour.
+
+Dernière mise à jour : 2026-09-08 (fin de G3) · 123 tests exécutés.
+
+## Produit
+
+| #   | Test                                                  | Statut      | Où                                                                                                                | Gate |
+| --- | ----------------------------------------------------- | ----------- | ----------------------------------------------------------------------------------------------------------------- | ---- |
+| 1   | Demo Mode sans permission externe                     | À VENIR     | —                                                                                                                 | G4   |
+| 2   | Premier insight rapide et compréhensible              | À VENIR     | —                                                                                                                 | G4   |
+| 3   | Hélios ne montre que le utile                         | À VENIR     | —                                                                                                                 | G4   |
+| 4   | L'absence de problème ne fabrique pas de notification | À VENIR     | —                                                                                                                 | G4   |
+| 5   | Chaque Case explique WHY et PROOF                     | À VENIR     | —                                                                                                                 | G4   |
+| 6   | Une détection peu fiable n'est pas surinterprétée     | **PARTIEL** | `normalization.test.ts` — la normalisation refuse l'ambiguïté et dégrade la confiance ; l'affichage reste à faire | G4   |
+
+## Privacy
+
+| #   | Test                                                                   | Statut      | Où                                                                                                        | Gate |
+| --- | ---------------------------------------------------------------------- | ----------- | --------------------------------------------------------------------------------------------------------- | ---- |
+| 7   | La charge brute ne contourne jamais la quarantaine                     | **PARTIEL** | schéma `source` inaccessible au client (`rls.test.ts`) ; le pipeline d'ingestion n'existe pas encore      | G6   |
+| 8   | Les tables de domaine ne contiennent que du normalisé                  | **PARTIEL** | `normalization.test.ts` : aucun fait dérivé ne naît d'une normalisation échouée                           | G6   |
+| 9   | Les champs d'identité sont absents des modules qui n'en ont pas besoin | **COUVERT** | `data-registry.test.ts` + `rls.test.ts`                                                                   | G2   |
+| 10  | L'IA externe ne reçoit que des champs minimisés autorisés              | **PARTIEL** | registre : `email` en `AI_FORBIDDEN`, politique IA validée par classification. Le AI Gateway n'existe pas | G4   |
+| 11  | La suppression retire les copies selon la politique                    | **COUVERT** | `deletion.test.ts` — 6 des 12 emplacements de `SEC-33` existent                                           | G2   |
+| 12  | La déconnexion est explicite sur ce qui est conservé                   | **COUVERT** | `contracts.test.ts` : `DisconnectConnectorCommandV1` exige un choix explicite                             | G3   |
+
+## Sécurité
+
+| #   | Test                                                   | Statut      | Où                                                                       | Gate |
+| --- | ------------------------------------------------------ | ----------- | ------------------------------------------------------------------------ | ---- |
+| 13  | RLS bloque un accès non autorisé                       | **COUVERT** | `rls.test.ts` — 16 tests                                                 | G2   |
+| 14  | Un appareil révoqué ne synchronise pas                 | **À VENIR** | `SEC-35` écrit ; la synchronisation n'existe pas                         | G8   |
+| 15  | Une permission révoquée bloque l'action                | **COUVERT** | `capability.test.ts` + `rls.test.ts`                                     | G3   |
+| 16  | Le rejeu d'une commande à effet de bord est idempotent | **COUVERT** | `idempotence.test.ts` — 9 tests, dont la concurrence                     | G3   |
+| 17  | Safe Mode empêche l'exécution externe                  | **COUVERT** | `safe-mode.test.ts` — vérifié par accès direct à la base                 | G3   |
+| 18  | Aucun secret critique dans le bundle client            | **PARTIEL** | `secret-scan` sur le dépôt ; l'analyse du bundle construit reste à faire | G9   |
+
+## Données
+
+| #   | Test                                              | Statut      | Où                                                                                       | Gate |
+| --- | ------------------------------------------------- | ----------- | ---------------------------------------------------------------------------------------- | ---- |
+| 19  | Les montants ont une représentation canonique     | **COUVERT** | `normalization.test.ts`                                                                  | G2   |
+| 20  | Dates et fuseaux canoniques                       | **COUVERT** | `normalization.test.ts`                                                                  | G2   |
+| 21  | Les doublons de marchands ne prolifèrent pas      | **PARTIEL** | canonicalisation testée ; la résolution d'identité par référentiel officiel arrive en G5 | G5   |
+| 22  | La provenance accompagne tout fait dérivé durable | **COUVERT** | `normalization.test.ts` + `data-registry.test.ts`                                        | G2   |
+
+## Muses
+
+| #   | Test                                                   | Statut  | Où  | Gate |
+| --- | ------------------------------------------------------ | ------- | --- | ---- |
+| 23  | Une proposition IA ne devient pas connaissance publiée | À VENIR | —   | G5   |
+| 24  | Une règle critique exige un quorum                     | À VENIR | —   | G5   |
+| 25  | Une contradiction crée un objet de conflit             | À VENIR | —   | G5   |
+| 26  | La validité temporelle sélectionne la règle applicable | À VENIR | —   | G5   |
+| 27  | Une règle publiée peut être suspendue                  | À VENIR | —   | G5   |
+
+## Offline
+
+| #   | Test                                                        | Statut      | Où                                                                                                     | Gate |
+| --- | ----------------------------------------------------------- | ----------- | ------------------------------------------------------------------------------------------------------ | ---- |
+| 28  | Lecture hors ligne des données autorisées en cache          | À VENIR     | —                                                                                                      | G8   |
+| 29  | Une écriture locale atteint le serveur via l'outbox         | À VENIR     | `ARC-42` écrit                                                                                         | G8   |
+| 30  | Un conflit n'écrase pas silencieusement un état critique    | À VENIR     | —                                                                                                      | G8   |
+| 31  | Une donnée supprimée ne réapparaît pas à la synchronisation | **PARTIEL** | `deletion.test.ts` : la clé étrangère l'empêche déjà ; les tombstones arrivent avec la synchronisation | G8   |
+
+## UX
+
+| #   | Test                                                                 | Statut          | Où                                                          | Gate |
+| --- | -------------------------------------------------------------------- | --------------- | ----------------------------------------------------------- | ---- |
+| 32  | Chaque écran définit ses états                                       | À VENIR         | `capability.ts` fournit le moteur                           | G4   |
+| 33  | La feuille d'action énonce destinataire, données, impact, permission | **PARTIEL**     | contrat et machine à états en place ; l'écran reste à faire | G4   |
+| 34  | Libellés d'accessibilité sur les contrôles                           | **NON COUVERT** | outillage de test RN non choisi                             | G4   |
+| 35  | La couleur n'est jamais le seul porteur d'état                       | **NON COUVERT** | idem                                                        | G4   |
+
+## Release
+
+| #   | Test                                     | Statut      | Où                                       | Gate |
+| --- | ---------------------------------------- | ----------- | ---------------------------------------- | ---- |
+| 36  | typecheck / lint / tests / build passent | **COUVERT** | `npm run ci` + `expo export`             | G1   |
+| 37  | Les suites privacy et sécurité passent   | **COUVERT** | chaîne CI complète                       | G2   |
+| 38  | Un plan de rollback existe               | **COUVERT** | rapports de gate, section ROLLBACK       | G1   |
+| 39  | `PROJECT_STATE` est à jour               | **COUVERT** | mis à jour à chaque fin de gate          | G0   |
+| 40  | Aucune décision RED ouverte              | **COUVERT** | `docs/ADR/INDEX.md` + `00_OPEN_ITEMS.md` | G0   |
+
+## Bilan
+
+| Statut          | Nombre |
+| --------------- | ------ |
+| COUVERT         | 15     |
+| PARTIEL         | 9      |
+| À VENIR         | 14     |
+| **NON COUVERT** | **2**  |
+
+**Les deux tests non couverts sont les deux tests d'accessibilité** (34 et 35). Ils ne dépendent d'aucune gate ultérieure : ils dépendent d'un choix d'outillage de test pour React Native, signalé comme risque depuis le rapport de G1 et toujours ouvert.
+
+`PRD-14` §18 vise WCAG AA. Sans outillage, cette cible n'est pas vérifiable — et une cible d'accessibilité non vérifiée est une intention, pas un engagement. **À trancher avant G4**, où les premiers écrans réels apparaissent.
