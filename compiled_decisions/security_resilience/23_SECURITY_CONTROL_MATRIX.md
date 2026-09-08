@@ -12,7 +12,7 @@ Mise à jour : 2026-09-08 (étape 0). Deux contrôles ajoutés, colonne « Spec 
 | Least privilege                                            | Yes      | manifest + RLS tests                     | ADR-0005 (grants par schéma)        | G2          |
 | Device revocation                                          | Yes      | integration test                         | `SEC-35` ✅                         | G2          |
 | Permission revocation                                      | Yes      | integration test                         | —                                   | G2          |
-| Command idempotence                                        | Yes      | contract test                            | **`ARC-42` à écrire**               | G3          |
+| Command idempotence                                        | Yes      | contract test                            | `ARC-42` ✅                         | G3          |
 | Sensitive fields encrypted                                 | Yes      | architecture/test evidence               | `SEC-31` ✅ (ADR-0008)              | G2          |
 | Audit for external actions                                 | Yes      | audit test                               | ADR-0006 (`actor_id`)               | G3          |
 | Safe Mode                                                  | Yes      | integration test                         | **`SEC-32` à écrire**               | G3          |
