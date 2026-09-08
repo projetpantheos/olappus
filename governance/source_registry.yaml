@@ -1,0 +1,132 @@
+# =============================================================================
+# OLAPPUS — SOURCE REGISTRY
+#
+# Reprise des 26 champs et des 5 statuts de `docs/00_PREVIOUS_BLUEPRINT` §5,
+# promus dans la couche normative (docs/DEPRECATION_MAP : « À PROMOUVOIR »).
+#
+# RÈGLE ABSOLUE (`docs/11`) : aucune source n'est ingérée parce qu'elle est
+# « publique » ou « open ». Elle doit être enregistrée ici et franchir le
+# License Gate. **Default deny** : tout ce qui n'est pas APPROVED est refusé.
+#
+# RÈGLE DE VÉRIFICATION (D14) : les licences et quotas cités dans `docs/` sont
+# NON VÉRIFIÉS. Aucune valeur de licence ci-dessous ne fait foi tant que
+# `license_verified` n'est pas `true` avec une date de vérification.
+# =============================================================================
+
+version: 1
+updated_at: '2026-09-08'
+gate: G5
+
+# --- Statuts autorisés -------------------------------------------------------
+statuses:
+  APPROVED: Ingestion autorisée. Licence vérifiée à la source primaire.
+  APPROVED_WITH_CONDITIONS: Ingestion autorisée sous réserve documentée (attribution, périmètre).
+  REVIEW_REQUIRED: Enregistrée, non ingérable. Licence ou conditions non vérifiées.
+  REJECTED: Ingestion interdite. Motif consigné.
+  DEPRECATED: Anciennement utilisée, plus ingérée.
+
+# Seuls ces deux statuts ouvrent l'ingestion. Le License Gate ne connaît pas
+# d'autre porte.
+ingestible_statuses:
+  - APPROVED
+  - APPROVED_WITH_CONDITIONS
+
+sources:
+  - source_id: legifrance
+    name: Légifrance
+    publisher: Direction de l'information légale et administrative
+    country: FR
+    jurisdiction: FR
+    dataset_url: null
+    api_url: null
+
+    # --- Licence : NON VÉRIFIÉE ---------------------------------------------
+    # `docs/11` et `docs/25` annoncent une Licence Ouverte 2.0 assortie de
+    # conditions d'API. Ces mentions portent des références non résolubles
+    # (D14) : elles ne font pas foi.
+    license_name: null
+    license_url: null
+    license_verified: false
+    commercial_use_allowed: null
+    redistribution_allowed: null
+    attribution_required: null
+    share_alike_required: null
+    privacy_restrictions: null
+
+    update_frequency: null
+    last_checked_at: null
+    last_imported_at: null
+    source_hash: null
+    schema_version: null
+    quality_score: null
+    priority: S
+    legal_review_status: PENDING
+
+    status: REVIEW_REQUIRED
+
+    purpose: >-
+      Servir les trois droits du périmètre P0 (ADR-0007) : garantie légale de
+      conformité, droit de rétractation, résiliation et réclamation. Sans source
+      juridique datée, Thémis ne peut produire aucune affirmation.
+
+    blocking_conditions:
+      - Licence non vérifiée à la source primaire.
+      - Conditions d'API et quotas non lus.
+      - Aucun compte d'accès créé.
+
+    notes: >-
+      Enregistrée délibérément en REVIEW_REQUIRED. C'est l'état honnête : la
+      source est identifiée et nécessaire, rien n'a été vérifié. Le passage en
+      APPROVED est une action fondateur, pas une action d'agent.
+
+  - source_id: rappelconso
+    name: RappelConso
+    publisher: Administration française
+    country: FR
+    jurisdiction: FR
+    dataset_url: null
+    api_url: null
+
+    license_name: null
+    license_url: null
+    license_verified: false
+    commercial_use_allowed: null
+    redistribution_allowed: null
+    attribution_required: null
+    share_alike_required: null
+    privacy_restrictions: null
+
+    update_frequency: null
+    last_checked_at: null
+    last_imported_at: null
+    source_hash: null
+    schema_version: null
+    quality_score: null
+    priority: A
+    legal_review_status: PENDING
+
+    status: REVIEW_REQUIRED
+
+    purpose: >-
+      Rappels de produits. Hors P0 (aucun module ne les porte, ADR-0003), mais
+      enregistrée pour que la correspondance sur GTIN exact d'ADR-0013 ait une
+      source identifiée le jour venu.
+
+    blocking_conditions:
+      - Licence non vérifiée à la source primaire.
+      - Hors périmètre P0: aucun module ne consomme cette source aujourd'hui.
+
+    notes: >-
+      ADR-0013 impose une correspondance sur GTIN exact uniquement. Un faux
+      positif provoque une panique inutile, un faux négatif un risque physique.
+
+# --- Ce que le passage en APPROVED exige -------------------------------------
+# Liste de contrôle, à remplir par le fondateur, source par source.
+approval_checklist:
+  - Licence lue à la source primaire, pas dans une note du kit.
+  - Réutilisation commerciale explicitement autorisée, ou condition documentée.
+  - Obligations d'attribution et de partage à l'identique consignées.
+  - Conditions d'API, quotas et fréquence de mise à jour lus.
+  - Absence de données personnelles, ou restrictions consignées.
+  - Stratégie de cache définie (OPEN-07) — le budget cible est de 0 € récurrent.
+  - Date de vérification renseignée dans `last_checked_at`.

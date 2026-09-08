@@ -927,6 +927,318 @@ entities:
         ai_policy: AI_FORBIDDEN
         provenance: false
         rls_scope: self
+  - id: knowledge.source
+    schema: knowledge
+    owner: Knowledge
+    access: public_knowledge
+    status: SPECIFIED
+    source_doc: AI-10
+    note: "Registre des sources externes. Default deny : seuls APPROVED et APPROVED_WITH_CONDITIONS ouvrent l'ingestion, et exigent une licence verifiee."
+    fields:
+      - name: source_id
+        classification: PUBLIC
+        purpose: Identifiant de la source externe.
+        source: knowledge
+        normalized_form: opaque_id
+        retention: versioned
+        export: true
+        delete: keep
+        ai_policy: AI_ALLOWED
+        provenance: true
+        rls_scope: public
+      - name: status
+        classification: PUBLIC
+        purpose: Statut au License Gate.
+        source: knowledge
+        normalized_form: enum
+        retention: versioned
+        export: true
+        delete: keep
+        ai_policy: AI_ALLOWED
+        provenance: true
+        rls_scope: public
+      - name: license_verified
+        classification: PUBLIC
+        purpose: Licence verifiee a la source primaire, ou non.
+        source: knowledge
+        normalized_form: boolean
+        retention: versioned
+        export: true
+        delete: keep
+        ai_policy: AI_ALLOWED
+        provenance: true
+        rls_scope: public
+      - name: last_checked_at
+        classification: PUBLIC
+        purpose: Date de la derniere verification de licence.
+        source: knowledge
+        normalized_form: timestamp_utc
+        retention: versioned
+        export: true
+        delete: keep
+        ai_policy: AI_ALLOWED
+        provenance: true
+        rls_scope: public
+  - id: knowledge.fact
+    schema: knowledge
+    owner: Knowledge
+    access: public_knowledge
+    status: SPECIFIED
+    source_doc: AI-10
+    note: Connaissance collective. Une correction cree une nouvelle version, jamais un ecrasement. Seule la connaissance PUBLISHED est lisible par le client.
+    fields:
+      - name: fact_id
+        classification: PUBLIC
+        purpose: Identifiant de la connaissance.
+        source: knowledge
+        normalized_form: opaque_id
+        retention: versioned
+        export: true
+        delete: keep
+        ai_policy: AI_ALLOWED
+        provenance: true
+        rls_scope: public
+      - name: source_id
+        classification: PUBLIC
+        purpose: Source dont la connaissance est issue.
+        source: knowledge
+        normalized_form: opaque_id
+        retention: versioned
+        export: true
+        delete: keep
+        ai_policy: AI_ALLOWED
+        provenance: true
+        rls_scope: public
+      - name: valid_from
+        classification: PUBLIC
+        purpose: Debut de validite. Obligatoire pour toute regle temporelle.
+        source: knowledge
+        normalized_form: local_date
+        retention: versioned
+        export: true
+        delete: keep
+        ai_policy: AI_ALLOWED
+        provenance: true
+        rls_scope: public
+      - name: valid_to
+        classification: PUBLIC
+        purpose: Fin de validite. Une regle expiree ne produit aucune affirmation.
+        source: knowledge
+        normalized_form: local_date
+        retention: versioned
+        export: true
+        delete: keep
+        ai_policy: AI_ALLOWED
+        provenance: true
+        rls_scope: public
+      - name: status
+        classification: PUBLIC
+        purpose: Etat dans le cycle de gouvernance AI-10.
+        source: knowledge
+        normalized_form: enum
+        retention: versioned
+        export: true
+        delete: keep
+        ai_policy: AI_ALLOWED
+        provenance: true
+        rls_scope: public
+      - name: verification_level
+        classification: PUBLIC
+        purpose: Niveau de verification, d OFFICIAL a AI_PROPOSED.
+        source: knowledge
+        normalized_form: enum
+        retention: versioned
+        export: true
+        delete: keep
+        ai_policy: AI_ALLOWED
+        provenance: true
+        rls_scope: public
+      - name: version
+        classification: PUBLIC
+        purpose: Version de la connaissance.
+        source: knowledge
+        normalized_form: integer
+        retention: versioned
+        export: true
+        delete: keep
+        ai_policy: AI_ALLOWED
+        provenance: true
+        rls_scope: public
+  - id: knowledge.proposal
+    schema: knowledge
+    owner: Knowledge
+    access: service_only
+    status: SPECIFIED
+    source_doc: AI-10
+    note: "Proposition de connaissance. Non exposee au client : une proposition n'est pas une connaissance."
+    fields:
+      - name: proposal_id
+        classification: PUBLIC
+        purpose: Identifiant de la proposition.
+        source: knowledge
+        normalized_form: opaque_id
+        retention: versioned
+        export: true
+        delete: keep
+        ai_policy: AI_ALLOWED
+        provenance: true
+        rls_scope: service_only
+      - name: origin
+        classification: PUBLIC
+        purpose: 'Origine : humaine, IA ou source officielle.'
+        source: knowledge
+        normalized_form: enum
+        retention: versioned
+        export: true
+        delete: keep
+        ai_policy: AI_ALLOWED
+        provenance: true
+        rls_scope: service_only
+  - id: knowledge.review
+    schema: knowledge
+    owner: Knowledge
+    access: service_only
+    status: SPECIFIED
+    source_doc: AI-10
+    note: Revue independante. L'identite des contributeurs n'est jamais exposee dans la connaissance publique (AI-10).
+    fields:
+      - name: review_id
+        classification: PUBLIC
+        purpose: Identifiant de la revue.
+        source: knowledge
+        normalized_form: opaque_id
+        retention: versioned
+        export: true
+        delete: keep
+        ai_policy: AI_ALLOWED
+        provenance: true
+        rls_scope: service_only
+      - name: reviewer_id
+        classification: L3
+        purpose: Identite du validateur. Non exposee dans la connaissance publique.
+        source: knowledge
+        normalized_form: opaque_id
+        retention: versioned
+        export: false
+        delete: keep
+        ai_policy: AI_FORBIDDEN
+        provenance: true
+        rls_scope: service_only
+      - name: origin_group
+        classification: PUBLIC
+        purpose: Groupe d'origine, pour detecter un quorum artificiel.
+        source: knowledge
+        normalized_form: opaque_id
+        retention: versioned
+        export: true
+        delete: keep
+        ai_policy: AI_ALLOWED
+        provenance: true
+        rls_scope: service_only
+      - name: verdict
+        classification: PUBLIC
+        purpose: Verdict de la revue.
+        source: knowledge
+        normalized_form: enum
+        retention: versioned
+        export: true
+        delete: keep
+        ai_policy: AI_ALLOWED
+        provenance: true
+        rls_scope: service_only
+  - id: knowledge.certification
+    schema: knowledge
+    owner: Knowledge
+    access: service_only
+    status: SPECIFIED
+    source_doc: AI-10
+    note: Certification revocable. Une certification revoquee laisse sa trace.
+    fields:
+      - name: certification_id
+        classification: PUBLIC
+        purpose: Identifiant de la certification.
+        source: knowledge
+        normalized_form: opaque_id
+        retention: versioned
+        export: true
+        delete: keep
+        ai_policy: AI_ALLOWED
+        provenance: true
+        rls_scope: service_only
+      - name: certified_by
+        classification: L3
+        purpose: Identite du certificateur. Non exposee publiquement.
+        source: knowledge
+        normalized_form: opaque_id
+        retention: versioned
+        export: false
+        delete: keep
+        ai_policy: AI_FORBIDDEN
+        provenance: true
+        rls_scope: service_only
+      - name: revoked_at
+        classification: PUBLIC
+        purpose: Date de revocation, le cas echeant.
+        source: knowledge
+        normalized_form: timestamp_utc
+        retention: versioned
+        export: true
+        delete: keep
+        ai_policy: AI_ALLOWED
+        provenance: true
+        rls_scope: service_only
+  - id: knowledge.conflict
+    schema: knowledge
+    owner: Knowledge
+    access: public_knowledge
+    status: SPECIFIED
+    source_doc: AI-10
+    note: Contradiction entre deux connaissances. La source perdante est conservee avec la resolution, jamais supprimee (AI-10).
+    fields:
+      - name: conflict_id
+        classification: PUBLIC
+        purpose: Identifiant du conflit.
+        source: knowledge
+        normalized_form: opaque_id
+        retention: versioned
+        export: true
+        delete: keep
+        ai_policy: AI_ALLOWED
+        provenance: true
+        rls_scope: public
+      - name: fact_a
+        classification: PUBLIC
+        purpose: Premiere connaissance en conflit.
+        source: knowledge
+        normalized_form: opaque_id
+        retention: versioned
+        export: true
+        delete: keep
+        ai_policy: AI_ALLOWED
+        provenance: true
+        rls_scope: public
+      - name: fact_b
+        classification: PUBLIC
+        purpose: Seconde connaissance en conflit.
+        source: knowledge
+        normalized_form: opaque_id
+        retention: versioned
+        export: true
+        delete: keep
+        ai_policy: AI_ALLOWED
+        provenance: true
+        rls_scope: public
+      - name: resolution
+        classification: PUBLIC
+        purpose: Resolution retenue, ou UNRESOLVED.
+        source: knowledge
+        normalized_form: enum
+        retention: versioned
+        export: true
+        delete: keep
+        ai_policy: AI_ALLOWED
+        provenance: true
+        rls_scope: public
 
 # =============================================================================
 # ENTITÉS DÉCLARÉES SANS CHAMPS
@@ -948,15 +1260,9 @@ unspecified_entities:
   - { id: domain.transaction, gate: G7 }
   - { id: domain.deadline, gate: G7 }
   - { id: domain.travel_item, gate: 'P1' }
-  - { id: knowledge.source, gate: G5 }
-  - { id: knowledge.fact, gate: G5 }
   - { id: knowledge.evidence, gate: G5 }
   - { id: knowledge.rule, gate: G5 }
   - { id: knowledge.rule_version, gate: G5 }
-  - { id: knowledge.proposal, gate: G5 }
-  - { id: knowledge.review, gate: G5 }
-  - { id: knowledge.certification, gate: G5 }
-  - { id: knowledge.conflict, gate: G5 }
   - { id: audit.business_event, gate: G3 }
   - { id: audit.security_event, gate: G3 }
   - { id: audit.data_access, gate: G3 }
