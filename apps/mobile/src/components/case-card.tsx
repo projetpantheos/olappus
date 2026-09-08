@@ -1,7 +1,15 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import type { AttentionItem } from '../demo/attention';
-import { attentionStyle, color, confidenceLabel, fontSize, radius, spacing } from '../theme/tokens';
+import {
+  attentionStyle,
+  color,
+  confidenceLabel,
+  fontFamily,
+  fontSize,
+  radius,
+  spacing,
+} from '../theme/tokens';
 
 /**
  * Carte d'attention — `PRD-15`.
@@ -64,8 +72,12 @@ const styles = StyleSheet.create({
   },
   header: { alignItems: 'center', flexDirection: 'row', gap: spacing.sm },
   dot: { borderRadius: radius.sm, height: 10, width: 10 },
-  level: { fontSize: fontSize.caption, fontWeight: '600' },
-  title: { color: color.text.primary, fontSize: fontSize.subtitle, fontWeight: '600' },
+  level: { fontFamily: fontFamily.bodyStrong, fontSize: fontSize.caption },
+  title: {
+    color: color.text.primary,
+    fontFamily: fontFamily.bodyStrong,
+    fontSize: fontSize.subtitle,
+  },
   footer: { flexDirection: 'row', gap: spacing.md },
   confidence: { color: color.text.secondary, fontSize: fontSize.caption },
   evidence: { color: color.text.secondary, fontSize: fontSize.caption },

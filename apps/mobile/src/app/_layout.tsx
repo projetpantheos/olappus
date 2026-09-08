@@ -1,17 +1,52 @@
+import { Cinzel_600SemiBold, useFonts } from '@expo-google-fonts/cinzel';
+import { Inter_400Regular, Inter_600SemiBold } from '@expo-google-fonts/inter';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+
+import { ScreenState } from '../components/screen-state';
+import { color } from '../theme/tokens';
 
 /**
  * Racine de navigation.
  *
- * G1 : une seule route, le temps de prouver que l'application démarre.
- * G4 : navigation primaire à quatre entrées — Aujourd'hui, Protection,
- *      Mémoire, Plus (PRD-14_UX_JOURNEY_BIBLE §2), Hélios étant « Aujourd'hui ».
+ * Deux familles typographiques, conformes à `docs/04` et à la planche de
+ * direction artistique (moodboard, ADR-0016) :
+ *   - Cinzel pour les titres et l'identité — serif à l'antique, licence OFL ;
+ *   - Inter pour le texte — lisibilité moderne.
+ *
+ * `docs/04` prévient : « les titres ne doivent pas devenir théâtraux ». Cinzel
+ * est donc réservé à l'identité et aux titres d'écran, jamais au corps de texte.
+ *
+ * L'écran d'accueil est la route initiale : c'est le parcours de première valeur
+ * de `PRD-14` Journey A — comprendre la valeur avant qu'on demande des données.
  */
 export default function RootLayout() {
+  const [fontsLoaded] = useFonts({
+    Cinzel_600SemiBold,
+    Inter_400Regular,
+    Inter_600SemiBold,
+  });
+
+  if (!fontsLoaded) {
+    // Un état de chargement explicite plutôt qu'un écran blanc : `PRD-14` §15
+    // exige que chaque écran définisse son état de chargement.
+    return <ScreenState kind="loading" />;
+  }
+
   return (
     <>
-      <Stack screenOptions={{ headerShown: false }} />
+      <Stack
+        screenOptions={{
+          headerStyle: { backgroundColor: color.surface.ivory },
+          headerTitleStyle: { color: color.text.primary, fontFamily: 'Cinzel_600SemiBold' },
+          headerShadowVisible: false,
+          contentStyle: { backgroundColor: color.surface.ivory },
+        }}
+      >
+        <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="case/[id]" options={{ title: 'Situation' }} />
+      </Stack>
       <StatusBar style="dark" />
     </>
   );

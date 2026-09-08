@@ -69,3 +69,16 @@ export const confidenceLabel = {
   UNCERTAIN: 'À confirmer',
   INSUFFICIENT_DATA: 'Données insuffisantes',
 } as const;
+
+/**
+ * Familles typographiques — `docs/04` et planche de direction artistique.
+ *
+ * Cinzel porte l'identité et les titres d'écran. `docs/04` prévient : « les
+ * titres ne doivent pas devenir théâtraux » — elle ne descend donc jamais dans
+ * le corps de texte, qui reste en Inter pour la lisibilité.
+ */
+export const fontFamily = {
+  display: 'Cinzel_600SemiBold',
+  body: 'Inter_400Regular',
+  bodyStrong: 'Inter_600SemiBold',
+} as const;
