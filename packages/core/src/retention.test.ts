@@ -184,6 +184,54 @@ describe.skipIf(!available)('Rétention — la purge s’exécute réellement', 
   });
 });
 
+describe.skipIf(!available)('Rétention — ordonnancement et supervision', () => {
+  it('le point d’entrée unique exécute les deux purges et laisse une trace', async () => {
+    const before = await db!.query<{ n: number }>(
+      'select count(*)::int as n from core.retention_run',
+    );
+    await db!.query('select core.run_retention_purges()');
+    const after = await db!.query<{ n: number }>(
+      'select count(*)::int as n from core.retention_run',
+    );
+    expect(Number(after.rows[0]!.n)).toBe(Number(before.rows[0]!.n) + 1);
+  });
+
+  it('signale une purge en bonne santé après exécution', async () => {
+    await db!.query('select core.run_retention_purges()');
+    const rows = await db!.query<{ is_healthy: boolean; overdue_quarantine_rows: number }>(
+      'select is_healthy, overdue_quarantine_rows from core.retention_health',
+    );
+    expect(rows.rows[0]!.is_healthy).toBe(true);
+    // Après purge, plus aucune charge brute ne doit être en retard.
+    expect(Number(rows.rows[0]!.overdue_quarantine_rows)).toBe(0);
+  });
+
+  it('rend visible une charge brute en retard tant que la purge n’a pas tourné', async () => {
+    // Une purge arrêtée est invisible sans indicateur : les données
+    // s'accumulent silencieusement. C'est ce que cette vue empêche.
+    const hash = `hash-retard-${randomUUID()}`;
+    await db!.query(
+      `insert into source.raw_quarantine
+         (user_id, connector_id, payload_raw, content_hash, observed_at, created_at)
+       values ($1, 'test', '\\x05'::bytea, $2, now() - interval '20 days',
+               now() - interval '20 days')`,
+      [USER, hash],
+    );
+
+    const overdue = await db!.query<{ overdue_quarantine_rows: number }>(
+      'select overdue_quarantine_rows from core.retention_health',
+    );
+    expect(Number(overdue.rows[0]!.overdue_quarantine_rows)).toBeGreaterThanOrEqual(1);
+
+    await db!.query('select core.run_retention_purges()');
+
+    const cleared = await db!.query<{ overdue_quarantine_rows: number }>(
+      'select overdue_quarantine_rows from core.retention_health',
+    );
+    expect(Number(cleared.rows[0]!.overdue_quarantine_rows)).toBe(0);
+  });
+});
+
 describe.skipIf(!available)('Déduplication de la quarantaine', () => {
   it('refuse deux fois la même charge pour le même connecteur', async () => {
     const hash = `hash-dedup-${Date.now()}`;
