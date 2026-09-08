@@ -1,24 +1,24 @@
 # OLAPPUS — PROJECT STATE
 
-Dernière mise à jour : 2026-09-08 (étape 0, post-G0)
+Dernière mise à jour : 2026-09-08 (fin de G1)
 Ce fichier est le **seul** porteur de l'état d'avancement. `project.manifest.json` ne porte que les invariants et les conventions.
 
 ## Current phase
 
-Étape 0 terminée — préparation de G1 Foundation
+G1 Foundation terminée — en attente de revue fondateur.
 
 ## Current gate
 
-**G0 — PASSED**. Prochaine : G1 Foundation.
+**G1 — PASSED**, sous réserve de revue. Prochaine : **G2 Privacy / Security baseline**.
 Taxonomie applicable : `compiled_decisions/runbooks/RUN-42_GATE_MAP.md` (G0–G9).
 
 ## Last successful checkpoint
 
-2026-09-08 — Audit G0 rendu, 14 décisions tranchées (ADR-0001 → ADR-0014), réparations documentaires appliquées.
+2026-09-08 — G1 : dépôt initialisé, socle monorepo, application Expo, chaîne CI verte. 3 commits, aucun push.
 
 ## Status
 
-READY_FOR_BOOTSTRAP
+G1_COMPLETE / PENDING_FOUNDER_REVIEW
 
 ## Completed
 
@@ -27,15 +27,16 @@ READY_FOR_BOOTSTRAP
 - **Audit G0** : architecture, fichiers manquants, 13 contradictions, dépendances, risques privacy et sécurité
 - **Analyse de cohérence** : promesse consommateur, sécurité des données, angles morts
 - **14 ADR** déposés dans `docs/ADR/`
-- **Étape 0** : carte d'autorité (`docs/DEPRECATION_MAP.md`), liste des zones ouvertes (`compiled_decisions/00_OPEN_ITEMS.md`), table de correspondance des gates, chemin d'autorité corrigé, 42 marqueurs de citation traités, prompt agrégé archivé
+- **Étape 0** : carte d'autorité (`docs/DEPRECATION_MAP.md`), zones ouvertes (`compiled_decisions/00_OPEN_ITEMS.md`), table de correspondance des gates, chemin d'autorité corrigé, 42 marqueurs de citation traités, prompt agrégé archivé
+- **G1 Foundation** : dépôt git, `.gitignore` avant le premier `git add`, scan de secrets, monorepo npm workspaces, TypeScript 6 strict, ESLint 10, Prettier, vitest 5, CI GitHub Actions, `.env.example`, `SEC-34`, application Expo SDK 57 minimale
 
 ## In progress
 
-Aucun travail en cours. En attente du démarrage de G1.
+Aucun travail en cours. En attente de la revue de G1 et du démarrage de G2.
 
 ## Blocked
 
-Rien. Prérequis avant G1/G2 : Docker Desktop (ADR-0009). Node 24 LTS déjà présent et retenu (ADR-0014 amendé) ; la CLI Supabase sera une dépendance du projet, pas une installation globale. Seul compte à créer maintenant : GitHub (dépôt privé). Supabase hébergé et Google Cloud attendent G6 ; Expo/EAS attend G9 — voir docs/SETUP_FONDATEUR.md.
+Rien. Le dépôt distant n'est pas configuré : aucun push n'a été effectué, l'URL du dépôt GitHub reste à fournir.
 
 ## Open decisions
 
@@ -46,28 +47,29 @@ Zones volontairement non définies : voir `compiled_decisions/00_OPEN_ITEMS.md` 
 
 - Le Data Registry machine-lisible n'existe pas encore ; il conditionne G2 et donc tout le reste (chemin critique).
 - Six contrôles de la matrice de sécurité n'ont pas encore de spécification d'implémentation : chiffrement L3, Safe Mode, idempotence, vérification de suppression, restauration de backup, révocation d'appareil.
+- 14 vulnérabilités modérées transitives dans la chaîne Expo (`decode-uri-component` via `expo-router`, `uuid` via `@expo/config-plugins`). Aucune haute ni critique. Acceptées et surveillées : le correctif proposé par npm redescendrait Expo en 46.
 - Les licences et quotas de sources open data cités dans `docs/` sont non vérifiés ; aucune ingestion possible avant re-vérification à la source primaire.
 - Revue juridique/DPO requise avant tout pilote public.
 
 ## Privacy status
 
 DESIGN_READY / IMPLEMENTATION_PENDING
-Renforcé : `email` en `AI_FORBIDDEN` (ADR-0012), niveau `L0_RAW_QUARANTINE` introduit, règle des données de tiers posée.
+Renforcé : `email` en `AI_FORBIDDEN` (ADR-0012), niveau `L0_RAW_QUARANTINE` introduit, règle des données de tiers posée. Aucune donnée réelle ni compte réel dans le dépôt.
 
 ## Security status
 
 DESIGN_READY / IMPLEMENTATION_PENDING
-Renforcé : deux invariants ajoutés au manifeste (contenu non fiable ne paramètre pas d'action externe ; pas d'identité de tiers durable). Modèle de clés tranché (ADR-0008), spécification `SEC-31` à écrire en G2.
+Deux invariants ajoutés au manifeste (contenu non fiable ne paramètre pas d'action externe ; pas d'identité de tiers durable). Modèle de clés tranché (ADR-0008), `SEC-31` à écrire en G2. Contrôles opérationnels en G1 : scan de secrets automatisé, audit de dépendances, `SEC-34` écrit.
 
 ## Test status
 
-SPEC_READY / IMPLEMENTATION_PENDING
-Les 40 tests d'acceptation ont désormais un environnement d'exécution prévu (ADR-0009). `TEST_MAP.md` reste à produire.
+PARTIEL — la chaîne existe, la couverture est symbolique.
+2 tests unitaires. Les 40 tests d'acceptation ont un environnement d'exécution prévu (ADR-0009) mais ne sont pas écrits. `TEST_MAP.md` reste à produire.
 
 ## Next founder action
 
-Suivre docs/SETUP_FONDATEUR.md : configurer git, installer Docker Desktop, créer le dépôt GitHub privé, préparer le coffre de secrets. Les comptes Supabase, Expo et Google Cloud ne sont pas nécessaires avant G6/G9. Puis lancer `prompts/02_BOOTSTRAP_FOUNDATION.md`.
+Relire `docs/GATE_REPORTS/G1.md`, fournir l'URL du dépôt GitHub privé pour configurer le remote, puis autoriser le premier push.
 
 ## Next Claude action
 
-G1 Foundation : `git init`, `.gitignore` et secret scan **en premier commit**, monorepo npm workspaces, TypeScript strict, Expo, CI, séparation d'environnements, politique de journalisation (`SEC-34`). Aucun compte réel, aucun secret de production.
+G2 Privacy / Security baseline : écrire `governance/data_registry.yaml` (chemin critique), puis quarantine, normalisation, identité/appareil/permissions, RLS par schéma, et la **preuve automatisée qu'un accès non autorisé échoue**. Nécessite la CLI Supabase en dépendance de projet et la stack locale Docker.
