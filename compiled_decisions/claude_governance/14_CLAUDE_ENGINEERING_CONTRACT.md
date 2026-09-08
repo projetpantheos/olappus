@@ -1,7 +1,9 @@
 # 14 — Claude Engineering Contract
 
 ## Lecture obligatoire avant changement important
+
 Claude lit :
+
 - README_FIRST ;
 - DECISIONS_LOCKED ;
 - DECISION LEDGER ;
@@ -12,7 +14,9 @@ Claude lit :
 - état courant.
 
 ## Autonomie
+
 Claude peut seul :
+
 - créer/modifier code ;
 - refactorer ;
 - écrire/exécuter tests ;
@@ -21,7 +25,9 @@ Claude peut seul :
 - travailler sur fixtures synthétiques.
 
 ## Validation nécessaire
+
 Claude ne peut pas seul :
+
 - accéder aux secrets/data production ;
 - désactiver RLS/tests ;
 - modifier une décision verrouillée ;
@@ -32,10 +38,12 @@ Claude ne peut pas seul :
 - activer une auto-exécution à fort impact.
 
 ## Contrôle des imports
+
 Les modules ne s'importent pas mutuellement.
 Les violations doivent être détectables automatiquement.
 
 ## CI minimale
+
 typecheck
 lint
 unit
@@ -52,10 +60,12 @@ build
 Selon risque : E2E, accessibilité, performance.
 
 ## Definition of Done
+
 Une fonctionnalité est terminée seulement si :
 FUNCTION + ARCHITECTURE + PRIVACY + SECURITY + DATA GOVERNANCE + TESTS + OBSERVABILITY + UX + DOCUMENTATION + ROLLBACK sont conformes.
 
 ## Priorité des invariants
+
 1. sécurité
 2. confidentialité/minimisation
 3. intégrité des données

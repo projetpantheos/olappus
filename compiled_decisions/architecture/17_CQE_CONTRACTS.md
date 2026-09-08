@@ -1,7 +1,9 @@
 # 17 — CQE Contracts
 
 ## Envelope
+
 All Commands:
+
 - command_id
 - actor_id
 - device_id
@@ -11,6 +13,7 @@ All Commands:
 - payload
 
 All Events:
+
 - event_id
 - aggregate_id
 - event_type
@@ -21,6 +24,7 @@ All Events:
 - payload
 
 ## Commands
+
 CreateCaseCommandV1
 PrepareActionCommandV1
 ConfirmActionCommandV1
@@ -32,13 +36,17 @@ DisconnectConnectorCommandV1
 DeleteDataCommandV1
 
 ## Query rules
+
 Queries are read-only and side-effect free.
 
 ## Idempotence
+
 All side-effecting commands are idempotent by `command_id`.
 
 ## Authorization
+
 Core validates:
+
 - actor;
 - device;
 - capability;
@@ -49,10 +57,12 @@ Core validates:
 - risk.
 
 ## Event immutability
+
 Events are never edited in place.
 Corrections use new events.
 
 ## Versioning
+
 Breaking change:
 v1 retained during migration.
 v2 introduced.
@@ -61,4 +71,5 @@ Migration.
 v1 retirement only after usage is zero and rollback plan is available.
 
 ## Runtime schemas
+
 Contracts must exist both as TypeScript types and runtime validation schemas (e.g. Zod or equivalent).

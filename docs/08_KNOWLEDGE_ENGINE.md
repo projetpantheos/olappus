@@ -1,9 +1,11 @@
 # KNOWLEDGE ENGINE
 
 ## Objectif
+
 Faire diminuer avec le temps la dépendance à l'IA et aux appels externes.
 
 ## Pipeline
+
 ```text
 Raw input
  → sanitize
@@ -20,6 +22,7 @@ Raw input
 ```
 
 ## Hiérarchie de confiance
+
 1. source officielle vérifiée ;
 2. règle interne versionnée issue d'une source ;
 3. connaissance certifiée ;
@@ -28,17 +31,22 @@ Raw input
 6. hypothèse IA.
 
 ## No auto-trust
+
 Une sortie IA ne devient jamais directement une connaissance globale. Une contribution utilisateur non plus.
 
 ## Auto-incrémentation
+
 Un cas nouveau peut générer une `knowledge_candidate` si :
+
 - aucun fait identique n'existe ;
 - la valeur est généralisable ;
 - elle n'est pas personnelle ;
 - son utilité future est supérieure à son coût de maintenance.
 
 ## Réutilisation
+
 Avant tout appel IA :
+
 1. exact lookup ;
 2. canonicalization ;
 3. fuzzy matching contrôlé ;
@@ -47,6 +55,7 @@ Avant tout appel IA :
 6. IA si ambigu.
 
 ## Quality metrics
+
 - IA calls / 1000 événements ;
 - known-hit rate ;
 - candidate acceptance rate ;
@@ -55,4 +64,5 @@ Avant tout appel IA :
 - knowledge freshness.
 
 ## Anti-leakage
+
 Aucune connaissance collective ne doit permettre de réidentifier un utilisateur ou de reconstituer ses documents.

@@ -8,18 +8,18 @@ Cette matrice est un **extrait**, pas le Data Registry. Le registre complet (`go
 
 ## Modifications appliquées
 
-| Champ | Avant | Après | Origine |
-|---|---|---|---|
-| `email` | L3, `AI_MINIMIZED_ONLY` | L3, **`AI_FORBIDDEN`** | ADR-0012 |
-| `email_domain` | absent | L2, `AI_MINIMIZED_ONLY` | ADR-0012 |
-| `sender_pseudonym_id` | absent | L2, `AI_MINIMIZED_ONLY`, provenance `derived` | ADR-0012 |
-| `document_raw` | classification `RAW` (hors taxonomie) | **`L0_RAW_QUARANTINE`** | D8 |
-| `email_body_raw` | absent | `L0_RAW_QUARANTINE` | D8 |
-| `device_id` | absent | L1, `AI_FORBIDDEN` | modèle canonique |
-| `oauth_refresh_token` | absent | L4, `server_only`, **non exportable** | `docs/07`, `docs/15` |
-| `deadline_date` | absent | L2 | ADR-0003 |
-| `legal_rule_ref` | absent | `PUBLIC` (connaissance collective, non personnelle) | ADR-0003 |
-| `third_party_identity` | absent | L3, `allowed_modules: none`, `retention: not_retained` | invariant `no_durable_third_party_identity` |
+| Champ                  | Avant                                 | Après                                                  | Origine                                     |
+| ---------------------- | ------------------------------------- | ------------------------------------------------------ | ------------------------------------------- |
+| `email`                | L3, `AI_MINIMIZED_ONLY`               | L3, **`AI_FORBIDDEN`**                                 | ADR-0012                                    |
+| `email_domain`         | absent                                | L2, `AI_MINIMIZED_ONLY`                                | ADR-0012                                    |
+| `sender_pseudonym_id`  | absent                                | L2, `AI_MINIMIZED_ONLY`, provenance `derived`          | ADR-0012                                    |
+| `document_raw`         | classification `RAW` (hors taxonomie) | **`L0_RAW_QUARANTINE`**                                | D8                                          |
+| `email_body_raw`       | absent                                | `L0_RAW_QUARANTINE`                                    | D8                                          |
+| `device_id`            | absent                                | L1, `AI_FORBIDDEN`                                     | modèle canonique                            |
+| `oauth_refresh_token`  | absent                                | L4, `server_only`, **non exportable**                  | `docs/07`, `docs/15`                        |
+| `deadline_date`        | absent                                | L2                                                     | ADR-0003                                    |
+| `legal_rule_ref`       | absent                                | `PUBLIC` (connaissance collective, non personnelle)    | ADR-0003                                    |
+| `third_party_identity` | absent                                | L3, `allowed_modules: none`, `retention: not_retained` | invariant `no_durable_third_party_identity` |
 
 ## Taxonomie des classifications
 

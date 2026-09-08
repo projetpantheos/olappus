@@ -20,6 +20,7 @@ Les Events étant déclarés immuables et versionnés, une erreur d'enveloppe co
 Base `17_CQE_CONTRACTS`, enrichie d'`actor_id`, sans `tenantId`.
 
 **Event**
+
 ```
 event_id
 aggregate_id
@@ -33,6 +34,7 @@ payload
 ```
 
 **Command**
+
 ```
 command_id
 actor_id

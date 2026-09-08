@@ -37,10 +37,12 @@ const PATTERNS = [
 ];
 
 /** Valeurs manifestement fictives : un gabarit n'est pas une fuite. */
-const PLACEHOLDER = /(YOUR|EXAMPLE|PLACEHOLDER|CHANGEME|CHANGE_ME|XXXX|<[^>]+>|\.\.\.|TODO|FIXME|REDACTED|A_REMPLIR|VOTRE)/i;
+const PLACEHOLDER =
+  /(YOUR|EXAMPLE|PLACEHOLDER|CHANGEME|CHANGE_ME|XXXX|<[^>]+>|\.\.\.|TODO|FIXME|REDACTED|A_REMPLIR|VOTRE)/i;
 
 /** Extensions binaires ou non pertinentes. */
-const SKIP_EXT = /\.(png|jpe?g|gif|webp|svg|ico|pdf|zip|gz|tgz|7z|rar|mp4|mp3|wav|woff2?|ttf|eot|otf|lock)$/i;
+const SKIP_EXT =
+  /\.(png|jpe?g|gif|webp|svg|ico|pdf|zip|gz|tgz|7z|rar|mp4|mp3|wav|woff2?|ttf|eot|otf|lock)$/i;
 
 const scanAll = process.argv.includes('--all');
 
@@ -99,7 +101,5 @@ for (const f of findings) {
   console.error(`  ${f.file}:${f.line}  [${f.name}]`);
   console.error(`     ${f.excerpt}`);
 }
-console.error(
-  '\nUn secret présent dans le dépôt doit être RÉVOQUÉ avant d’être retiré du code.',
-);
+console.error('\nUn secret présent dans le dépôt doit être RÉVOQUÉ avant d’être retiré du code.');
 process.exit(1);

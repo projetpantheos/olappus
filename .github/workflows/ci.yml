@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# Aucun secret n'est nécessaire à cette CI : elle ne touche ni compte,
+# ni base, ni fournisseur externe.
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Qualité et sécurité
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Installation
+        run: npm ci
+
+      # SEC-23 — « No production secrets in repo », preuve : secret scan.
+      # Placé en premier : un secret détecté doit arrêter la chaîne
+      # avant toute autre étape.
+      - name: Scan de secrets
+        run: npm run secret-scan
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Format
+        run: npm run format:check
+
+      - name: Tests
+        run: npm test
+
+      # SEC-23 — « Dependency audit », preuve : CI.
+      - name: Audit des dépendances
+        run: npm run audit:deps

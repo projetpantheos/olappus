@@ -1,14 +1,7 @@
 {
   "name": "PrepareActionCommandV1",
   "version": 1,
-  "required": [
-    "command_id",
-    "actor_id",
-    "device_id",
-    "correlation_id",
-    "created_at",
-    "payload"
-  ],
+  "required": ["command_id", "actor_id", "device_id", "correlation_id", "created_at", "payload"],
   "payload": {
     "case_id": "opaque-id",
     "action_type": "string",

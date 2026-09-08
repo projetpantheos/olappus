@@ -10,16 +10,16 @@
 
 Deux séquences d'exécution portaient les mêmes numéros pour des contenus différents :
 
-| N° | `01_TO_10_EXECUTION_PROMPTS.md` | Fichiers individuels |
-|---|---|---|
-| 03 | Hélios | Core |
-| 04 | Hermès | Module SDK |
-| 05 | **Chronos** | Muses |
-| 06 | **Mnémosyne** | Hélios |
-| 07 | Hadès/Argos/Thémis | Hermès |
-| 08 | Data + Muses | Hadès/Argos/Thémis |
-| 09 | Case/Actions | Offline |
-| 10 | Security gate | Release |
+| N°  | `01_TO_10_EXECUTION_PROMPTS.md` | Fichiers individuels |
+| --- | ------------------------------- | -------------------- |
+| 03  | Hélios                          | Core                 |
+| 04  | Hermès                          | Module SDK           |
+| 05  | **Chronos**                     | Muses                |
+| 06  | **Mnémosyne**                   | Hélios               |
+| 07  | Hadès/Argos/Thémis              | Hermès               |
+| 08  | Data + Muses                    | Hadès/Argos/Thémis   |
+| 09  | Case/Actions                    | Offline              |
+| 10  | Security gate                   | Release              |
 
 Aucun des deux fichiers ne se déclarait subordonné à l'autre.
 

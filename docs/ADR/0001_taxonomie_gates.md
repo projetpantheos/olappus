@@ -23,18 +23,18 @@ L'audit G0 a par ailleurs relevé que les 7 gates du manifeste ne comportaient *
 
 Taxonomie unique :
 
-| Gate | Objet | Condition de sortie |
-|---|---|---|
-| G0 | Audit | Décisions bloquantes tranchées, couche d'autorité cohérente |
-| G1 | Foundation | Dépôt, TS strict, Expo, CI, secret scan, séparation d'environnements |
-| G2 | Privacy / Security baseline | Data Registry, quarantine, normalisation, RLS ; preuve d'échec d'accès non autorisé |
-| G3 | Core contracts | CQE figés + runtime, Case/Action/Outcome, audit, manifestes, lint d'imports, Safe Mode |
-| G4 | Demo Mode + Hélios déterministe | Première valeur < 5 min, sans aucun appel externe |
-| G5 | Muses minimal + License Gate | Source `blocked` ⇒ ingestion impossible |
-| G6 | **Connecteur externe (Hermès / OAuth)** | Aucun token ni corps brut dans les logs |
-| G7 | Modules domaine + protection | Chaque insight porte reason codes + evidence |
-| G8 | Offline / Outbox | Aucune résurrection après suppression, rejeu idempotent |
-| G9 | Release / Beta | Suites vertes, rollback répété, aucune décision RED ouverte |
+| Gate | Objet                                   | Condition de sortie                                                                    |
+| ---- | --------------------------------------- | -------------------------------------------------------------------------------------- |
+| G0   | Audit                                   | Décisions bloquantes tranchées, couche d'autorité cohérente                            |
+| G1   | Foundation                              | Dépôt, TS strict, Expo, CI, secret scan, séparation d'environnements                   |
+| G2   | Privacy / Security baseline             | Data Registry, quarantine, normalisation, RLS ; preuve d'échec d'accès non autorisé    |
+| G3   | Core contracts                          | CQE figés + runtime, Case/Action/Outcome, audit, manifestes, lint d'imports, Safe Mode |
+| G4   | Demo Mode + Hélios déterministe         | Première valeur < 5 min, sans aucun appel externe                                      |
+| G5   | Muses minimal + License Gate            | Source `blocked` ⇒ ingestion impossible                                                |
+| G6   | **Connecteur externe (Hermès / OAuth)** | Aucun token ni corps brut dans les logs                                                |
+| G7   | Modules domaine + protection            | Chaque insight porte reason codes + evidence                                           |
+| G8   | Offline / Outbox                        | Aucune résurrection après suppression, rejeu idempotent                                |
+| G9   | Release / Beta                          | Suites vertes, rollback répété, aucune décision RED ouverte                            |
 
 Les 5 gates thématiques de `17_FOUNDER_GATES` (DATA / TRUST / ACTION / CHANGE / RELEASE) s'appliquent **à chaque** gate numérotée, en surcouche.
 

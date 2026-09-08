@@ -1,6 +1,7 @@
 # 17 — Product Strategy Pre-Launch
 
 ## Category
+
 Not a generic productivity app.
 Not an omniscient AI assistant.
 Not a bank aggregator.
@@ -9,6 +10,7 @@ Not a document archive.
 Olappus is an attention-and-protection layer over fragmented everyday information.
 
 ## Differentiation
+
 1. attention reduction;
 2. proof/provenance;
 3. privacy/minimization;
@@ -18,10 +20,12 @@ Olappus is an attention-and-protection layer over fragmented everyday informatio
 7. modular ecosystem.
 
 ## Competitive risk
+
 The product can become a noisy super-app.
 Countermeasure: every feature must justify cognitive cost.
 
 ## Moat candidates
+
 - canonical normalized personal domain;
 - provenance/evidence model;
 - Muses governed knowledge;
@@ -30,7 +34,9 @@ Countermeasure: every feature must justify cognitive cost.
 - trust built by silent usefulness.
 
 ## Validation priorities
+
 Before broad launch validate:
+
 - first value;
 - useful detection rate;
 - false alert rate;

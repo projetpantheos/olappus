@@ -20,22 +20,10 @@
       "type": "string"
     },
     "status": {
-      "enum": [
-        "INTERNAL",
-        "ALPHA",
-        "BETA",
-        "ACTIVE",
-        "SUSPENDED",
-        "RETIRED"
-      ]
+      "enum": ["INTERNAL", "ALPHA", "BETA", "ACTIVE", "SUSPENDED", "RETIRED"]
     },
     "risk_level": {
-      "enum": [
-        "LOW",
-        "MEDIUM",
-        "HIGH",
-        "CRITICAL"
-      ]
+      "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"]
     },
     "permissions": {
       "type": "array",
@@ -68,12 +56,7 @@
       "type": "array"
     },
     "ai_policy": {
-      "enum": [
-        "AI_ALLOWED",
-        "AI_MINIMIZED_ONLY",
-        "AI_LOCAL_ONLY",
-        "AI_FORBIDDEN"
-      ]
+      "enum": ["AI_ALLOWED", "AI_MINIMIZED_ONLY", "AI_LOCAL_ONLY", "AI_FORBIDDEN"]
     },
     "external_actions": {
       "type": "array"

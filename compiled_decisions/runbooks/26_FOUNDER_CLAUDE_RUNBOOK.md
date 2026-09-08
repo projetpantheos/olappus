@@ -1,7 +1,9 @@
 # 26 — Founder ↔ Claude Code Runbook
 
 ## Session 0
+
 Founder:
+
 1. clone repository;
 2. add kit;
 3. launch Claude;
@@ -11,7 +13,9 @@ Founder:
 Founder approval only if no unresolved RED/critical contradiction.
 
 ## Session cadence
+
 At end of every meaningful Claude session:
+
 - tests;
 - git status;
 - diff summary;
@@ -20,15 +24,19 @@ At end of every meaningful Claude session:
 - next action.
 
 ## Green
+
 Claude may proceed autonomously.
 
 ## Yellow
+
 Claude proposes and waits.
 
 ## Red
+
 Founder must explicitly approve.
 
 ## Founder review format
+
 GATE
 STATUS
 EVIDENCE
@@ -38,8 +46,10 @@ ROLLBACK
 NEXT GATE
 
 ## Rule
+
 Do not judge a feature only by whether it works.
 Judge:
+
 - product value;
 - privacy;
 - security;

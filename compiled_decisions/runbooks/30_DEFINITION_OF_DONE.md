@@ -1,6 +1,7 @@
 # 30 — Definition of Done
 
 ## Feature
+
 [ ] requirement linked to user problem
 [ ] journey identified
 [ ] screen states specified
@@ -17,6 +18,7 @@
 [ ] documentation
 
 ## Data field
+
 [ ] owner
 [ ] classification
 [ ] purpose
@@ -30,6 +32,7 @@
 [ ] provenance
 
 ## Module
+
 [ ] manifest
 [ ] capabilities
 [ ] permissions
@@ -44,6 +47,7 @@
 [ ] kill switch/feature flag
 
 ## Release
+
 [ ] all mandatory gates green
 [ ] no RED decision
 [ ] rollback rehearsed

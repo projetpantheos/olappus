@@ -1,9 +1,11 @@
 # 25 — Synthetic Data Strategy
 
 ## Default
+
 All development and agent work uses synthetic data.
 
 ## Fixture categories
+
 - user
 - account
 - device
@@ -21,6 +23,7 @@ All development and agent work uses synthetic data.
 - adversarial
 
 ## Adversarial cases
+
 - malformed OCR;
 - ambiguous dates;
 - currencies;
@@ -37,4 +40,5 @@ All development and agent work uses synthetic data.
 - deleted data trying to reappear via sync.
 
 ## Never
+
 Do not invent realistic third-party secrets, payment credentials or credentials that could be mistaken for live access.

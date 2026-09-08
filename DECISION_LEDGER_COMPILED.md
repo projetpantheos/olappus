@@ -1,14 +1,15 @@
 # OLAPPUS — DECISION LEDGER COMPILED
 
 <!-- AUTHORITY-BANNER -->
+
 > **Vue condensée des invariants.** Les décisions tracées et leurs justifications vivent dans `docs/ADR/` — commencer par `docs/ADR/INDEX.md`. En cas de divergence entre ce résumé et un ADR, **l'ADR fait foi**.
 >
 > Mis à jour le 2026-09-08 : monorepo npm workspaces · schémas PostgreSQL · enveloppe CQE + `actor_id` · Thémis porte les règles juridiques datées · pas d'upload en P0 · `email` en AI_FORBIDDEN.
 
-
 Ce fichier est la vue condensée des invariants décidés.
 
 ## Product
+
 - Mental-load reduction + consumer protection.
 - Hélios = attention inbox.
 - Muses = trusted knowledge layer.
@@ -22,6 +23,7 @@ Ce fichier est la vue condensée des invariants décidés.
 - Success = Mental Load Removed / Attention Avoided.
 
 ## Architecture
+
 - Supabase yes.
 - Local-first hybrid.
 - Mobile first, web secondary.
@@ -36,6 +38,7 @@ Ce fichier est la vue condensée des invariants décidés.
 - Migrations only; no manual production schema edits.
 
 ## Data
+
 - Raw ≠ domain.
 - Identity ≠ domain.
 - Normalize before durable business storage.
@@ -50,6 +53,7 @@ Ce fichier est la vue condensée des invariants décidés.
 - Controlled verifiable deletion.
 
 ## Knowledge / Muses
+
 - User data ≠ collective knowledge.
 - Muses receives minimized facts.
 - Official/certified/validated/community/AI hierarchy with context.
@@ -61,6 +65,7 @@ Ce fichier est la vue condensée des invariants décidés.
 - Muses not public at launch.
 
 ## Security / Resilience
+
 - Passkey.
 - Device identity and revocation.
 - Recovery codes + verified email + optional trusted device.
@@ -76,6 +81,7 @@ Ce fichier est la vue condensée des invariants décidés.
 - Portable domain model.
 
 ## AI
+
 - Deterministic first.
 - AI only when useful.
 - AI Gateway + model router.
@@ -85,12 +91,14 @@ Ce fichier est la vue condensée des invariants décidés.
 - No automatic training on user behavior.
 
 ## UX
+
 - WHY → PROOF → OPTIONS → ACTION.
 - CONFIRMED / HIGH_CONFIDENCE / PROBABLE / UNCERTAIN / INSUFFICIENT_DATA.
 - SILENCE / INFO / ATTENTION / ACTION / URGENT.
 - Capability states AVAILABLE / PARTIAL / BLOCKED / UNKNOWN.
 
 ## Monetization
+
 - Freemium/premium but changeable.
 - Billing separated from capabilities.
 - Entitlements central.
@@ -99,6 +107,7 @@ Ce fichier est la vue condensée des invariants décidés.
 - No sale of personal data.
 
 ## Claude
+
 - Claude can build; it cannot silently decide.
 - Synthetic/anonymized data by default.
 - Green/yellow/red approval matrix.

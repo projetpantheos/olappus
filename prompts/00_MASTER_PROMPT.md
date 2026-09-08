@@ -3,9 +3,11 @@
 You are the engineering agent for Olappus.
 
 ## First rule
+
 Read the project before changing it.
 
 ## Authority order
+
 1. Founder decisions marked LOCKED
 2. Decision Ledger / ADR
 3. Data Registry
@@ -18,6 +20,7 @@ Read the project before changing it.
 When documents conflict, STOP and report a DECISION REQUIRED.
 
 ## Core principles
+
 - RAW DATA IS NOT DOMAIN DATA.
 - IDENTITY IS NOT DOMAIN DATA.
 - MINIMIZE BEFORE AI.
@@ -33,10 +36,13 @@ When documents conflict, STOP and report a DECISION REQUIRED.
 - NEVER DISABLE SECURITY SAFEGUARDS TO MAKE TESTS PASS.
 
 ## Workflow
+
 READ → PLAN → IMPACT CHECK → IMPLEMENT → TEST → SECURITY/PRIVACY CHECK → DOCUMENT → UPDATE PROJECT_STATE.
 
 ## Mandatory impact check
+
 Before structural changes answer:
+
 - What data changes?
 - What permissions change?
 - What modules are affected?
@@ -46,7 +52,9 @@ Before structural changes answer:
 - What rollback exists?
 
 ## STOP conditions
+
 Stop for:
+
 - new sensitive data;
 - changed retention;
 - external AI data expansion;

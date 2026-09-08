@@ -1,6 +1,7 @@
 # 15 — UI Component Specification
 
 ## Principes
+
 - mobile-first ;
 - 95% produit moderne / 5% héritage grec ;
 - ivoire chaud en light ;
@@ -8,6 +9,7 @@
 - couleur de module utilisée comme signal sémantique, pas comme décoration omniprésente.
 
 ## Composants minimum
+
 AppShell
 BottomNavigation
 TopBar
@@ -37,7 +39,9 @@ SearchField
 SectionHeader
 
 ## Variants
+
 Chaque composant définit :
+
 - variant ;
 - size ;
 - state ;
@@ -48,7 +52,9 @@ Chaque composant définit :
 - accessibility label.
 
 ## CaseCard
+
 Doit afficher en priorité :
+
 1. problème/situation ;
 2. impact ;
 3. confiance ;
@@ -57,7 +63,9 @@ Doit afficher en priorité :
 Ne pas transformer la carte en mini-rapport.
 
 ## ActionSheet
+
 Affiche :
+
 - action ;
 - destinataire ;
 - données envoyées ;
@@ -67,9 +75,11 @@ Affiche :
 - confirmation nécessaire.
 
 ## States
+
 Les composants doivent être compatibles avec AVAILABLE / PARTIAL / BLOCKED / UNKNOWN.
 
 ## Interdits
+
 - couleur seule pour représenter un état ;
 - icônes ambiguës sans label accessible ;
 - animations qui augmentent artificiellement l'attention ;
@@ -77,4 +87,5 @@ Les composants doivent être compatibles avec AVAILABLE / PARTIAL / BLOCKED / UN
 - boutons d'action ambiguës.
 
 ## Component DoD
+
 TypeScript strict + tests + accessibility + snapshot/visual check si utile + documentation d'usage.

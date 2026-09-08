@@ -1,11 +1,14 @@
 # 02 — MVP / P0
 
 ## Objectif
+
 Démontrer une boucle complète :
 DONNÉE → COMPRÉHENSION → DÉTECTION → PRIORISATION → EXPLICATION → PREUVE → ACTION → SUIVI
 
 ## P0
+
 ### Core
+
 - identité/appareils ;
 - permissions ;
 - données normalisées ;
@@ -16,6 +19,7 @@ DONNÉE → COMPRÉHENSION → DÉTECTION → PRIORISATION → EXPLICATION → P
 - sync de base.
 
 ### Hermès
+
 - ingestion Gmail ;
 - extraction ;
 - factures ;
@@ -24,6 +28,7 @@ DONNÉE → COMPRÉHENSION → DÉTECTION → PRIORISATION → EXPLICATION → P
 - documents.
 
 ### Hélios
+
 - Attention Inbox ;
 - priorisation ;
 - preuves ;
@@ -32,21 +37,25 @@ DONNÉE → COMPRÉHENSION → DÉTECTION → PRIORISATION → EXPLICATION → P
 - Attention Avoided.
 
 ### Hadès
+
 - récurrences ;
 - abonnements ;
 - renouvellements.
 
 ### Argos
+
 - variations de prix ;
 - changements détectés ;
 - comparaisons temporelles.
 
 ### Thémis
+
 - échéances ;
 - délais ;
 - rappels contextuels.
 
 ### Muses
+
 - sources officielles ;
 - connaissances/règles initiales ;
 - provenance ;
@@ -54,9 +63,11 @@ DONNÉE → COMPRÉHENSION → DÉTECTION → PRIORISATION → EXPLICATION → P
 - versionnement.
 
 ### Demo Mode
+
 Données synthétiques utilisant exactement les mêmes objets métier que le mode réel.
 
 ## Ordre P0
+
 1. Core
 2. Privacy
 3. Security
@@ -71,9 +82,11 @@ Données synthétiques utilisant exactement les mêmes objets métier que le mod
 12. Calendar Connector léger si nécessaire
 
 ## Après P0
+
 Déméter → Perséphone → Chronos → Poséidon → Peithô/Asclépios/Plutus/Zeus/Héphaïstos...
 
 ## Hors MVP
+
 - chatbot omniscient ;
 - connexion bancaire universelle ;
 - auto-exécution généralisée ;

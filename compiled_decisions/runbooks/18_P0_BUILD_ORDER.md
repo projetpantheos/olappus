@@ -1,6 +1,7 @@
 # 18 — P0 Build Order
 
 ## Phase 0 — Foundation
+
 1. monorepo
 2. TypeScript strict
 3. Expo
@@ -13,6 +14,7 @@
 10. test fixtures
 
 ## Phase 1 — Core
+
 1. Account / User / Device
 2. Permissions
 3. Commands / Queries / Events
@@ -23,6 +25,7 @@
 8. capability-aware state
 
 ## Phase 2 — Privacy
+
 1. quarantine
 2. extraction model
 3. normalization
@@ -33,6 +36,7 @@
 8. deletion workflow
 
 ## Phase 3 — Muses
+
 1. sources
 2. facts
 3. rules
@@ -44,6 +48,7 @@
 9. suspension/retirement
 
 ## Phase 4 — Product
+
 1. Demo Mode
 2. Hélios
 3. Hermès
@@ -52,6 +57,7 @@
 6. Thémis
 
 ## Phase 5 — Real connector
+
 1. Gmail OAuth
 2. quarantine ingestion
 3. extraction
@@ -59,6 +65,7 @@
 5. end-to-end case
 
 ## Phase 6 — Beta readiness
+
 - privacy tests
 - security tests
 - RLS tests

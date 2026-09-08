@@ -1,0 +1,38 @@
+{
+  "name": "olappus",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Olappus — couche d'attention et de protection sur l'information du quotidien",
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=24.0.0 <25.0.0",
+    "npm": ">=11.0.0"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "typecheck": "tsc --build --force",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "secret-scan": "node tooling/secret-scan.mjs",
+    "audit:deps": "npm audit --audit-level=high",
+    "ci": "npm run secret-scan && npm run typecheck && npm run lint && npm run format:check && npm run test"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.10.0",
+    "prettier": "^3.9.6",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.70.0",
+    "vitest": "^5.0.0"
+  },
+  "comments": {
+    "typescript": "Épinglé en 6.x et non en 7.x : typescript-eslint 8.70 déclare la plage supportée >=4.8.4 <6.1.0. Passer à TypeScript 7 casserait la chaîne de lint. À revoir quand typescript-eslint supportera la 7."
+  }
+}

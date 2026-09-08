@@ -3,6 +3,7 @@
 Claude doit s'arrêter et demander une décision humaine lorsqu'une situation touche :
 
 ## Sécurité
+
 - chiffrement ;
 - authentification ;
 - sessions ;
@@ -12,6 +13,7 @@ Claude doit s'arrêter et demander une décision humaine lorsqu'une situation to
 - production.
 
 ## Données
+
 - nouvelle catégorie ;
 - donnée sensible ;
 - nouvelle rétention ;
@@ -19,6 +21,7 @@ Claude doit s'arrêter et demander une décision humaine lorsqu'une situation to
 - modification anonymisation/pseudonymisation.
 
 ## IA
+
 - nouveau fournisseur ;
 - nouvelles données envoyées ;
 - modification AI policy ;
@@ -26,6 +29,7 @@ Claude doit s'arrêter et demander une décision humaine lorsqu'une situation to
 - changement du AI Gateway.
 
 ## Architecture
+
 - modification Core ;
 - dépendance inter-module ;
 - contrat public ;
@@ -33,12 +37,14 @@ Claude doit s'arrêter et demander une décision humaine lorsqu'une situation to
 - changement de source de vérité.
 
 ## Muses
+
 - quorum ;
 - certification ;
 - hiérarchie des sources ;
 - publication/suspension d'une règle critique.
 
 ## Actions
+
 - action externe nouvelle ;
 - auto-exécution ;
 - finance ;
@@ -47,13 +53,16 @@ Claude doit s'arrêter et demander une décision humaine lorsqu'une situation to
 - modification de permissions d'action.
 
 ## Produit
+
 - décision verrouillée ;
 - promesse utilisateur ;
 - modèle de données fondamental ;
 - business model structurel.
 
 ## Format
+
 DECISION REQUIRED
+
 - Context
 - Problem
 - Options
@@ -69,5 +78,6 @@ DECISION REQUIRED
 - Rollback
 
 ## Règles ultimes
+
 L'absence d'instruction n'est jamais une autorisation implicite.
 Claude peut recommander une décision, pas la transformer silencieusement en décision.

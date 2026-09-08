@@ -1,9 +1,11 @@
 # 06 — Data Registry
 
 ## Objectif
+
 Le Data Registry est la source déclarative de gouvernance des champs métier.
 
 Chaque champ doit indiquer :
+
 - owner ;
 - classification ;
 - sources ;
@@ -17,7 +19,9 @@ Chaque champ doit indiquer :
 - provenance.
 
 ## Exemple
+
 merchant_id
+
 - owner: Core
 - classification: L2
 - allowed modules: Déméter, Perséphone
@@ -26,7 +30,9 @@ merchant_id
 - deletion: cascade
 
 ## Data Governance as Code
+
 Le Registry doit alimenter autant que possible :
+
 - politiques d'accès ;
 - tests RLS ;
 - documentation ;
@@ -36,6 +42,7 @@ Le Registry doit alimenter autant que possible :
 - contrôles AI.
 
 ## Quatre niveaux
+
 L1 Preferences
 L2 Business
 L3 Sensitive

@@ -3,14 +3,17 @@
 Version de cadrage : 2026-09-05 · **Kit à jour : 2026-09-08 (post-G0, étape 0)** · Statut : `G0_APPROVED`
 
 ## Mission
+
 Construire un prototype mobile installable d'Olappus, très peu coûteux, fortement sécurisé, local-first autant que raisonnable, et pensé dès le départ comme un produit extensible par briques.
 
 ## Promesse
+
 **« Et si les dieux étaient avec vous ? »**
 
 Olappus surveille, comprend, protège et simplifie le quotidien. Il réduit la charge mentale en demandant l'attention de l'utilisateur uniquement quand elle est réellement nécessaire.
 
 ## Principes bloquants
+
 1. La sécurité et la vie privée priment sur la vitesse de développement.
 2. Le prototype doit pouvoir fonctionner sans IA externe.
 3. Les données personnelles brutes ne sont jamais envoyées à une IA externe par défaut.
@@ -25,6 +28,7 @@ Olappus surveille, comprend, protège et simplifie le quotidien. Il réduit la c
 12. **Aucune identité de tiers n'est conservée durablement** hors entité canonique résolue via un référentiel officiel.
 
 ## Choix verrouillés
+
 - Backend : Supabase.
 - Architecture : local-first autant que raisonnable.
 - Hébergement et traitement des données de production cible : Europe.
@@ -54,6 +58,7 @@ En cas de conflit non résolu par cette hiérarchie : **STOP et DECISION REQUIRE
 ## Ordre de lecture
 
 **1. Gouvernance et décisions**
+
 1. `docs/ADR/INDEX.md`
 2. `docs/DEPRECATION_MAP.md`
 3. `compiled_decisions/00_OPEN_ITEMS.md`
@@ -61,9 +66,7 @@ En cas de conflit non résolu par cette hiérarchie : **STOP et DECISION REQUIRE
 5. `project.manifest.json`
 6. `PROJECT_STATE.md`
 
-**2. Couche normative**
-7. `compiled_decisions/00_INDEX.md` puis l'ordre qu'il donne
-8. `compiled_decisions/runbooks/RUN-42_GATE_MAP.md` (gates et matrice d'autonomie)
+**2. Couche normative** 7. `compiled_decisions/00_INDEX.md` puis l'ordre qu'il donne 8. `compiled_decisions/runbooks/RUN-42_GATE_MAP.md` (gates et matrice d'autonomie)
 
 **3. Couche de cadrage** — dans l'ordre historique ci-dessous, **en appliquant le statut de `DEPRECATION_MAP`** :
 `docs/01` → `docs/27`, puis `docs/00_PREVIOUS_BLUEPRINT.md` (le plus riche en schémas encore à promouvoir).
@@ -73,6 +76,7 @@ En cas de conflit non résolu par cette hiérarchie : **STOP et DECISION REQUIRE
 (`prompts/01_TO_10_EXECUTION_PROMPTS.md` est archivé et ne fait plus foi — ADR-0010.)
 
 ## Première consigne
+
 **Ne code rien avant d'avoir lu le Decision Ledger, vérifié les contraintes et confirmé la gate courante.**
 
 Le G0 est passé : l'audit est fait, 14 décisions sont tranchées. La gate courante et l'action suivante sont dans `PROJECT_STATE.md`. Les gestes concrets côté fondateur sont dans `docs/SETUP_FONDATEUR.md`.

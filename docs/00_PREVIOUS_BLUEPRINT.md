@@ -1,8 +1,8 @@
 # OLAPPUS — Blueprint Knowledge & Consumer Protection
 
 <!-- AUTHORITY-BANNER -->
-> **Statut : À PROMOUVOIR** — ce document contient des schémas exécutables absents de la couche normative (Source Registry 26 champs, modèle de connaissance 18 champs, Consumer Protection Graph, Evidence Vault, Privacy Firewall, identifiants pivots, KPI). Ils doivent être remontés dans `compiled_decisions/`, pas réinventés. Voir `docs/DEPRECATION_MAP.md`.
 
+> **Statut : À PROMOUVOIR** — ce document contient des schémas exécutables absents de la couche normative (Source Registry 26 champs, modèle de connaissance 18 champs, Consumer Protection Graph, Evidence Vault, Privacy Firewall, identifiants pivots, KPI). Ils doivent être remontés dans `compiled_decisions/`, pas réinventés. Voir `docs/DEPRECATION_MAP.md`.
 
 ## Document de référence — Prototype France / coût minimal / commercialisable
 
@@ -791,18 +791,18 @@ BAN address_id → canonical_address_id
 
 # 26. Sources prioritaires pour le prototype
 
-| Priorité | Source | Licence / état | Fonction | Coût cible |
-|---|---|---|---|---:|
-| S | Légifrance | LO 2.0 | droit | 0 € |
-| S | RappelConso | LO 2.0 | rappels | 0 € |
-| S | SIRENE | LO 2.0 | entreprises | 0 € |
-| S | BAN | LO 2.0 | adresses | 0 € |
-| S | Prix carburants | LO 2.0 | prix | 0 € |
-| A | BODACC | LO 2.0 | entreprises | 0 € |
-| A | BALO | LO 2.0 | annonces | 0 € |
-| A | Open Food Facts | ODbL | produits alimentaires | 0 € |
-| A | Open Products Facts | à vérifier avant ingestion commerciale | produits | 0 € |
-| A | Safety Gate | à vérifier sur source primaire | alertes UE | 0 € |
+| Priorité | Source              | Licence / état                         | Fonction              | Coût cible |
+| -------- | ------------------- | -------------------------------------- | --------------------- | ---------: |
+| S        | Légifrance          | LO 2.0                                 | droit                 |        0 € |
+| S        | RappelConso         | LO 2.0                                 | rappels               |        0 € |
+| S        | SIRENE              | LO 2.0                                 | entreprises           |        0 € |
+| S        | BAN                 | LO 2.0                                 | adresses              |        0 € |
+| S        | Prix carburants     | LO 2.0                                 | prix                  |        0 € |
+| A        | BODACC              | LO 2.0                                 | entreprises           |        0 € |
+| A        | BALO                | LO 2.0                                 | annonces              |        0 € |
+| A        | Open Food Facts     | ODbL                                   | produits alimentaires |        0 € |
+| A        | Open Products Facts | à vérifier avant ingestion commerciale | produits              |        0 € |
+| A        | Safety Gate         | à vérifier sur source primaire         | alertes UE            |        0 € |
 
 **Principe :** cette table est un backlog d’intégration, pas une autorisation juridique définitive. Toute licence doit être revérifiée dans la source primaire avant mise en production commerciale.
 

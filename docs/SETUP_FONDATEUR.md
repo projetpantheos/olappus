@@ -16,7 +16,7 @@ Ce document ne remplace pas `docs/23_FOUNDER_RUNBOOK.md` (vision d'ensemble des 
 4. Activez la double authentification sur chaque compte créé.
 5. Si un secret fuite : le révoquer d'abord, le remplacer ensuite. Jamais l'inverse.
 
-Un agent peut écrire le code qui *lit* un secret. Il n'a jamais besoin d'en *connaître* la valeur.
+Un agent peut écrire le code qui _lit_ un secret. Il n'a jamais besoin d'en _connaître_ la valeur.
 
 ---
 
@@ -24,15 +24,15 @@ Un agent peut écrire le code qui *lit* un secret. Il n'a jamais besoin d'en *co
 
 Ne créez pas les comptes dont vous n'avez pas encore besoin. Chaque compte externe créé trop tôt est une surface d'exposition ouverte pour rien, et certains démarrent des compteurs (les tokens de test Google expirent, les quotas courent).
 
-| Ce dont vous avez besoin | À quelle gate | Pourquoi pas avant |
-|---|---|---|
-| Git configuré, dépôt GitHub privé | **G1** | Le premier commit doit exister avant tout code |
-| Docker Desktop | **G2** (installable dès maintenant) | Supabase tourne en local ; aucun projet distant nécessaire |
-| Supabase CLI | **G2** | Installée comme dépendance du projet, pas globalement |
-| Projet Supabase hébergé (DEV) | **G6** | Tant que tout tourne en local, un projet distant n'apporte rien |
-| Compte Expo / EAS | **G9** | Nécessaire pour construire un binaire, pas pour développer |
-| Projet Google Cloud + OAuth | **G6** | Le compteur des tokens de test démarre à la création |
-| Comptes stores | après G9 | — |
+| Ce dont vous avez besoin          | À quelle gate                       | Pourquoi pas avant                                              |
+| --------------------------------- | ----------------------------------- | --------------------------------------------------------------- |
+| Git configuré, dépôt GitHub privé | **G1**                              | Le premier commit doit exister avant tout code                  |
+| Docker Desktop                    | **G2** (installable dès maintenant) | Supabase tourne en local ; aucun projet distant nécessaire      |
+| Supabase CLI                      | **G2**                              | Installée comme dépendance du projet, pas globalement           |
+| Projet Supabase hébergé (DEV)     | **G6**                              | Tant que tout tourne en local, un projet distant n'apporte rien |
+| Compte Expo / EAS                 | **G9**                              | Nécessaire pour construire un binaire, pas pour développer      |
+| Projet Google Cloud + OAuth       | **G6**                              | Le compteur des tokens de test démarre à la création            |
+| Comptes stores                    | après G9                            | —                                                               |
 
 **À faire maintenant : les étapes 1 à 5.** Le reste attendra sa gate.
 
@@ -48,7 +48,7 @@ Attendu : Node v24.x, npm 11.x, git 2.x.
 
 **Vous n'avez pas besoin d'installer Node.** Votre version (v24.20.0) est sur la ligne LTS active. Nous l'épinglerons au bootstrap via `.nvmrc` et `engines` pour que la CI et votre machine partagent exactement la même version.
 
-*Si Expo signale une incompatibilité au bootstrap*, je le verrai immédiatement et nous épinglerons alors la version qu'il exige — c'est le seul cas où une installation de Node sera nécessaire.
+_Si Expo signale une incompatibilité au bootstrap_, je le verrai immédiatement et nous épinglerons alors la version qu'il exige — c'est le seul cas où une installation de Node sera nécessaire.
 
 ---
 
@@ -134,12 +134,12 @@ Ne configurez rien d'autre pour l'instant : la protection de la branche `main` s
 
 Créez une entrée dans votre gestionnaire de mots de passe, nommée par exemple « Olappus — secrets techniques ». Elle recevra progressivement :
 
-| Secret | Créé à quelle étape |
-|---|---|
-| Mot de passe de la base Supabase DEV | G6 |
-| `service_role` key Supabase | G6 |
-| `client_id` / `client_secret` Google | G6 |
-| Clé d'API de la source juridique | G5 |
+| Secret                               | Créé à quelle étape |
+| ------------------------------------ | ------------------- |
+| Mot de passe de la base Supabase DEV | G6                  |
+| `service_role` key Supabase          | G6                  |
+| `client_id` / `client_secret` Google | G6                  |
+| Clé d'API de la source juridique     | G5                  |
 
 Rien à y mettre aujourd'hui : c'est la place qui est préparée, pas le contenu.
 
@@ -202,16 +202,16 @@ Pousser sur un dépôt distant · créer un compte · saisir un identifiant · t
 
 ## APERÇU DES GATES SUIVANTES
 
-| Gate | Ce que vous aurez à faire |
-|---|---|
-| **G1** Foundation | Rien, hors relecture du rapport de gate |
-| **G2** Privacy/Security | Rien, hors validation des preuves d'isolation entre utilisateurs |
-| **G3** Core contracts | Valider les contrats CQE et la portée du Safe Mode |
-| **G4** Demo Mode + Hélios | **Juger vous-même la première valeur** : est-elle compréhensible en moins de 5 minutes ? |
+| Gate                        | Ce que vous aurez à faire                                                                    |
+| --------------------------- | -------------------------------------------------------------------------------------------- |
+| **G1** Foundation           | Rien, hors relecture du rapport de gate                                                      |
+| **G2** Privacy/Security     | Rien, hors validation des preuves d'isolation entre utilisateurs                             |
+| **G3** Core contracts       | Valider les contrats CQE et la portée du Safe Mode                                           |
+| **G4** Demo Mode + Hélios   | **Juger vous-même la première valeur** : est-elle compréhensible en moins de 5 minutes ?     |
 | **G5** Muses + License Gate | Choisir et faire enregistrer la première source ; créer un compte d'API si la source l'exige |
-| **G6** Connecteur Hermès | Créer le projet Google Cloud, l'écran de consentement en Testing, le projet Supabase DEV |
-| **G7** Modules + protection | Valider la formulation prudente des affirmations juridiques |
-| **G8** Offline | Rien |
-| **G9** Release/Beta | Compte Expo/EAS, recrutement des premiers testeurs, revue juridique avant tout pilote public |
+| **G6** Connecteur Hermès    | Créer le projet Google Cloud, l'écran de consentement en Testing, le projet Supabase DEV     |
+| **G7** Modules + protection | Valider la formulation prudente des affirmations juridiques                                  |
+| **G8** Offline              | Rien                                                                                         |
+| **G9** Release/Beta         | Compte Expo/EAS, recrutement des premiers testeurs, revue juridique avant tout pilote public |
 
 La numérotation complète et les conditions de sortie sont dans `compiled_decisions/runbooks/RUN-42_GATE_MAP.md`.

@@ -1,9 +1,11 @@
 # Module Example — Hermès
 
 ## Responsibility
+
 Ingest and classify user-authorized email-derived information.
 
 ## Does not own
+
 - global identity;
 - Cases source of truth;
 - permissions;
@@ -11,6 +13,7 @@ Ingest and classify user-authorized email-derived information.
 - billing.
 
 ## Pipeline
+
 Gmail connector
 → quarantine
 → extraction
@@ -20,9 +23,11 @@ Gmail connector
 → Core event/case creation.
 
 ## Minimum data
+
 Only fields required by the active capability are retained.
 
 ## Forbidden by default
+
 - unrelated personal email content;
 - complete mailbox retention;
 - passwords;
@@ -30,9 +35,11 @@ Only fields required by the active capability are retained.
 - raw content sent to external AI.
 
 ## Example permissions
+
 email.read.minimal
 document.extract
 case.create
 
 ## AI
+
 AI_MINIMIZED_ONLY.
