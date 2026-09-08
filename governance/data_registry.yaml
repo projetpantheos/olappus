@@ -561,6 +561,39 @@ entities:
         ai_policy: AI_FORBIDDEN
         provenance: true
         rls_scope: service_only
+      - name: user_id
+        classification: L1
+        purpose: Proprietaire, pour la suppression en cascade.
+        source: system
+        normalized_form: opaque_id
+        retention: connection_lifetime
+        export: true
+        delete: cascade
+        ai_policy: AI_FORBIDDEN
+        provenance: false
+        rls_scope: service_only
+      - name: connector_id
+        classification: L2
+        purpose: Connecteur a l origine de la charge.
+        source: system
+        normalized_form: enum
+        retention: connection_lifetime
+        export: true
+        delete: cascade
+        ai_policy: AI_FORBIDDEN
+        provenance: false
+        rls_scope: service_only
+      - name: purged_at
+        classification: L2
+        purpose: Date de purge de payload_raw. La ligne subsiste sans son contenu.
+        source: system
+        normalized_form: timestamp_utc
+        retention: connection_lifetime
+        export: true
+        delete: cascade
+        ai_policy: AI_FORBIDDEN
+        provenance: true
+        rls_scope: service_only
 
   - id: extraction.record
     schema: extraction
@@ -601,6 +634,28 @@ entities:
         delete: cascade
         ai_policy: AI_ALLOWED
         provenance: true
+        rls_scope: service_only
+      - name: source_id
+        classification: L1
+        purpose: Charge brute dont l extraction est issue.
+        source: system
+        normalized_form: opaque_id
+        retention: case_lifetime
+        export: true
+        delete: cascade
+        ai_policy: AI_FORBIDDEN
+        provenance: true
+        rls_scope: service_only
+      - name: user_id
+        classification: L1
+        purpose: Proprietaire, pour la suppression en cascade.
+        source: system
+        normalized_form: opaque_id
+        retention: case_lifetime
+        export: true
+        delete: cascade
+        ai_policy: AI_FORBIDDEN
+        provenance: false
         rls_scope: service_only
 
   # --- domain ----------------------------------------------------------------
@@ -787,6 +842,91 @@ entities:
         ai_policy: AI_FORBIDDEN
         provenance: true
         rls_scope: none
+  - id: core.permission
+    schema: core
+    owner: Core
+    access: owner_only
+    status: SPECIFIED
+    source_doc: SEC-08
+    note: "Dimensions imposees par SEC-08 : WHO + ACTION + RESOURCE + CONDITIONS + DATA SCOPE + EXPIRATION. Lecture seule cote client : l'octroi passe par le serveur, avec audit."
+    fields:
+      - name: permission_id
+        classification: L1
+        purpose: Identifiant de la permission.
+        source: system
+        normalized_form: opaque_id
+        retention: account_lifetime
+        export: true
+        delete: cascade
+        ai_policy: AI_FORBIDDEN
+        provenance: false
+        rls_scope: self
+      - name: action
+        classification: L2
+        purpose: Action autorisee.
+        source: system
+        normalized_form: enum
+        retention: account_lifetime
+        export: true
+        delete: cascade
+        ai_policy: AI_ALLOWED
+        provenance: false
+        rls_scope: self
+      - name: resource
+        classification: L2
+        purpose: Ressource concernee.
+        source: system
+        normalized_form: enum
+        retention: account_lifetime
+        export: true
+        delete: cascade
+        ai_policy: AI_ALLOWED
+        provenance: false
+        rls_scope: self
+      - name: level
+        classification: L2
+        purpose: Niveau accorde, de READ a AUTO_EXECUTE.
+        source: system
+        normalized_form: enum
+        retention: account_lifetime
+        export: true
+        delete: cascade
+        ai_policy: AI_ALLOWED
+        provenance: false
+        rls_scope: self
+      - name: data_scope
+        classification: L2
+        purpose: Portee des donnees couvertes par la permission.
+        source: system
+        normalized_form: enum
+        retention: account_lifetime
+        export: true
+        delete: cascade
+        ai_policy: AI_ALLOWED
+        provenance: false
+        rls_scope: self
+      - name: expires_at
+        classification: L1
+        purpose: Expiration. Une permission sans expiration est un choix explicite, pas un oubli.
+        source: system
+        normalized_form: timestamp_utc
+        retention: account_lifetime
+        export: true
+        delete: cascade
+        ai_policy: AI_FORBIDDEN
+        provenance: false
+        rls_scope: self
+      - name: revoked_at
+        classification: L1
+        purpose: Revocation. La ligne subsiste pour l'audit.
+        source: system
+        normalized_form: timestamp_utc
+        retention: account_lifetime
+        export: true
+        delete: cascade
+        ai_policy: AI_FORBIDDEN
+        provenance: false
+        rls_scope: self
 
 # =============================================================================
 # ENTITÉS DÉCLARÉES SANS CHAMPS
@@ -794,7 +934,6 @@ entities:
 # Elles sont listées pour que l'oubli soit visible, et NON remplies au jugé.
 # =============================================================================
 unspecified_entities:
-  - { id: core.permission, gate: G2 }
   - { id: core.module, gate: G3 }
   - { id: core.capability, gate: G3 }
   - { id: core.notification, gate: G4 }

@@ -205,6 +205,61 @@ describe.skipIf(!available)('RLS — schémas jamais exposés au client', () => 
   });
 });
 
+describe.skipIf(!available)('RLS — permissions et audit', () => {
+  it('un utilisateur ne peut pas s’accorder une permission lui-même', async () => {
+    // Une permission que le client pourrait écrire ne serait pas une
+    // permission : l'octroi passe par le serveur, avec audit.
+    await expect(
+      asUser(
+        USER_A,
+        `insert into core.permission (user_id, action, resource, level, data_scope)
+         values ($1, 'action.execute', 'case', 'AUTO_EXECUTE', 'all')`,
+        [USER_A],
+      ),
+    ).rejects.toThrow();
+  });
+
+  it('un utilisateur ne peut pas modifier une permission existante', async () => {
+    await admin!.query(
+      `insert into core.permission (user_id, action, resource, level, data_scope)
+       values ($1, 'email.read.minimal', 'connector', 'READ', 'minimal')
+       on conflict do nothing`,
+      [USER_A],
+    );
+    await expect(
+      asUser(USER_A, `update core.permission set level = 'AUTO_EXECUTE' where user_id = $1`, [
+        USER_A,
+      ]),
+    ).rejects.toThrow();
+  });
+
+  it("l'audit des actions externes n'est ni modifiable ni supprimable", async () => {
+    await expect(
+      asUser(USER_A, `delete from audit.action_log where actor_id = $1`, [USER_A]),
+    ).rejects.toThrow();
+  });
+
+  it('une permission expirée ou révoquée est inactive', async () => {
+    const rows = await admin!.query<{ active: boolean }>(
+      `select core.permission_is_active(p) as active
+         from (values
+                 (null::timestamptz, null::timestamptz),
+                 (now() - interval '1 day', null),
+                 (null, now() - interval '1 hour')
+              ) as v(revoked_at, expires_at)
+         cross join lateral (
+           select gen_random_uuid() as permission_id, $1::uuid as user_id,
+                  'a' as action, 'r' as resource, 'READ' as level,
+                  '{}'::jsonb as conditions, 's' as data_scope,
+                  now() - interval '2 days' as granted_at,
+                  v.expires_at, v.revoked_at
+         ) as p`,
+      [USER_A],
+    );
+    expect(rows.rows.map((r) => r.active)).toEqual([true, false, false]);
+  });
+});
+
 describe.skipIf(!available)('RLS — activation effective', () => {
   it('toute table exposée porte RLS activée et forcée', async () => {
     const rows = await admin!.query(
