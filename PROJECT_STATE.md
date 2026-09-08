@@ -1,24 +1,24 @@
 # OLAPPUS — PROJECT STATE
 
-Dernière mise à jour : 2026-09-08 (fin de G2)
+Dernière mise à jour : 2026-09-08 (fin de G3)
 Ce fichier est le **seul** porteur de l'état d'avancement. `project.manifest.json` ne porte que les invariants et les conventions.
 
 ## Current phase
 
-G2 Privacy / Security baseline terminée — en attente de revue fondateur.
+G3 Core contracts terminée — en attente de revue fondateur.
 
 ## Current gate
 
-**G2 — PASSED**, sous réserve de revue. Prochaine : **G3 Core contracts**.
+**G3 — PASSED**, sous réserve de revue. Prochaine : **G4 Demo Mode + Hélios déterministe**.
 Taxonomie applicable : `compiled_decisions/runbooks/RUN-42_GATE_MAP.md` (G0–G9).
 
 ## Last successful checkpoint
 
-2026-09-08 — G2 : Data Registry exécutable, isolation RLS prouvée, normalisation, suppression vérifiée, rétention purgée et supervisée. 66 tests, 13 commits poussés.
+2026-09-08 — G3 : contrats CQE validés au runtime, idempotence, Safe Mode, machine à états, manifestes, lint d'isolation, moteur de capacités. 143 tests, 18 commits poussés.
 
 ## Status
 
-G2_COMPLETE / PENDING_FOUNDER_REVIEW
+G3_COMPLETE / PENDING_FOUNDER_REVIEW
 
 ## Completed
 
@@ -31,10 +31,12 @@ G2_COMPLETE / PENDING_FOUNDER_REVIEW
 - **G1 Foundation** : dépôt git, `.gitignore` avant tout `git add`, scan de secrets, monorepo npm workspaces, TypeScript 6 strict, ESLint 10, vitest 5, CI, application Expo SDK 57 minimale
 - **G2 Privacy / Security** : Data Registry exécutable, 7 schémas en deny by default, RLS activée et forcée, permissions, quarantaine, audit append-only, normalisation canonique, suppression vérifiée, rétention chiffrée, purgée et supervisée
 - **Spécifications de sécurité** : `SEC-31`, `SEC-33`, `SEC-34`, `SEC-35`, `DAT-43`
+- **G3 Core contracts** : contrats CQE avec validation runtime stricte, idempotence portée par la base, Safe Mode, machine à états des actions, Detection/Evidence/Outcome/Merchant/règles juridiques, manifestes de modules, lint d'isolation, moteur de capacités `ARC-41`, `docs/TEST_MAP.md`
+- **La matrice de contrôle `SEC-23` n'a plus aucune spécification manquante**
 
 ## In progress
 
-Aucun travail en cours. En attente de la revue de G2 et du démarrage de G3.
+Aucun travail en cours. En attente de la revue de G3 et du démarrage de G4.
 
 ## Blocked
 
@@ -63,17 +65,19 @@ Le registre gouverne réellement : classification, politique IA, export, suppres
 ## Security status
 
 IMPLEMENTATION_STARTED
-Isolation entre utilisateurs **démontrée** par 16 tests. Schémas sensibles inaccessibles par construction. Audit append-only et anonymisé à la clôture. Reste : chiffrement L3, Safe Mode (`SEC-32`), idempotence (`ARC-42`).
+Isolation entre utilisateurs **démontrée** par 16 tests. Schémas sensibles inaccessibles par construction. Audit append-only et anonymisé à la clôture. Safe Mode, idempotence et machine à états portés par la base, vérifiés par accès direct SQL. **Reste : le chiffrement applicatif L3**, spécifié (`SEC-31`) et non implémenté.
 
 ## Test status
 
-66 tests : 16 d'isolation RLS, 10 de rétention, 4 de suppression, 23 de normalisation, 11 de gouvernance du registre, 2 de socle.
-`TEST_MAP.md` — correspondance avec les 40 tests d'acceptation P0 — reste à produire.
+143 tests : 19 de contrats CQE, 17 de capacités, 16 d'isolation RLS, 12 de manifestes, 11 de Safe Mode et machine à états, 10 de rétention, 9 d'idempotence, 8 d'isolation de modules, 23 de normalisation, 11 de gouvernance du registre, 4 de suppression, 3 de dérive registre/schéma.
+`docs/TEST_MAP.md` relie les 40 tests d'acceptation P0 : **15 couverts, 9 partiels, 14 à venir, 2 non couverts**.
+
+Les deux non couverts sont les tests d'accessibilité (34, 35). Ils ne dépendent d'aucune gate mais d'un choix d'outillage de test React Native, ouvert depuis G1.
 
 ## Next founder action
 
-Relire `docs/GATE_REPORTS/G2.md`, puis autoriser le démarrage de G3.
+Relire `docs/GATE_REPORTS/G3.md`. Deux points à trancher avant G4 : l'outillage de test React Native (sans lui, les deux tests d'accessibilité restent non couverts) et le choix des scénarios de démonstration.
 
 ## Next Claude action
 
-G3 Core contracts : enveloppe CQE figée (ADR-0006) avec validation runtime, Case/Action/Outcome, audit, manifestes de modules validés contre `ARC-19`, lint d'architecture interdisant les imports inter-modules, et `SEC-32` (Safe Mode).
+G4 Demo Mode + Hélios déterministe : fixtures synthétiques y compris adverses, moteurs déterministes, parcours WHY → PROOF → OPTIONS → ACTION, états d'écran complets. **Aucun appel externe, aucune IA.** C'est la gate où la première valeur doit être compréhensible en moins de cinq minutes.
