@@ -1,0 +1,800 @@
+# =============================================================================
+# OLAPPUS — DATA REGISTRY
+#
+# Source déclarative de gouvernance des champs métier (DAT-06).
+# « Data Governance as Code » : ce fichier doit alimenter, autant que possible,
+# les politiques d'accès, les tests RLS, la rétention, l'export, la suppression
+# et les contrôles du AI Gateway. Il n'est pas une documentation : il est
+# validé automatiquement (tooling/validate-data-registry.mjs) et la CI échoue
+# s'il est incohérent.
+#
+# Règle de non-invention (00_PRE_CLAUDE_FREEZE) : une entité dont le kit ne
+# spécifie pas les champs est déclarée FIELDS_UNSPECIFIED avec la gate où elle
+# sera définie. Aucun champ n'est inventé ici.
+#
+# Autorité : ADR-0005 (schémas), ADR-0012 (email), D8 (L0_RAW_QUARANTINE).
+# =============================================================================
+
+version: 1
+updated_at: '2026-09-08'
+gate: G2
+
+# --- Vocabulaire de classification -------------------------------------------
+classifications:
+  L0_RAW_QUARANTINE:
+    label: Données brutes en quarantaine
+    ai_policy_max: AI_FORBIDDEN
+    durable_by_default: false
+  L1:
+    label: Préférences et identifiants techniques
+    ai_policy_max: AI_FORBIDDEN
+    durable_by_default: true
+  L2:
+    label: Données métier normalisées
+    ai_policy_max: AI_ALLOWED
+    durable_by_default: true
+  L3:
+    label: Données identifiantes ou sensibles
+    ai_policy_max: AI_MINIMIZED_ONLY
+    durable_by_default: true
+  L4:
+    label: Secrets et données financières directes
+    ai_policy_max: AI_FORBIDDEN
+    durable_by_default: true
+  PUBLIC:
+    label: Connaissance collective sans donnée personnelle
+    ai_policy_max: AI_ALLOWED
+    durable_by_default: true
+
+ai_policies:
+  - AI_FORBIDDEN
+  - AI_MINIMIZED_ONLY
+  - AI_LOCAL_ONLY
+  - AI_ALLOWED
+
+# --- Modes d'accès : traduits en politiques RLS ------------------------------
+access_patterns:
+  owner_only:
+    description: Lecture et écriture par le propriétaire uniquement.
+    rls: 'user_id = auth.uid()'
+  service_only:
+    description: Aucune exposition au client. Accès service serveur uniquement.
+    rls: 'deny all to authenticated, anon'
+  public_knowledge:
+    description: Lecture par tout compte authentifié ; écriture par la gouvernance Muses.
+    rls: 'select: authenticated ; insert/update: service'
+  append_only_audit:
+    description: Écriture par le service, lecture restreinte, jamais de mise à jour.
+    rls: 'no update, no delete'
+
+# --- Vocabulaire de rétention ------------------------------------------------
+# Toute valeur OPEN doit être chiffrée avant la sortie de G2 : « court » n'est
+# pas testable.
+retention_vocabulary:
+  account_lifetime: Conservé tant que le compte existe.
+  until_revoked: Conservé jusqu'à révocation explicite.
+  case_lifetime: Conservé tant que le Case n'est pas résolu ou expiré.
+  connection_lifetime: Conservé tant que la connexion au fournisseur existe.
+  versioned: Conservé sous forme versionnée, jamais écrasé.
+  not_retained: Jamais conservé durablement.
+  OPEN: Durée non encore décidée — bloquant pour la sortie de G2.
+
+# =============================================================================
+# ENTITÉS
+# =============================================================================
+entities:
+  # --- identity --------------------------------------------------------------
+  - id: identity.account
+    schema: identity
+    owner: Identity
+    access: owner_only
+    status: SPECIFIED
+    source_doc: DAT-08
+    fields:
+      - name: account_id
+        classification: L1
+        purpose: Identifiant opaque du compte.
+        source: system
+        normalized_form: opaque_id
+        retention: account_lifetime
+        export: true
+        delete: cascade
+        ai_policy: AI_FORBIDDEN
+        provenance: false
+        rls_scope: self
+      - name: status
+        classification: L1
+        purpose: État du compte (actif, suspendu, clos).
+        source: system
+        normalized_form: enum
+        retention: account_lifetime
+        export: true
+        delete: cascade
+        ai_policy: AI_FORBIDDEN
+        provenance: false
+        rls_scope: self
+      - name: authentication_metadata
+        classification: L4
+        purpose: Métadonnées d'authentification (passkey). Aucune donnée métier.
+        source: system
+        normalized_form: opaque_blob
+        retention: account_lifetime
+        export: false
+        delete: cascade
+        ai_policy: AI_FORBIDDEN
+        provenance: false
+        rls_scope: service_only
+      - name: recovery_metadata
+        classification: L4
+        purpose: Métadonnées de récupération. La perte des codes est irréversible (ADR-0008).
+        source: system
+        normalized_form: opaque_blob
+        retention: account_lifetime
+        export: false
+        delete: cascade
+        ai_policy: AI_FORBIDDEN
+        provenance: false
+        rls_scope: service_only
+
+  - id: identity.device
+    schema: identity
+    owner: Identity
+    access: owner_only
+    status: SPECIFIED
+    source_doc: DAT-08
+    fields:
+      - name: device_id
+        classification: L1
+        purpose: Identité propre de l'appareil, révocable et auditable.
+        source: system
+        normalized_form: opaque_id
+        retention: until_revoked
+        export: true
+        delete: cascade
+        ai_policy: AI_FORBIDDEN
+        provenance: false
+        rls_scope: self
+      - name: account_id
+        classification: L1
+        purpose: Rattachement au compte.
+        source: system
+        normalized_form: opaque_id
+        retention: until_revoked
+        export: true
+        delete: cascade
+        ai_policy: AI_FORBIDDEN
+        provenance: false
+        rls_scope: self
+      - name: public_key_reference
+        classification: L4
+        purpose: Référence de clé publique de l'appareil.
+        source: system
+        normalized_form: opaque_blob
+        retention: until_revoked
+        export: false
+        delete: cascade
+        ai_policy: AI_FORBIDDEN
+        provenance: false
+        rls_scope: service_only
+      - name: status
+        classification: L1
+        purpose: État de l'appareil (actif, révoqué).
+        source: system
+        normalized_form: enum
+        retention: account_lifetime
+        export: true
+        delete: cascade
+        ai_policy: AI_FORBIDDEN
+        provenance: false
+        rls_scope: self
+      - name: revoked_at
+        classification: L1
+        purpose: Date de révocation. Conservée pour l'audit après révocation.
+        source: system
+        normalized_form: timestamp_utc
+        retention: account_lifetime
+        export: true
+        delete: cascade
+        ai_policy: AI_FORBIDDEN
+        provenance: false
+        rls_scope: self
+
+  # --- core ------------------------------------------------------------------
+  - id: core.case
+    schema: core
+    owner: Core
+    access: owner_only
+    status: SPECIFIED
+    source_doc: PRD-12
+    fields:
+      - name: case_id
+        classification: L1
+        purpose: Identifiant du dossier.
+        source: system
+        normalized_form: opaque_id
+        retention: case_lifetime
+        export: true
+        delete: cascade
+        ai_policy: AI_FORBIDDEN
+        provenance: false
+        rls_scope: self
+      - name: user_id
+        classification: L1
+        purpose: Propriétaire du dossier. Clé de cloisonnement RLS.
+        source: system
+        normalized_form: opaque_id
+        retention: case_lifetime
+        export: true
+        delete: cascade
+        ai_policy: AI_FORBIDDEN
+        provenance: false
+        rls_scope: self
+      - name: module_id
+        classification: L2
+        purpose: >-
+          Module ayant produit le dossier. Métadonnée métier, et non identifiant
+          d'utilisateur : d'où L2 et non L1, qui interdirait toute exposition IA.
+        source: system
+        normalized_form: enum
+        retention: case_lifetime
+        export: true
+        delete: cascade
+        ai_policy: AI_ALLOWED
+        provenance: false
+        rls_scope: self
+      - name: type
+        classification: L2
+        purpose: Nature de la situation.
+        source: derived
+        normalized_form: enum
+        retention: case_lifetime
+        export: true
+        delete: cascade
+        ai_policy: AI_ALLOWED
+        provenance: true
+        rls_scope: self
+      - name: status
+        classification: L2
+        purpose: État dans la machine à états du Case.
+        source: system
+        normalized_form: enum
+        retention: case_lifetime
+        export: true
+        delete: cascade
+        ai_policy: AI_ALLOWED
+        provenance: false
+        rls_scope: self
+      - name: priority
+        classification: L2
+        purpose: Priorité calculée (impact, urgence, confiance, réversibilité, effort).
+        source: derived
+        normalized_form: integer
+        retention: case_lifetime
+        export: true
+        delete: cascade
+        ai_policy: AI_ALLOWED
+        provenance: true
+        rls_scope: self
+      - name: confidence
+        classification: L2
+        purpose: Niveau de confiance affiché à l'utilisateur.
+        source: derived
+        normalized_form: confidence_enum
+        retention: case_lifetime
+        export: true
+        delete: cascade
+        ai_policy: AI_ALLOWED
+        provenance: true
+        rls_scope: self
+
+  - id: core.detection
+    schema: core
+    owner: Core
+    access: owner_only
+    status: SPECIFIED
+    source_doc: PRD-12
+    fields:
+      - name: detection_id
+        classification: L1
+        purpose: Identifiant de la détection.
+        source: system
+        normalized_form: opaque_id
+        retention: case_lifetime
+        export: true
+        delete: cascade
+        ai_policy: AI_FORBIDDEN
+        provenance: false
+        rls_scope: self
+      - name: rule_id
+        classification: PUBLIC
+        purpose: Règle déterministe ayant déclenché la détection.
+        source: knowledge
+        normalized_form: opaque_id
+        retention: case_lifetime
+        export: true
+        delete: keep
+        ai_policy: AI_ALLOWED
+        provenance: true
+        rls_scope: self
+      - name: rule_version
+        classification: PUBLIC
+        purpose: Version exacte de la règle appliquée. Sans elle, aucune explication n'est reproductible.
+        source: knowledge
+        normalized_form: semver
+        retention: versioned
+        export: true
+        delete: keep
+        ai_policy: AI_ALLOWED
+        provenance: true
+        rls_scope: self
+      - name: confidence
+        classification: L2
+        purpose: Confiance de la détection.
+        source: derived
+        normalized_form: confidence_enum
+        retention: case_lifetime
+        export: true
+        delete: cascade
+        ai_policy: AI_ALLOWED
+        provenance: true
+        rls_scope: self
+
+  - id: core.action
+    schema: core
+    owner: Core
+    access: owner_only
+    status: SPECIFIED
+    source_doc: PRD-12
+    fields:
+      - name: action_id
+        classification: L1
+        purpose: Identifiant de l'action.
+        source: system
+        normalized_form: opaque_id
+        retention: case_lifetime
+        export: true
+        delete: cascade
+        ai_policy: AI_FORBIDDEN
+        provenance: false
+        rls_scope: self
+      - name: risk_level
+        classification: L2
+        purpose: Niveau de risque de l'action (0 à 5, docs/10).
+        source: derived
+        normalized_form: enum
+        retention: case_lifetime
+        export: true
+        delete: cascade
+        ai_policy: AI_ALLOWED
+        provenance: true
+        rls_scope: self
+      - name: permission_level
+        classification: L2
+        purpose: Niveau de permission requis (READ → EXECUTE_WITH_CONFIRMATION).
+        source: system
+        normalized_form: enum
+        retention: case_lifetime
+        export: true
+        delete: cascade
+        ai_policy: AI_FORBIDDEN
+        provenance: false
+        rls_scope: self
+      - name: prepared_payload
+        classification: L3
+        purpose: >-
+          Contenu exact de l'action préparée, y compris le destinataire.
+          Aucune de ces valeurs ne peut provenir de contenu non fiable
+          (invariant untrusted_content_cannot_parameterize_external_actions).
+        source: derived
+        normalized_form: structured_json
+        retention: case_lifetime
+        export: true
+        delete: cascade
+        ai_policy: AI_FORBIDDEN
+        provenance: true
+        rls_scope: self
+
+  - id: core.outcome
+    schema: core
+    owner: Core
+    access: owner_only
+    status: SPECIFIED
+    source_doc: PRD-12
+    fields:
+      - name: outcome_id
+        classification: L1
+        purpose: Identifiant du résultat observé.
+        source: system
+        normalized_form: opaque_id
+        retention: case_lifetime
+        export: true
+        delete: cascade
+        ai_policy: AI_FORBIDDEN
+        provenance: false
+        rls_scope: self
+      - name: result
+        classification: L2
+        purpose: Résultat vérifié de l'action.
+        source: observed
+        normalized_form: enum
+        retention: case_lifetime
+        export: true
+        delete: cascade
+        ai_policy: AI_ALLOWED
+        provenance: true
+        rls_scope: self
+
+  - id: core.evidence
+    schema: core
+    owner: Core
+    access: owner_only
+    status: SPECIFIED
+    source_doc: DAT-05
+    fields:
+      - name: evidence_id
+        classification: L1
+        purpose: Identifiant de la preuve.
+        source: system
+        normalized_form: opaque_id
+        retention: case_lifetime
+        export: true
+        delete: cascade
+        ai_policy: AI_FORBIDDEN
+        provenance: false
+        rls_scope: self
+      - name: source_id
+        classification: L1
+        purpose: Source dont la preuve est issue.
+        source: system
+        normalized_form: opaque_id
+        retention: case_lifetime
+        export: true
+        delete: cascade
+        ai_policy: AI_FORBIDDEN
+        provenance: true
+        rls_scope: self
+      - name: content_hash
+        classification: L2
+        purpose: Empreinte d'intégrité. Permet de démontrer qu'une preuve n'a pas été altérée.
+        source: system
+        normalized_form: sha256
+        retention: case_lifetime
+        export: true
+        delete: cascade
+        ai_policy: AI_FORBIDDEN
+        provenance: true
+        rls_scope: self
+      - name: captured_at
+        classification: L2
+        purpose: Date de capture de la preuve.
+        source: system
+        normalized_form: timestamp_utc
+        retention: case_lifetime
+        export: true
+        delete: cascade
+        ai_policy: AI_ALLOWED
+        provenance: true
+        rls_scope: self
+
+  # --- source / extraction ---------------------------------------------------
+  - id: source.raw_quarantine
+    schema: source
+    owner: Connector
+    access: service_only
+    status: SPECIFIED
+    source_doc: DAT-05
+    note: >-
+      Zone de quarantaine. Rien ne sort d'ici sans passer par extraction,
+      normalisation et minimisation. Aucune exposition au client.
+    fields:
+      - name: source_id
+        classification: L1
+        purpose: Identifiant de la charge brute reçue.
+        source: connector
+        normalized_form: opaque_id
+        retention: OPEN
+        export: true
+        delete: cascade
+        ai_policy: AI_FORBIDDEN
+        provenance: true
+        rls_scope: service_only
+      - name: payload_raw
+        classification: L0_RAW_QUARANTINE
+        purpose: Charge brute non normalisée. Jamais durable par défaut.
+        source: connector
+        normalized_form: none
+        retention: OPEN
+        export: true
+        delete: cascade
+        ai_policy: AI_FORBIDDEN
+        provenance: true
+        rls_scope: service_only
+      - name: content_hash
+        classification: L2
+        purpose: Empreinte permettant la déduplication sans conserver le contenu.
+        source: system
+        normalized_form: sha256
+        retention: OPEN
+        export: false
+        delete: cascade
+        ai_policy: AI_FORBIDDEN
+        provenance: true
+        rls_scope: service_only
+      - name: observed_at
+        classification: L2
+        purpose: Date d'observation par le connecteur.
+        source: connector
+        normalized_form: timestamp_utc
+        retention: OPEN
+        export: true
+        delete: cascade
+        ai_policy: AI_FORBIDDEN
+        provenance: true
+        rls_scope: service_only
+
+  - id: extraction.record
+    schema: extraction
+    owner: Core
+    access: service_only
+    status: SPECIFIED
+    source_doc: DAT-05
+    fields:
+      - name: extraction_id
+        classification: L1
+        purpose: Identifiant de l'extraction.
+        source: system
+        normalized_form: opaque_id
+        retention: OPEN
+        export: true
+        delete: cascade
+        ai_policy: AI_FORBIDDEN
+        provenance: true
+        rls_scope: service_only
+      - name: extractor_version
+        classification: PUBLIC
+        purpose: Version de l'extracteur. Sans elle, aucune correction n'est traçable.
+        source: system
+        normalized_form: semver
+        retention: versioned
+        export: true
+        delete: keep
+        ai_policy: AI_ALLOWED
+        provenance: true
+        rls_scope: service_only
+      - name: confidence
+        classification: L2
+        purpose: Confiance de l'extraction.
+        source: derived
+        normalized_form: confidence_enum
+        retention: OPEN
+        export: true
+        delete: cascade
+        ai_policy: AI_ALLOWED
+        provenance: true
+        rls_scope: service_only
+
+  # --- domain ----------------------------------------------------------------
+  - id: domain.merchant
+    schema: domain
+    owner: Core
+    access: owner_only
+    status: SPECIFIED
+    source_doc: DAT-10
+    fields:
+      - name: merchant_id
+        classification: L2
+        purpose: Identité canonique du marchand.
+        source: derived
+        normalized_form: opaque_id
+        retention: case_lifetime
+        export: true
+        delete: cascade
+        ai_policy: AI_ALLOWED
+        provenance: true
+        rls_scope: self
+      - name: canonical_name
+        classification: L2
+        purpose: Nom canonique, distinct du libellé d'affichage.
+        source: derived
+        normalized_form: normalized_string
+        retention: case_lifetime
+        export: true
+        delete: cascade
+        ai_policy: AI_MINIMIZED_ONLY
+        provenance: true
+        rls_scope: self
+      - name: external_identifiers
+        classification: L2
+        purpose: Identifiants officiels servant de pivot (jamais le nom libre).
+        source: knowledge
+        normalized_form: identifier_list
+        retention: case_lifetime
+        export: true
+        delete: cascade
+        ai_policy: AI_ALLOWED
+        provenance: true
+        rls_scope: self
+
+  # --- knowledge -------------------------------------------------------------
+  - id: knowledge.legal_rule
+    schema: knowledge
+    owner: Knowledge
+    access: public_knowledge
+    status: SPECIFIED
+    source_doc: ADR-0003
+    note: >-
+      Connaissance collective, sans donnée personnelle. Une règle expirée,
+      hors juridiction ou sous le seuil de confiance ne produit jamais
+      d'affirmation : la sortie est INSUFFICIENT_DATA.
+    fields:
+      - name: rule_id
+        classification: PUBLIC
+        purpose: Identifiant de la règle juridique.
+        source: knowledge
+        normalized_form: opaque_id
+        retention: versioned
+        export: true
+        delete: keep
+        ai_policy: AI_ALLOWED
+        provenance: true
+        rls_scope: public
+      - name: jurisdiction
+        classification: PUBLIC
+        purpose: Juridiction d'application. France uniquement en P0 (ADR-0007).
+        source: knowledge
+        normalized_form: iso_country
+        retention: versioned
+        export: true
+        delete: keep
+        ai_policy: AI_ALLOWED
+        provenance: true
+        rls_scope: public
+      - name: instrument_ref
+        classification: PUBLIC
+        purpose: Texte de référence identifié.
+        source: official_source
+        normalized_form: normalized_string
+        retention: versioned
+        export: true
+        delete: keep
+        ai_policy: AI_ALLOWED
+        provenance: true
+        rls_scope: public
+      - name: in_force_from
+        classification: PUBLIC
+        purpose: Début de validité. Obligatoire pour toute règle temporelle.
+        source: official_source
+        normalized_form: local_date
+        retention: versioned
+        export: true
+        delete: keep
+        ai_policy: AI_ALLOWED
+        provenance: true
+        rls_scope: public
+      - name: in_force_to
+        classification: PUBLIC
+        purpose: Fin de validité. Une règle expirée ne produit aucune affirmation.
+        source: official_source
+        normalized_form: local_date
+        retention: versioned
+        export: true
+        delete: keep
+        ai_policy: AI_ALLOWED
+        provenance: true
+        rls_scope: public
+      - name: verification_level
+        classification: PUBLIC
+        purpose: Niveau de vérification de la règle.
+        source: knowledge
+        normalized_form: enum
+        retention: versioned
+        export: true
+        delete: keep
+        ai_policy: AI_ALLOWED
+        provenance: true
+        rls_scope: public
+
+  # --- audit -----------------------------------------------------------------
+  - id: audit.action_log
+    schema: audit
+    owner: Core
+    access: append_only_audit
+    status: SPECIFIED
+    source_doc: DAT-08
+    note: >-
+      Journal des actions externes. Aucune valeur interdite par SEC-34
+      ne doit y figurer : ni jeton, ni corps brut, ni adresse.
+    fields:
+      - name: actor_id
+        classification: L1
+        purpose: Acteur de l'action, présent nativement dans l'enveloppe (ADR-0006).
+        source: system
+        normalized_form: opaque_id
+        retention: OPEN
+        export: true
+        delete: anonymize
+        ai_policy: AI_FORBIDDEN
+        provenance: true
+        rls_scope: self
+      - name: action_id
+        classification: L1
+        purpose: Action journalisée.
+        source: system
+        normalized_form: opaque_id
+        retention: OPEN
+        export: true
+        delete: anonymize
+        ai_policy: AI_FORBIDDEN
+        provenance: true
+        rls_scope: self
+      - name: occurred_at
+        classification: L2
+        purpose: Horodatage de l'action.
+        source: system
+        normalized_form: timestamp_utc
+        retention: OPEN
+        export: true
+        delete: keep
+        ai_policy: AI_FORBIDDEN
+        provenance: true
+        rls_scope: self
+
+  # --- Champs de contrôle ----------------------------------------------------
+  - id: control.third_party_identity
+    schema: identity
+    owner: Identity
+    access: service_only
+    status: CONTROL
+    source_doc: SEC-23
+    note: >-
+      Entrée de contrôle, pas de stockage. Elle matérialise l'invariant
+      no_durable_third_party_identity : hors entité canonique résolue via un
+      référentiel officiel, aucune identité de tiers n'est conservée.
+      Les expéditeurs non résolus sont réduits à un pseudonyme et un domaine.
+    fields:
+      - name: third_party_identity
+        classification: L3
+        purpose: Identité d'un tiers non marchand. Interdite en stockage durable.
+        source: connector
+        normalized_form: forbidden
+        retention: not_retained
+        export: false
+        delete: never_stored
+        ai_policy: AI_FORBIDDEN
+        provenance: true
+        rls_scope: none
+
+# =============================================================================
+# ENTITÉS DÉCLARÉES SANS CHAMPS
+# Le modèle canonique (DAT-08) les nomme, le kit ne spécifie pas leurs champs.
+# Elles sont listées pour que l'oubli soit visible, et NON remplies au jugé.
+# =============================================================================
+unspecified_entities:
+  - { id: core.user, gate: G2 }
+  - { id: core.permission, gate: G2 }
+  - { id: core.module, gate: G3 }
+  - { id: core.capability, gate: G3 }
+  - { id: core.notification, gate: G4 }
+  - { id: core.preference, gate: G3 }
+  - { id: core.feature_flag, gate: G3 }
+  - { id: source.connector, gate: G6 }
+  - { id: extraction.field, gate: G6 }
+  - { id: domain.product, gate: G7 }
+  - { id: domain.subscription, gate: G7 }
+  - { id: domain.contract, gate: G7 }
+  - { id: domain.document, gate: G7 }
+  - { id: domain.transaction, gate: G7 }
+  - { id: domain.deadline, gate: G7 }
+  - { id: domain.travel_item, gate: 'P1' }
+  - { id: knowledge.source, gate: G5 }
+  - { id: knowledge.fact, gate: G5 }
+  - { id: knowledge.evidence, gate: G5 }
+  - { id: knowledge.rule, gate: G5 }
+  - { id: knowledge.rule_version, gate: G5 }
+  - { id: knowledge.proposal, gate: G5 }
+  - { id: knowledge.review, gate: G5 }
+  - { id: knowledge.certification, gate: G5 }
+  - { id: knowledge.conflict, gate: G5 }
+  - { id: audit.business_event, gate: G3 }
+  - { id: audit.security_event, gate: G3 }
+  - { id: audit.data_access, gate: G3 }

@@ -26,11 +26,13 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@types/node": "^26.5.0",
     "eslint": "^10.10.0",
     "prettier": "^3.9.6",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.70.0",
-    "vitest": "^5.0.0"
+    "vitest": "^5.0.0",
+    "yaml": "^2.9.0"
   },
   "comments": {
     "typescript": "Épinglé en 6.x et non en 7.x : typescript-eslint 8.70 déclare la plage supportée >=4.8.4 <6.1.0. Passer à TypeScript 7 casserait la chaîne de lint. À revoir quand typescript-eslint supportera la 7."
