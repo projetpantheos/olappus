@@ -22,13 +22,10 @@
  * donnée supprimée tentant de réapparaître via la synchronisation.
  */
 
-/** Marqueur porté par toute fixture, pour qu'aucune ne soit prise pour une donnée réelle. */
-export const SYNTHETIC_MARKER = 'SYNTHETIC' as const;
-
-export type Synthetic<T> = T & { readonly _source: typeof SYNTHETIC_MARKER };
+export * from './marker';
 
 // Les fixtures sont consommées par leur nom de paquet, jamais par chemin
 // relatif : traverser une frontière de paquet par `../../` contournerait
 // l'isolation que le lint d'architecture protège.
-export * from './scenarios.js';
-export * from './adversarial.js';
+export * from './scenarios';
+export * from './adversarial';

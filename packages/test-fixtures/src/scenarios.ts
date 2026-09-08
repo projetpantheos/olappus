@@ -12,7 +12,7 @@
  *   3. variation de prix inhabituelle (Argos)
  */
 
-import { SYNTHETIC_MARKER } from './index.js';
+import { SYNTHETIC_MARKER } from './marker';
 
 export type Confidence =
   'CONFIRMED' | 'HIGH_CONFIDENCE' | 'PROBABLE' | 'UNCERTAIN' | 'INSUFFICIENT_DATA';

@@ -11,7 +11,7 @@
  * accès réel. Toutes les valeurs ci-dessous sont manifestement fictives, et les
  * domaines utilisent `.invalid`, réservé par convention à cet usage.
  */
-import { SYNTHETIC_MARKER } from './index.js';
+import { SYNTHETIC_MARKER } from './index';
 export type AdversarialCategory =
   | 'OCR_MALFORME'
   | 'DATE_AMBIGUE'

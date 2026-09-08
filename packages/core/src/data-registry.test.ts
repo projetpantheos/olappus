@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { parse } from 'yaml';
 import { describe, expect, it } from 'vitest';
 
-import { openRetentions, validateRegistry, type Registry } from './data-registry.js';
+import { openRetentions, validateRegistry, type Registry } from './data-registry';
 
 const REGISTRY_PATH = join(
   dirname(fileURLToPath(import.meta.url)),

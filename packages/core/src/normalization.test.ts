@@ -7,7 +7,7 @@ import {
   normalizeDate,
   normalizeMoney,
   present,
-} from './normalization.js';
+} from './normalization';
 
 describe('Montants — forme canonique', () => {
   it('convertit un montant français en unité mineure entière', () => {

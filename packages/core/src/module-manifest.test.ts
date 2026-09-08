@@ -4,7 +4,7 @@ import {
   checkManifestConsistency,
   validateModuleManifest,
   type ModuleManifest,
-} from './module-manifest.js';
+} from './module-manifest';
 
 /** Manifeste conforme, inspiré de l'exemple Hermès d'ARC-20. */
 const hermes: ModuleManifest = {

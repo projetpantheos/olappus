@@ -4,7 +4,7 @@ import {
   resolveCapability,
   type CapabilityContext,
   type CapabilityRequirements,
-} from './capability.js';
+} from './capability';
 
 /** Capacité type : exécuter une action externe. */
 const executeAction: CapabilityRequirements = {

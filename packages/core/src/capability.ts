@@ -11,7 +11,7 @@
  * serait un contrôle côté client, c'est-à-dire aucun contrôle.
  */
 
-import { PERMISSION_LEVELS } from './contracts.js';
+import { PERMISSION_LEVELS } from './contracts';
 
 export const CAPABILITY_STATES = ['AVAILABLE', 'PARTIAL', 'BLOCKED', 'UNKNOWN'] as const;
 export type CapabilityState = (typeof CAPABILITY_STATES)[number];

@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "olappus-web",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "--workspace", "@olappus/mobile", "web"],
+      "port": 8081
+    }
+  ]
+}

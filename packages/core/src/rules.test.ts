@@ -7,7 +7,7 @@ import {
   runRules,
   type Detection,
   type Fact,
-} from './rules.js';
+} from './rules';
 
 const NOW = new Date('2026-09-08T00:00:00Z');
 

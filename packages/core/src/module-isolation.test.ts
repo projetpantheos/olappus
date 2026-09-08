@@ -68,7 +68,7 @@ describe('Lint d’isolation — ce qu’il refuse', () => {
   it('détecte un import par chemin relatif contournant le paquet', () => {
     // La forme la plus tentante quand on est pressé, et la plus facile à
     // laisser passer en revue.
-    makeModule('hades', 'index.ts', `import { detect } from '../../modules/argos/src/index.js';\n`);
+    makeModule('hades', 'index.ts', `import { detect } from '../../modules/argos/src/index';\n`);
     makeModule('argos', 'index.ts', `export const detect = () => null;\n`);
 
     const violations = findViolations(root);

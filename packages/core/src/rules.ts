@@ -14,7 +14,7 @@
  *    Olappus ne dit rien. Le silence est un comportement, pas un échec.
  */
 
-import type { Confidence } from './normalization.js';
+import type { Confidence } from './normalization';
 
 export type AttentionLevel = 'SILENCE' | 'INFO' | 'ATTENTION' | 'ACTION' | 'URGENT';
 

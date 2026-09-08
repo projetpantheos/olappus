@@ -12,7 +12,7 @@
  * domaines utilisent `.invalid`, réservé par convention à cet usage.
  */
 
-import { SYNTHETIC_MARKER, type Synthetic } from './index.js';
+import { SYNTHETIC_MARKER, type Synthetic } from './marker';
 
 export type AdversarialCategory =
   | 'OCR_MALFORME'

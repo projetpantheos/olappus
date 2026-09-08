@@ -20,7 +20,7 @@ import { Client } from 'pg';
 import { parse } from 'yaml';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
-import type { Registry } from './data-registry.js';
+import type { Registry } from './data-registry';
 
 const CONNECTION = {
   host: '127.0.0.1',

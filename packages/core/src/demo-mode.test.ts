@@ -24,8 +24,8 @@ import {
   casesFor,
 } from '@olappus/test-fixtures';
 
-import { attentionInbox, attentionLevel, runRules, type Fact } from './rules.js';
-import { normalizeMoney } from './normalization.js';
+import { attentionInbox, attentionLevel, runRules, type Fact } from './rules';
+import { normalizeMoney } from './normalization';
 
 const NOW = new Date('2026-09-08T00:00:00Z');
 

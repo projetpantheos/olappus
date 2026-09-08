@@ -9,7 +9,7 @@ import {
   parseCommand,
   parseEvent,
   type CommandName,
-} from './contracts.js';
+} from './contracts';
 
 const envelope = () => ({
   command_id: randomUUID(),

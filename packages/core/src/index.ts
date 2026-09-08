@@ -41,7 +41,7 @@ export type DbSchema = (typeof DB_SCHEMAS)[number];
 // Les validateurs de gouvernance (registre, manifestes) ne sont pas exposés :
 // ils servent la CI, pas le produit.
 
-export * from './contracts.js';
-export * from './normalization.js';
-export * from './rules.js';
-export * from './capability.js';
+export * from './contracts';
+export * from './normalization';
+export * from './rules';
+export * from './capability';

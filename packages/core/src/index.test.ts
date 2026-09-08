@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { CORE_CONTRACT_VERSION, DB_SCHEMAS } from './index.js';
+import { CORE_CONTRACT_VERSION, DB_SCHEMAS } from './index';
 
 describe('@olappus/core', () => {
   it('expose une version de contrat', () => {

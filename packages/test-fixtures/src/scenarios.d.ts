@@ -11,7 +11,7 @@
  *   2. échéance de résiliation      (Thémis)
  *   3. variation de prix inhabituelle (Argos)
  */
-import { SYNTHETIC_MARKER } from './index.js';
+import { SYNTHETIC_MARKER } from './index';
 export type Confidence =
   'CONFIRMED' | 'HIGH_CONFIDENCE' | 'PROBABLE' | 'UNCERTAIN' | 'INSUFFICIENT_DATA';
 /** Fait normalisé, tel qu'il sortirait du pipeline de normalisation. */
