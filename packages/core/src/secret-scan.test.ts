@@ -45,7 +45,7 @@ describe('Scan de secrets — ce qu’il doit voir', () => {
 
   it('reconnaît les affectations de secret classiques', () => {
     expect(detecte(affectation(`api${'_'}key`, 'abcdefghijklmnop'))).not.toEqual([]);
-    expect(detecte(affectation('password', 'un-mot-de-passe-synthetique'))).not.toEqual([]);
+    expect(detecte(affectation('password', 'X7wq2Lm9Rt4Zb1Kd'))).not.toEqual([]);
     expect(detecte(affectation(`refresh${'_'}token`, 'abcdefghijklmnop'))).not.toEqual([]);
   });
 
@@ -89,5 +89,19 @@ describe('Scan de secrets — ce qu’il ne prétend pas faire', () => {
     // Ce test empêche de croire le scanner plus capable qu'il ne l'est — il ne
     // remplace pas une revue, et il n'attrape pas une clé collée hors du dépôt.
     expect(detecte(UUID)).toEqual([]);
+  });
+});
+
+describe('Scan de secrets — la convention du dépôt', () => {
+  it('reconnaît le marqueur synthétique des fixtures', () => {
+    // `packages/test-fixtures` marque déjà toute fixture par SYNTHETIC. Le
+    // scanner connaît cette convention, sinon chaque test de sécurité
+    // exigerait une dérogation.
+    expect(detecte(affectation(`client${'_'}id`, 'client-SYNTHETIQUE-0001'))).toEqual([]);
+    expect(detecte(affectation(`api${'_'}key`, 'cle-SYNTHETIC-abcdefgh'))).toEqual([]);
+  });
+
+  it('n’étend pas cette tolérance à une valeur non marquée', () => {
+    expect(detecte(affectation(`client${'_'}id`, 'client-de-production-0001'))).not.toEqual([]);
   });
 });

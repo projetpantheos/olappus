@@ -45,9 +45,19 @@ const PATTERNS = [
   },
 ];
 
-/** Valeurs manifestement fictives : un gabarit n'est pas une fuite. */
+/**
+ * Valeurs manifestement fictives : un gabarit n'est pas une fuite.
+ *
+ * SYNTHETIQUE et SYNTHETIC reprennent le marqueur de `packages/test-fixtures` :
+ * le depot en marque deja toute fixture. Sans cela, chaque test de securite
+ * exigerait une derogation, et une liste de derogations finit par ne plus etre
+ * relue.
+ *
+ * Le compromis est assume : un vrai secret contenant « synthetique » passerait.
+ * Nommer un secret ainsi releverait d'une intention, pas d'un accident.
+ */
 const PLACEHOLDER =
-  /(YOUR|EXAMPLE|PLACEHOLDER|CHANGEME|CHANGE_ME|XXXX|<[^>]+>|\.\.\.|TODO|FIXME|REDACTED|A_REMPLIR|VOTRE)/i;
+  /(YOUR|EXAMPLE|PLACEHOLDER|CHANGEME|CHANGE_ME|XXXX|<[^>]+>|\.\.\.|TODO|FIXME|REDACTED|A_REMPLIR|VOTRE|SYNTHETIQUE|SYNTHETIC)/i;
 
 /**
  * Référence à une variable d'environnement : `env(NOM)`, `${NOM}`, `process.env.NOM`.

@@ -46,6 +46,7 @@ export * from './normalization';
 export * from './rules';
 export * from './capability';
 export * from './logging';
+export * from './oauth';
 
 // './crypto' n'est PAS réexporté ici, délibérément. Il dépend de `node:crypto`
 // et se retrouverait dans le bundle client, qui ne peut pas l’exécuter — du
