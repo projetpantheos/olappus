@@ -43,22 +43,22 @@ Dernière mise à jour : 2026-09-08 (fin de G4) · 200 tests exécutés.
 
 ## Données
 
-| #   | Test                                              | Statut      | Où                                                                                       | Gate |
-| --- | ------------------------------------------------- | ----------- | ---------------------------------------------------------------------------------------- | ---- |
-| 19  | Les montants ont une représentation canonique     | **COUVERT** | `normalization.test.ts`                                                                  | G2   |
-| 20  | Dates et fuseaux canoniques                       | **COUVERT** | `normalization.test.ts`                                                                  | G2   |
-| 21  | Les doublons de marchands ne prolifèrent pas      | **PARTIEL** | canonicalisation testée ; la résolution d'identité par référentiel officiel arrive en G5 | G5   |
-| 22  | La provenance accompagne tout fait dérivé durable | **COUVERT** | `normalization.test.ts` + `data-registry.test.ts`                                        | G2   |
+| #   | Test                                              | Statut      | Où                                                                                                                          | Gate |
+| --- | ------------------------------------------------- | ----------- | --------------------------------------------------------------------------------------------------------------------------- | ---- |
+| 19  | Les montants ont une représentation canonique     | **COUVERT** | `normalization.test.ts`                                                                                                     | G2   |
+| 20  | Dates et fuseaux canoniques                       | **COUVERT** | `normalization.test.ts`                                                                                                     | G2   |
+| 21  | Les doublons de marchands ne prolifèrent pas      | **PARTIEL** | canonicalisation testée ; la résolution par référentiel officiel reste ouverte — aucune source de ce type n'est enregistrée | G6   |
+| 22  | La provenance accompagne tout fait dérivé durable | **COUVERT** | `normalization.test.ts` + `data-registry.test.ts`                                                                           | G2   |
 
 ## Muses
 
-| #   | Test                                                   | Statut  | Où  | Gate |
-| --- | ------------------------------------------------------ | ------- | --- | ---- |
-| 23  | Une proposition IA ne devient pas connaissance publiée | À VENIR | —   | G5   |
-| 24  | Une règle critique exige un quorum                     | À VENIR | —   | G5   |
-| 25  | Une contradiction crée un objet de conflit             | À VENIR | —   | G5   |
-| 26  | La validité temporelle sélectionne la règle applicable | À VENIR | —   | G5   |
-| 27  | Une règle publiée peut être suspendue                  | À VENIR | —   | G5   |
+| #   | Test                                                   | Statut      | Où                                                                              | Gate |
+| --- | ------------------------------------------------------ | ----------- | ------------------------------------------------------------------------------- | ---- |
+| 23  | Une proposition IA ne devient pas connaissance publiée | **COUVERT** | `muses.test.ts` — déclencheur `fact_ai_publication_guard`, y compris à l'update | G5   |
+| 24  | Une règle critique exige un quorum                     | **COUVERT** | `muses.test.ts` — quorum compté par `origin_group`, pas par nombre de comptes   | G5   |
+| 25  | Une contradiction crée un objet de conflit             | **COUVERT** | `muses.test.ts` — les deux faits survivent, aucun n'est écrasé                  | G5   |
+| 26  | La validité temporelle sélectionne la règle applicable | **COUVERT** | `muses.test.ts` — sélection à une date donnée, bornes incohérentes refusées     | G5   |
+| 27  | Une règle publiée peut être suspendue                  | **COUVERT** | `muses.test.ts` — suspension sans suppression                                   | G5   |
 
 ## Offline
 
@@ -92,9 +92,9 @@ Dernière mise à jour : 2026-09-08 (fin de G4) · 200 tests exécutés.
 
 | Statut          | Nombre |
 | --------------- | ------ |
-| COUVERT         | 23     |
+| COUVERT         | 28     |
 | PARTIEL         | 8      |
-| À VENIR         | 9      |
+| À VENIR         | 4      |
 | **NON COUVERT** | **0**  |
 
 **Plus aucun test n'est sans plan.** Les deux tests d'accessibilité (34 et 35) étaient les seuls : ils ne dépendaient d'aucune gate, mais d'un choix d'outillage de test React Native, ouvert depuis G1 et tranché en G4 (jest-expo et la bibliotheque de test React Native).

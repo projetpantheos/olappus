@@ -1,7 +1,7 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import { ScreenState } from '../../components/screen-state';
-import { color, fontSize, spacing } from '../../theme/tokens';
+import { color, spacing } from '../../theme/tokens';
 
 /**
  * Onglet « Plus » — navigation primaire de PRD-14 §2.
@@ -12,7 +12,6 @@ import { color, fontSize, spacing } from '../../theme/tokens';
 export default function PlusScreen() {
   return (
     <View style={styles.screen} testID="plus-screen">
-      <Text style={styles.title}>Plus</Text>
       <ScreenState
         kind="empty"
         reason="Connexions, permissions, données et contrôles de confidentialité."
@@ -28,5 +27,4 @@ const styles = StyleSheet.create({
     gap: spacing.lg,
     padding: spacing.lg,
   },
-  title: { color: color.text.primary, fontSize: fontSize.display, fontWeight: '600' },
 });
