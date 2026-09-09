@@ -52,6 +52,28 @@ ai_policies:
   - AI_LOCAL_ONLY
   - AI_ALLOWED
 
+# --- Modes de chiffrement applicatif -----------------------------------------
+# SEC-31 : « Le registre indique quels champs sont concernés par le
+# chiffrement — c'est lui qui fait foi, pas une décision au cas par cas dans le
+# code. » Tout champ L3 ou L4 doit donc déclarer son mode, et les modes qui
+# n'aboutissent pas à un chiffrement doivent porter leur justification écrite.
+encryption_modes:
+  APPLICATION_AES_256_GCM:
+    description: Chiffré côté application, clé dérivée d'un secret de l'utilisateur.
+    encrypted: true
+  MANAGED_BY_PLATFORM:
+    description: Détenu et protégé par la plateforme d'authentification, hors de notre schéma.
+    encrypted: false
+  NOT_ENCRYPTED_OPAQUE_ID:
+    description: Identifiant opaque nécessaire aux index, aux jointures ou à RLS (SEC-31).
+    encrypted: false
+  NOT_ENCRYPTED_JUSTIFIED:
+    description: Non chiffré pour une raison écrite et vérifiable.
+    encrypted: false
+  NOT_STORED:
+    description: Jamais stocké durablement ; il n'y a rien à chiffrer.
+    encrypted: false
+
 # --- Modes d'accès : traduits en politiques RLS ------------------------------
 access_patterns:
   owner_only:
@@ -126,6 +148,8 @@ entities:
         ai_policy: AI_FORBIDDEN
         provenance: false
         rls_scope: service_only
+        encryption: MANAGED_BY_PLATFORM
+        encryption_note: Détenu par auth.users (Supabase), pas par notre schéma. Dupliquer le stockage diviserait la vérité et le risque.
       - name: recovery_metadata
         classification: L4
         purpose: Métadonnées de récupération. La perte des codes est irréversible (ADR-0008).
@@ -137,6 +161,8 @@ entities:
         ai_policy: AI_FORBIDDEN
         provenance: false
         rls_scope: service_only
+        encryption: MANAGED_BY_PLATFORM
+        encryption_note: Détenu par auth.users (Supabase). Les codes eux-mêmes ne sont jamais côté serveur (ADR-0008).
 
   - id: identity.device
     schema: identity
@@ -178,6 +204,8 @@ entities:
         ai_policy: AI_FORBIDDEN
         provenance: false
         rls_scope: service_only
+        encryption: NOT_ENCRYPTED_JUSTIFIED
+        encryption_note: Une clé publique n'est pas un secret. La chiffrer donnerait l'apparence d'une protection sans en apporter.
       - name: status
         classification: L1
         purpose: État de l'appareil (actif, révoqué).
@@ -202,6 +230,130 @@ entities:
         rls_scope: self
 
   # --- core ------------------------------------------------------------------
+  - id: identity.user_key
+    schema: identity
+    owner: Identity
+    access: owner_only
+    status: SPECIFIED
+    source_doc: SEC-31
+    note: >-
+      Ne contient que des DEK enveloppées. Une lecture complète de cette table
+      n'ouvre aucune donnée : sans le secret de l'utilisateur, ces lignes sont
+      inertes. C'est la conséquence d'ADR-0008 — aucune clé maître serveur.
+    fields:
+      - name: key_id
+        classification: L1
+        purpose: Identifiant opaque de la clé.
+        source: system
+        normalized_form: opaque_id
+        retention: account_lifetime
+        export: false
+        delete: cascade
+        ai_policy: AI_FORBIDDEN
+        provenance: false
+        rls_scope: self
+      - name: user_id
+        classification: L1
+        purpose: Propriétaire de la clé.
+        source: system
+        normalized_form: opaque_id
+        retention: account_lifetime
+        export: false
+        delete: cascade
+        ai_policy: AI_FORBIDDEN
+        provenance: false
+        rls_scope: self
+      - name: key_version
+        classification: L1
+        purpose: Version de clé. Sans elle, aucune rotation n'est possible (SEC-31).
+        source: system
+        normalized_form: integer
+        retention: account_lifetime
+        export: false
+        delete: cascade
+        ai_policy: AI_FORBIDDEN
+        provenance: false
+        rls_scope: self
+      - name: wrapped_dek
+        classification: L4
+        purpose: DEK chiffrée par la KEK de l'utilisateur. Jamais la DEK elle-même.
+        source: system
+        normalized_form: opaque_blob
+        retention: account_lifetime
+        export: false
+        delete: cascade
+        ai_policy: AI_FORBIDDEN
+        provenance: false
+        rls_scope: self
+        encryption: APPLICATION_AES_256_GCM
+        encryption_note: C'est la clé de données, enveloppée. En clair, elle ouvrirait tous les champs L3 de l'utilisateur.
+      - name: kdf
+        classification: L1
+        purpose: Algorithme de dérivation employé (ADR-0017).
+        source: system
+        normalized_form: enum
+        retention: account_lifetime
+        export: false
+        delete: cascade
+        ai_policy: AI_FORBIDDEN
+        provenance: false
+        rls_scope: self
+      - name: kdf_salt
+        classification: L1
+        purpose: Sel de dérivation. Un sel n'est pas un secret ; il empêche les tables précalculées.
+        source: system
+        normalized_form: opaque_blob
+        retention: account_lifetime
+        export: false
+        delete: cascade
+        ai_policy: AI_FORBIDDEN
+        provenance: false
+        rls_scope: self
+      - name: kdf_params
+        classification: L1
+        purpose: "Paramètres de dérivation, stockés avec la clé : durcir demain ne doit pas rendre les clés d'hier illisibles."
+        source: system
+        normalized_form: structured_json
+        retention: account_lifetime
+        export: false
+        delete: cascade
+        ai_policy: AI_FORBIDDEN
+        provenance: false
+        rls_scope: self
+      - name: status
+        classification: L1
+        purpose: État de la clé (ACTIVE, RETIRING, REVOKED).
+        source: system
+        normalized_form: enum
+        retention: account_lifetime
+        export: false
+        delete: cascade
+        ai_policy: AI_FORBIDDEN
+        provenance: false
+        rls_scope: self
+      - name: created_at
+        classification: L1
+        purpose: Date de création de la clé.
+        source: system
+        normalized_form: timestamp_utc
+        retention: account_lifetime
+        export: false
+        delete: cascade
+        ai_policy: AI_FORBIDDEN
+        provenance: false
+        rls_scope: self
+      - name: revoked_at
+        classification: L1
+        purpose: Date de révocation. Une révocation est un fait daté, pas un drapeau.
+        source: system
+        normalized_form: timestamp_utc
+        retention: account_lifetime
+        export: false
+        delete: cascade
+        ai_policy: AI_FORBIDDEN
+        provenance: false
+        rls_scope: self
+
   - id: core.user
     schema: core
     owner: Core
@@ -424,6 +576,8 @@ entities:
         ai_policy: AI_FORBIDDEN
         provenance: true
         rls_scope: self
+        encryption: APPLICATION_AES_256_GCM
+        encryption_note: Contenu et destinataire d'une action. C'est la donnée dont l'exposition ferait le plus de dégâts.
 
   - id: core.outcome
     schema: core
@@ -842,6 +996,8 @@ entities:
         ai_policy: AI_FORBIDDEN
         provenance: true
         rls_scope: none
+        encryption: NOT_STORED
+        encryption_note: 'Jamais stockée : `delete: never_stored`. Chiffrer supposerait un stockage, que DAT-43 interdit.'
   - id: core.permission
     schema: core
     owner: Core
@@ -1124,6 +1280,8 @@ entities:
         ai_policy: AI_FORBIDDEN
         provenance: true
         rls_scope: service_only
+        encryption: NOT_ENCRYPTED_OPAQUE_ID
+        encryption_note: Identifiant opaque nécessaire au quorum indépendant et aux jointures. SEC-31 laisse les identifiants opaques en clair.
       - name: origin_group
         classification: PUBLIC
         purpose: Groupe d'origine, pour detecter un quorum artificiel.
@@ -1176,6 +1334,8 @@ entities:
         ai_policy: AI_FORBIDDEN
         provenance: true
         rls_scope: service_only
+        encryption: NOT_ENCRYPTED_OPAQUE_ID
+        encryption_note: Identifiant opaque nécessaire aux jointures de certification. SEC-31 laisse les identifiants opaques en clair.
       - name: revoked_at
         classification: PUBLIC
         purpose: Date de revocation, le cas echeant.

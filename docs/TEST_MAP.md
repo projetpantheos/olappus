@@ -6,7 +6,7 @@
 
 Statuts : **COUVERT** — une suite le vérifie · **PARTIEL** — vérifié en partie, la limite est dite · **À VENIR** — dépend d'une gate ultérieure · **NON COUVERT** — aucun plan à ce jour.
 
-Dernière mise à jour : 2026-09-08 (fin de G4) · 200 tests exécutés.
+Dernière mise à jour : 2026-09-09 (chiffrement L3, avant G6) · 280 tests exécutés.
 
 ## Produit
 
@@ -100,3 +100,15 @@ Dernière mise à jour : 2026-09-08 (fin de G4) · 200 tests exécutés.
 **Plus aucun test n'est sans plan.** Les deux tests d'accessibilité (34 et 35) étaient les seuls : ils ne dépendaient d'aucune gate, mais d'un choix d'outillage de test React Native, ouvert depuis G1 et tranché en G4 (jest-expo et la bibliotheque de test React Native).
 
 PRD-14 section 18 vise WCAG AA. La cible est désormais **vérifiable** : elle cesse d'être une intention pour devenir un engagement testable dès que les premiers écrans réels existent.
+
+## Annexe — suites qui servent un contrôle SEC-23 sans être un test P0
+
+Les 40 tests d'acceptation de `RUN-24` ne couvrent pas tout ce que la matrice
+`SEC-23` exige. Ces suites-là n'ont donc pas de ligne dans le tableau
+ci-dessus, et se perdraient sans cette annexe.
+
+| Contrôle `SEC-23`          | Suite                                    | Ce qui est prouvé                                                                               |
+| -------------------------- | ---------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| Sensitive fields encrypted | `crypto.test.ts` (25 tests)              | Altération rejetée, cryptogramme déplacé refusé, rotation lisible, secret perdu = donnée perdue |
+| Sensitive fields encrypted | `encryption.test.ts` (20 tests)          | La **base** refuse le clair, à l'insertion comme à l'update ; aucune colonne de clé en clair    |
+| Sensitive fields encrypted | `data-registry.test.ts` (7 des 18 tests) | Tout champ L3/L4 déclare son sort au chiffrement ; toute dérogation porte sa justification      |

@@ -45,3 +45,13 @@ export * from './contracts';
 export * from './normalization';
 export * from './rules';
 export * from './capability';
+
+// './crypto' n'est PAS réexporté ici, délibérément. Il dépend de `node:crypto`
+// et se retrouverait dans le bundle client, qui ne peut pas l’exécuter — du
+// code de chiffrement inerte est pire que pas de code de chiffrement : il
+// invite à l’appeler et à échouer en silence. Il s’importe explicitement par
+// '@olappus/core/crypto', côté serveur et outillage.
+//
+// L’implémentation client (WebCrypto / expo-crypto) reste à écrire : c’est
+// elle qui rendra ADR-0008 vrai en pratique, puisque la DEK ne doit jamais
+// atteindre le serveur. Livrable de G6.

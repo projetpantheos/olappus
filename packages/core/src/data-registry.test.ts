@@ -5,7 +5,13 @@ import { fileURLToPath } from 'node:url';
 import { parse } from 'yaml';
 import { describe, expect, it } from 'vitest';
 
-import { openRetentions, validateRegistry, type Registry } from './data-registry';
+import {
+  ENCRYPTED_MODE,
+  encryptedFields,
+  openRetentions,
+  validateRegistry,
+  type Registry,
+} from './data-registry';
 
 const REGISTRY_PATH = join(
   dirname(fileURLToPath(import.meta.url)),
@@ -171,5 +177,94 @@ describe('Data Registry — le validateur détecte réellement les violations', 
     };
     const issues = validateRegistry(broken);
     expect(issues.map((i) => i.rule)).toContain('schema-allowed');
+  });
+});
+
+describe('Data Registry — décision de chiffrement (SEC-31)', () => {
+  /** Fabrique un registre d'un seul champ, pour éprouver une règle à la fois. */
+  function withField(field: Record<string, unknown>): Registry {
+    return {
+      ...registry,
+      entities: [
+        {
+          id: 'core.test',
+          schema: 'core',
+          owner: 'Core',
+          access: 'owner_only',
+          status: 'SPECIFIED',
+          fields: [
+            {
+              name: 'champ',
+              classification: 'L3',
+              purpose: 'test',
+              source: 'system',
+              normalized_form: 'opaque_blob',
+              retention: 'account_lifetime',
+              export: false,
+              delete: 'cascade',
+              ai_policy: 'AI_FORBIDDEN',
+              provenance: false,
+              rls_scope: 'self',
+              ...field,
+            },
+          ],
+        },
+      ],
+    };
+  }
+
+  it('exige une décision de chiffrement pour tout champ L3 ou L4', () => {
+    // Le silence n'est pas une décision : c'est ainsi qu'un champ sensible
+    // finit en clair sans que personne ne l'ait voulu.
+    expect(validateRegistry(withField({})).map((i) => i.rule)).toContain('encryption-declared');
+    expect(validateRegistry(withField({ classification: 'L4' })).map((i) => i.rule)).toContain(
+      'encryption-declared',
+    );
+  });
+
+  it('refuse un mode de chiffrement hors vocabulaire', () => {
+    const issues = validateRegistry(withField({ encryption: 'ROT13' }));
+    expect(issues.map((i) => i.rule)).toContain('encryption-vocabulary');
+  });
+
+  it('exige une justification écrite pour toute dérogation', () => {
+    const sansMotif = validateRegistry(withField({ encryption: 'NOT_ENCRYPTED_JUSTIFIED' }));
+    expect(sansMotif.map((i) => i.rule)).toContain('encryption-exception-justified');
+
+    const motifCreux = validateRegistry(
+      withField({ encryption: 'NOT_ENCRYPTED_JUSTIFIED', encryption_note: 'pas besoin' }),
+    );
+    expect(motifCreux.map((i) => i.rule)).toContain('encryption-exception-justified');
+  });
+
+  it('accepte une dérogation motivée', () => {
+    const issues = validateRegistry(
+      withField({
+        encryption: 'NOT_ENCRYPTED_OPAQUE_ID',
+        encryption_note:
+          'Identifiant opaque nécessaire aux jointures et à RLS, comme le prévoit SEC-31.',
+      }),
+    );
+    expect(issues.filter((i) => i.rule.startsWith('encryption'))).toEqual([]);
+  });
+
+  it('refuse un chiffrement applicatif déclaré sur un champ non sensible', () => {
+    const issues = validateRegistry(
+      withField({ classification: 'L2', ai_policy: 'AI_ALLOWED', encryption: ENCRYPTED_MODE }),
+    );
+    expect(issues.map((i) => i.rule)).toContain('encryption-matches-classification');
+  });
+
+  it('chiffre effectivement la charge préparée d’une action', () => {
+    // C'est la donnée dont l'exposition ferait le plus de dégâts : elle porte
+    // le destinataire et le contenu exact de ce qui sera envoyé.
+    expect(encryptedFields(registry)).toContain('core.action.prepared_payload');
+  });
+
+  it('déclare la DEK enveloppée comme la seule autre valeur chiffrée', () => {
+    expect(encryptedFields(registry)).toEqual([
+      'core.action.prepared_payload',
+      'identity.user_key.wrapped_dek',
+    ]);
   });
 });

@@ -30,6 +30,28 @@ export const AI_POLICIES = [
 
 export const CLASSIFICATIONS = ['L0_RAW_QUARANTINE', 'L1', 'L2', 'L3', 'L4', 'PUBLIC'] as const;
 
+/**
+ * Modes de chiffrement applicatif (`SEC-31`).
+ *
+ * SEC-31 est explicite : « Le registre indique quels champs sont concernés par
+ * le chiffrement — c'est lui qui fait foi, pas une décision au cas par cas dans
+ * le code. » Ces constantes sont donc une **lecture** du registre, pas une
+ * seconde autorité.
+ */
+export const ENCRYPTION_MODES = [
+  'APPLICATION_AES_256_GCM',
+  'MANAGED_BY_PLATFORM',
+  'NOT_ENCRYPTED_OPAQUE_ID',
+  'NOT_ENCRYPTED_JUSTIFIED',
+  'NOT_STORED',
+] as const;
+
+/** Seul ce mode aboutit à un cryptogramme. Les autres doivent se justifier. */
+export const ENCRYPTED_MODE = 'APPLICATION_AES_256_GCM';
+
+/** Classifications pour lesquelles une décision de chiffrement est obligatoire. */
+const ENCRYPTION_REQUIRED_FOR = new Set(['L3', 'L4']);
+
 /** Politique IA maximale tolérée par classification. Ordre du plus strict au plus permissif. */
 const AI_STRICTNESS: Record<string, number> = {
   AI_FORBIDDEN: 0,
@@ -190,6 +212,50 @@ export function validateRegistry(registry: Registry): RegistryIssue[] {
         });
       }
 
+      // Invariant SEC-31 : un champ L3 ou L4 déclare ce qu'il advient de lui
+      // au chiffrement. Le silence n'est pas une décision — c'est ainsi qu'un
+      // champ sensible finit en clair sans que personne ne l'ait voulu.
+      if (ENCRYPTION_REQUIRED_FOR.has(field.classification)) {
+        const mode = field['encryption'];
+        if (typeof mode !== 'string' || mode === '') {
+          issues.push({
+            where: fieldWhere,
+            rule: 'encryption-declared',
+            message: `Champ ${field.classification} sans attribut « encryption » (SEC-31).`,
+          });
+        } else if (!(ENCRYPTION_MODES as readonly string[]).includes(mode)) {
+          issues.push({
+            where: fieldWhere,
+            rule: 'encryption-vocabulary',
+            message: `Mode de chiffrement « ${mode} » hors vocabulaire.`,
+          });
+        } else if (mode !== ENCRYPTED_MODE) {
+          // Ne pas chiffrer un champ sensible peut être juste. Ne pas dire
+          // pourquoi ne l'est jamais : la dérogation doit coûter une phrase.
+          const note = field['encryption_note'];
+          if (typeof note !== 'string' || note.trim().length < 30) {
+            issues.push({
+              where: fieldWhere,
+              rule: 'encryption-exception-justified',
+              message: `${mode} sans justification écrite : une dérogation non motivée est une dérogation oubliée.`,
+            });
+          }
+        }
+      }
+
+      // Un champ non sensible ne prétend pas au chiffrement applicatif : cela
+      // donnerait au registre une protection qu'aucune contrainte ne porte.
+      if (
+        !ENCRYPTION_REQUIRED_FOR.has(field.classification) &&
+        field['encryption'] === ENCRYPTED_MODE
+      ) {
+        issues.push({
+          where: fieldWhere,
+          rule: 'encryption-matches-classification',
+          message: `Chiffrement applicatif déclaré sur un champ ${field.classification} : reclasser le champ ou retirer la déclaration.`,
+        });
+      }
+
       // La rétention doit appartenir au vocabulaire déclaré.
       if (!Object.prototype.hasOwnProperty.call(registry.retention_vocabulary, field.retention)) {
         issues.push({
@@ -216,4 +282,19 @@ export function openRetentions(registry: Registry): string[] {
     }
   }
   return open;
+}
+
+/**
+ * Champs que le registre déclare chiffrés côté application.
+ * C'est cette liste — et non une constante dans le code — que la base doit
+ * refléter par une contrainte.
+ */
+export function encryptedFields(registry: Registry): string[] {
+  const encrypted: string[] = [];
+  for (const entity of registry.entities) {
+    for (const field of entity.fields) {
+      if (field['encryption'] === ENCRYPTED_MODE) encrypted.push(`${entity.id}.${field.name}`);
+    }
+  }
+  return encrypted.sort();
 }
