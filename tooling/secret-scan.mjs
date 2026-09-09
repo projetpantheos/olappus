@@ -18,47 +18,7 @@ import { readFileSync, statSync } from 'node:fs';
 
 const MAX_BYTES = 2_000_000;
 
-/** Motifs de secrets. `name` sert au rapport, `re` au test. */
-const PATTERNS = [
-  { name: 'Clé privée PEM', re: /-----BEGIN (RSA |EC |DSA |OPENSSH |PGP )?PRIVATE KEY-----/ },
-  { name: 'JWT', re: /\beyJ[A-Za-z0-9_-]{10,}\.eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\b/ },
-  { name: 'Clé API Google', re: /\bAIza[0-9A-Za-z_-]{35}\b/ },
-  { name: 'Client secret Google (OAuth)', re: /\bGOCSPX-[0-9A-Za-z_-]{20,}\b/ },
-  { name: 'Jeton GitHub', re: /\bgh[pousr]_[0-9A-Za-z]{30,}\b/ },
-  { name: 'Clé AWS', re: /\b(AKIA|ASIA)[0-9A-Z]{16}\b/ },
-  { name: 'Jeton Slack', re: /\bxox[abprs]-[0-9A-Za-z-]{10,}\b/ },
-  { name: 'Jeton Stripe', re: /\b[sr]k_(live|test)_[0-9A-Za-z]{20,}\b/ },
-  { name: 'Clé service_role Supabase', re: /\bservice_role\b[^\n]{0,80}\beyJ/ },
-  { name: 'URL avec identifiants', re: /\b[a-z][a-z0-9+.-]*:\/\/[^\s:@/]+:[^\s:@/]+@/ },
-  {
-    name: 'Affectation de secret en clair',
-    re: /\b(password|passwd|secret|api[_-]?key|access[_-]?token|refresh[_-]?token|private[_-]?key)\s*[:=]\s*["'][^"'\s]{8,}["']/i,
-  },
-];
-
-/** Valeurs manifestement fictives : un gabarit n'est pas une fuite. */
-const PLACEHOLDER =
-  /(YOUR|EXAMPLE|PLACEHOLDER|CHANGEME|CHANGE_ME|XXXX|<[^>]+>|\.\.\.|TODO|FIXME|REDACTED|A_REMPLIR|VOTRE)/i;
-
-/**
- * Référence à une variable d'environnement : `env(NOM)`, `${NOM}`, `process.env.NOM`.
- * Ce n'est pas une valeur, c'est un pointeur vers une valeur tenue ailleurs.
- */
-const ENV_REFERENCE = /(\benv\([A-Z0-9_]+\)|\$\{[A-Z0-9_]+\}|process\.env)/;
-
-/**
- * Dérogation explicite : `secret-scan:allow <justification>` sur la ligne
- * ou sur la précédente. La justification est obligatoire — une dérogation
- * sans motif est traitée comme une détection.
- *
- * Ce mécanisme existe pour que les exceptions soient visibles et relues,
- * jamais pour abaisser le seuil de détection globalement.
- */
-const ALLOW = /secret-scan:allow\s+(\S.*)$/;
-
-/** Extensions binaires ou non pertinentes. */
-const SKIP_EXT =
-  /\.(png|jpe?g|gif|webp|svg|ico|pdf|zip|gz|tgz|7z|rar|mp4|mp3|wav|woff2?|ttf|eot|otf|lock)$/i;
+import { ALLOW, ENV_REFERENCE, PATTERNS, PLACEHOLDER, SKIP_EXT } from './secret-scan-rules.mjs';
 
 const scanAll = process.argv.includes('--all');
 
