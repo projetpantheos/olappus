@@ -37,23 +37,34 @@ sources:
     publisher: Direction de l'information légale et administrative
     country: FR
     jurisdiction: FR
-    dataset_url: null
-    api_url: null
+    dataset_url: https://www.data.gouv.fr/datasets/legi-codes-lois-et-reglements-consolides/
+    api_url: https://piste.gouv.fr/
 
-    # --- Licence : NON VÉRIFIÉE ---------------------------------------------
-    # `docs/11` et `docs/25` annoncent une Licence Ouverte 2.0 assortie de
-    # conditions d'API. Ces mentions portent des références non résolubles
-    # (D14) : elles ne font pas foi.
-    license_name: null
-    license_url: null
+    # --- Licence : LUE, PAS ENCORE ENGAGÉE -----------------------------------
+    # Relevé le 2026-09-09 sur la page « Open data et API » de Légifrance
+    # elle-même, qui énonce trois documents et non un :
+    #   1. licence ouverte 2.0
+    #   2. CGU du portail PISTE
+    #   3. CGU de l'API Légifrance
+    #   + des quotas « détaillés sur le portail PISTE », donc après inscription.
+    #
+    # `license_verified` reste false : les deux CGU ne sont pas lues et les
+    # quotas sont inconnus. Ce champ porte l'engagement du fondateur, pas le
+    # travail de relevé.
+    license_name: Licence Ouverte / Open Licence version 2.0
+    license_url: https://www.etalab.gouv.fr/wp-content/uploads/2017/04/ETALAB-Licence-Ouverte-v2.0.pdf
     license_verified: false
-    commercial_use_allowed: null
-    redistribution_allowed: null
-    attribution_required: null
-    share_alike_required: null
-    privacy_restrictions: null
+    commercial_use_allowed: true
+    redistribution_allowed: true
+    attribution_required: true
+    share_alike_required: false
+    privacy_restrictions: >-
+      La Licence Ouverte 2.0 prévoit que l'information puisse contenir des
+      données à caractère personnel, réutilisables dans le respect du cadre
+      légal. La jurisprudence publiée peut nommer des personnes : à traiter
+      sous docs/13, indépendamment de la licence.
 
-    update_frequency: null
+    update_frequency: daily
     last_checked_at: null
     last_imported_at: null
     source_hash: null
@@ -70,33 +81,91 @@ sources:
       juridique datée, Thémis ne peut produire aucune affirmation.
 
     blocking_conditions:
-      - Licence non vérifiée à la source primaire.
-      - Conditions d'API et quotas non lus.
-      - Aucun compte d'accès créé.
+      - "CGU du portail PISTE non lues : PDF scanné, sans couche texte. Elles s'acceptent à l'inscription, donc à lire à ce moment-là."
+      - 'Quotas inconnus : consultables seulement sur PISTE, onglet Applications, après inscription.'
+      - 'Stratégie de cache non décidée (OPEN-07), or elle dépend des quotas.'
+      - 'Approbation non signée par le fondateur.'
+
+    documents:
+      cgu_api_legifrance:
+        url: https://www.legifrance.gouv.fr/contenu/Media/files/pied-de-page/cgu-legifrance-api-vf-15-12-2022_0.pdf
+        version: V1.0 du 15/12/2022
+        lu_le: '2026-09-09'
+      cgu_piste:
+        url: https://piste.gouv.fr/images/com_apiportal/CGU/cgu_portal_FR.pdf
+        lu_le: null
+        note: PDF image, non extractible automatiquement.
+      gratuite:
+        url: https://www.legifrance.gouv.fr/loda/texte_lc/JORFTEXT000029135221/2019-11-27/
+        note: Arrêté du 24 juin 2014 sur la gratuité de la réutilisation des bases juridiques de la DILA.
+
+    # --- Ce que les CGU de l'API imposent réellement -------------------------
+    # Relevé le 2026-09-09 dans le texte intégral. En cas de contradiction entre
+    # la licence, les CGU PISTE et celles-ci, ce sont **celles-ci qui
+    # prévalent** (article I.1). Ce n'est donc pas un document secondaire.
+    api_terms:
+      usage_commercial: >-
+        Autorisé (art. VI.2), mais « au risque et péril de l'Utilisateur ».
+      donnees_non_opposables: >-
+        Art. VI.1 - seuls les PDF signés publiés au JORF sont opposables ; les
+        données de l'API ne le sont pas. CONSÉQUENCE PRODUIT - Olappus ne peut
+        jamais présenter une règle issue de cette API comme du droit opposable.
+        Confirme docs/10 et ADR-0003 par une source primaire, au lieu d'un
+        principe éditorial.
+      aucune_garantie: >-
+        Art. VI.1 - ni le contenu, ni la complétude, ni la fraîcheur ne sont
+        garantis. Une règle affichée doit donc porter sa date et son incertitude.
+      disponibilite: >-
+        Art. IV.1 - aucun niveau minimal garanti, cible de 95 % par jour,
+        indisponibilité possible sans information préalable. Le cache et le
+        silence gracieux ne sont pas des optimisations, ce sont des exigences.
+      quotas: >-
+        Art. IV.3 - quotas par seconde, minute ou jour, en nombre de requêtes ou
+        en bande passante, par application ou par méthode. Consultables sur
+        PISTE après inscription. Modifiables à tout moment par la DILA.
+      secrets: >-
+        Art. III.3 et V.3 - les clés OAuth sont strictement réservées à
+        l'application et ne doivent jamais être publiées. Toute compromission
+        doit être notifiée à la DILA et à l'AIFE. Obligation opérationnelle à
+        porter par SEC-34 et le scan de secrets.
+      suspension: >-
+        Art. VII.1 - suspension possible sans préavis en cas de manquement. Le
+        registre doit pouvoir passer à REJECTED sans toucher au code métier ;
+        c'est déjà le cas par construction.
+      acceptation: >-
+        Art. I.2 - acceptation en deux temps, à l'inscription PISTE puis au
+        choix de l'API. Utilisateur majeur numérique, 15 ans minimum.
 
     notes: >-
-      Enregistrée délibérément en REVIEW_REQUIRED. C'est l'état honnête : la
-      source est identifiée et nécessaire, rien n'a été vérifié. Le passage en
-      APPROVED est une action fondateur, pas une action d'agent.
+      Relevé du 2026-09-09 : licence et CGU de l'API lues intégralement à la
+      source. Ce qui reste tient aux quotas et au cache, pas au droit de
+      réutilisation. Divergence constatée et non tranchée : la fiche data.gouv.fr du
+      jeu LEGI déclare la Licence Ouverte 1.0 (identifiant « fr-lo »), tandis
+      que Légifrance déclare la 2.0 pour l'API. Les deux autorisent l'usage
+      commercial et n'imposent pas de partage à l'identique ; la version exacte
+      doit néanmoins être arrêtée avant toute attribution affichée.
+      Le passage en APPROVED reste une action fondateur.
 
   - source_id: rappelconso
     name: RappelConso
     publisher: Administration française
     country: FR
     jurisdiction: FR
-    dataset_url: null
+    dataset_url: https://www.data.gouv.fr/datasets/rappelconso-v2-produits-tries-par-gtin/
     api_url: null
 
-    license_name: null
-    license_url: null
+    # Relevé le 2026-09-09 via l'API de data.gouv.fr. Deux jeux existent ;
+    # celui trié par GTIN sert directement la correspondance exacte d'ADR-0013.
+    license_name: Licence Ouverte / Open Licence version 2.0
+    license_url: https://www.etalab.gouv.fr/wp-content/uploads/2017/04/ETALAB-Licence-Ouverte-v2.0.pdf
     license_verified: false
-    commercial_use_allowed: null
-    redistribution_allowed: null
-    attribution_required: null
-    share_alike_required: null
+    commercial_use_allowed: true
+    redistribution_allowed: true
+    attribution_required: true
+    share_alike_required: false
     privacy_restrictions: null
 
-    update_frequency: null
+    update_frequency: hourly
     last_checked_at: null
     last_imported_at: null
     source_hash: null
@@ -113,12 +182,16 @@ sources:
       source identifiée le jour venu.
 
     blocking_conditions:
-      - Licence non vérifiée à la source primaire.
-      - Hors périmètre P0: aucun module ne consomme cette source aujourd'hui.
+      - "Hors périmètre P0 : aucun module ne consomme cette source aujourd'hui."
+      - 'Approbation non signée par le fondateur.'
 
     notes: >-
       ADR-0013 impose une correspondance sur GTIN exact uniquement. Un faux
       positif provoque une panique inutile, un faux négatif un risque physique.
+      Relevé du 2026-09-09 : un jeu « RappelConso V2 triés par GTIN » existe,
+      publié par les ministères économiques et financiers sous Licence Ouverte
+      2.0, mis à jour toutes les heures. Il rend ADR-0013 applicable tel quel.
+      Aucune raison de l'approuver aujourd'hui : rien ne le consomme.
 
 # --- Ce que le passage en APPROVED exige -------------------------------------
 # Liste de contrôle, à remplir par le fondateur, source par source.

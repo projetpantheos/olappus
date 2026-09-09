@@ -352,6 +352,20 @@ describe.skipIf(!available)('Registre des sources — la base et le YAML coïnci
     }
   });
 
+  it('écrit chaque condition bloquante comme une phrase, pas comme une paire', () => {
+    // Défaut trouvé le 2026-09-09, présent depuis G5 : « Hors périmètre P0:
+    // aucun module... » n'était pas une chaîne mais une paire clé/valeur. YAML
+    // avale un « : » suivi d'une espace dans un scalaire non quoté. La
+    // condition existait donc dans le fichier, comptait pour une, et se serait
+    // affichée « [object Object] » à l'utilisateur.
+    for (const source of registry.sources) {
+      for (const condition of source.blocking_conditions ?? []) {
+        expect(typeof condition, `${source.source_id} : condition non textuelle`).toBe('string');
+        expect(String(condition).trim().length).toBeGreaterThan(10);
+      }
+    }
+  });
+
   it('porte une liste de contrôle d’approbation', async () => {
     expect(registry.approval_checklist.length).toBeGreaterThanOrEqual(5);
   });

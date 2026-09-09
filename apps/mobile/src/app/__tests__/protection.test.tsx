@@ -59,9 +59,28 @@ describe('Provenance — ce que l’écran dit à l’utilisateur', () => {
   });
 
   it('énonce ce qui manque, en langage compréhensible', async () => {
-    const { getAllByText } = await render(<ProtectionScreen />);
-    const blocked = getAllByText(/Licence non vérifiée à la source primaire/);
-    expect(blocked.length).toBe(KNOWLEDGE_SOURCES.length);
+    // Le motif a changé le 2026-09-09 : la licence est désormais lue. L'écran
+    // doit dire ce qui bloque aujourd'hui, pas ce qui bloquait hier.
+    const { getByText, getAllByText } = await render(<ProtectionScreen />);
+    expect(getAllByText(/Licence.*lue/).length).toBe(KNOWLEDGE_SOURCES.length);
+    expect(getByText(/Limites de requêtes inconnues/)).toBeOnTheScreen();
+  });
+
+  it('avertit que la source juridique ne fait pas foi en justice', async () => {
+    // Les CGU de l'API Légifrance (art. VI.1) sont explicites : seuls les PDF
+    // signés du JORF sont opposables. Le produit doit porter cette limite
+    // devant l'utilisateur, pas la garder pour lui.
+    const { getByText } = await render(<ProtectionScreen />);
+    expect(getByText(/ne font pas foi en justice/)).toBeOnTheScreen();
+  });
+
+  it('ne présente pas une licence lue comme une source approuvée', async () => {
+    // Le piège de cette étape : confondre « j'ai lu la licence » et « la source
+    // est approuvée ». Trois conditions restent ouvertes, et le produit doit
+    // continuer de se taire tant qu'elles le sont.
+    const { getByText, getAllByText } = await render(<ProtectionScreen />);
+    expect(getByText('Aucune connaissance juridique disponible')).toBeOnTheScreen();
+    expect(getAllByText('Non vérifiée').length).toBe(KNOWLEDGE_SOURCES.length);
   });
 
   it('écrit le statut de chaque source, sans le réduire à une couleur', async () => {

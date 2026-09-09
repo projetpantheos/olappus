@@ -29,9 +29,9 @@ export const KNOWLEDGE_SOURCES: readonly KnowledgeSourceState[] = [
     name: 'Légifrance',
     status: 'REVIEW_REQUIRED',
     blocking: [
-      'Licence non vérifiée à la source primaire.',
-      'Conditions d’usage et limites non lues.',
-      'Aucun accès créé.',
+      'Licence et conditions d’usage lues : la réutilisation est autorisée.',
+      'Limites de requêtes inconnues tant qu’aucun accès n’est créé.',
+      'La source prévient elle-même que ses données ne font pas foi en justice.',
     ],
   },
   {
@@ -39,7 +39,7 @@ export const KNOWLEDGE_SOURCES: readonly KnowledgeSourceState[] = [
     name: 'RappelConso',
     status: 'REVIEW_REQUIRED',
     blocking: [
-      'Licence non vérifiée à la source primaire.',
+      'Licence lue : la réutilisation est autorisée.',
       'Hors du périmètre actuel : aucune fonctionnalité ne l’utilise.',
     ],
   },
