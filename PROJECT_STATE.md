@@ -90,7 +90,7 @@ Les tests de base sont **ignorés, et non silencieusement verts**, quand la pile
 
 ## Next founder action
 
-**Franchir la liste de contrôle d’approbation de Légifrance** — 7 points dans `governance/source_registry.yaml`, à faire à la source primaire. Tant qu’elle n’est pas franchie, la couche juridique du produit reste muette par conception.
+**Franchir la liste de contrôle d’approbation de Légifrance** — 7 points, à faire à la source primaire. Procédure : `docs/RUNBOOK_APPROBATION_SOURCE.md`, qui dit pour chaque point ce qu’il faut regarder et ce qui bloque. Tant qu’elle n’est pas franchie, la couche juridique du produit reste muette par conception.
 
 Puis ouvrir l’onglet Protection et juger : le produit vous dit ce qu’il ne sait pas. Est-ce compréhensible sans connaître le projet ?
 

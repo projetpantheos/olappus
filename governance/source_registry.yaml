@@ -122,6 +122,7 @@ sources:
 
 # --- Ce que le passage en APPROVED exige -------------------------------------
 # Liste de contrôle, à remplir par le fondateur, source par source.
+# Procédure détaillée, point par point : docs/RUNBOOK_APPROBATION_SOURCE.md
 approval_checklist:
   - Licence lue à la source primaire, pas dans une note du kit.
   - Réutilisation commerciale explicitement autorisée, ou condition documentée.
