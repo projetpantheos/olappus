@@ -37,6 +37,7 @@ Le passage d’une source en `APPROVED` est une **action fondateur**, pas une ac
 - **Spécifications de sécurité** : `SEC-31`, `SEC-33`, `SEC-34`, `SEC-35`, `DAT-43`
 - **G3 Core contracts** : contrats CQE avec validation runtime stricte, idempotence portée par la base, Safe Mode, machine à états des actions, Detection/Evidence/Outcome/Merchant/règles juridiques, manifestes de modules, lint d'isolation, moteur de capacités `ARC-41`, `docs/TEST_MAP.md`
 - **G4 Demo Mode + Hélios** : moteurs déterministes, Demo Mode traversant les mêmes moteurs que la production, 14 catégories de fixtures adverses, navigation à quatre entrées, parcours de Case, écran de première valeur
+- **Stratégie de cache (ADR-0018)** : OPEN-07 tranché sans dépendre d’un quota inconnu — aucune requête sur le chemin utilisateur, vérification quotidienne au plus, expiration par obsolescence juridique, plafond appris de la source
 - **G5 Muses + License Gate** : schéma `knowledge` (source, fact, proposal, review, certification, conflict), License Gate porté par déclencheur, contrainte rendant `APPROVED` impossible sans licence vérifiée, quorum compté par origine et non par compte, contradictions conservées, validité temporelle, suspension sans suppression, écran de provenance
 - **Chiffrement applicatif L3 (`SEC-31`, ADR-0017)** : AES-256-GCM, cryptogramme lié à `actor_id : entité : champ : ligne`, KEK dérivée par scrypt d'un secret utilisateur, DEK enveloppée en base, rotation versionnée, contrainte `is_ciphertext_envelope` refusant le clair à l'insertion **et** à la mise à jour
 - **La matrice de contrôle `SEC-23` n'a plus aucune spécification manquante**
@@ -64,7 +65,8 @@ Zones volontairement non définies : voir `compiled_decisions/00_OPEN_ITEMS.md`.
 - La suppression n'est vérifiée que sur 6 des 12 emplacements de `SEC-33` ; les autres n'existent pas encore (SQLite local, outbox, sauvegardes, journaux).
 - La rétention des sauvegardes reste ouverte (OPEN-06) : la durée après laquelle une donnée supprimée disparaît de toutes les copies est inconnue et ne doit pas être annoncée.
 - 14 vulnérabilités modérées transitives dans la chaîne Expo, aucune haute ni critique.
-- **Aucune source n’est approuvée.** Les deux licences sont **vérifiées** depuis le 2026-09-09 (Licence Ouverte 2.0, textes lus aux sources primaires), mais le droit de réutiliser n’est pas la capacité d’exploiter : les quotas de l’API Légifrance exigent une inscription sur PISTE, et la stratégie de cache (OPEN-07) en dépend. Le produit ne peut donc toujours rien affirmer sur les droits de l’utilisateur.
+- **Aucune source n’est approuvée.** Les deux licences sont **vérifiées** depuis le 2026-09-09 (Licence Ouverte 2.0, textes lus aux sources primaires) et la stratégie de cache est tranchée (ADR-0018). Il reste à créer l’accès PISTE. Le produit ne peut donc toujours rien affirmer sur les droits de l’utilisateur.
+- **Les quotas de l’API Légifrance ne sont pas publiés** et sont modifiables sans préavis. Le plafond réel ne sera connu qu’en le rencontrant ; il devra alors être consigné au registre (`rate_limit.observed_rate_limit`).
 - **Les données de l’API Légifrance ne sont pas opposables** (CGU art. VI.1 : seuls les PDF signés du JORF le sont), et la DILA ne garantit ni leur complétude ni leur fraîcheur, ni aucun niveau de disponibilité. Le cache et le silence gracieux cessent d’être des optimisations.
 - **Aucune ingestion réelle n’a eu lieu** : le chemin d’ingestion lui-même (parsing, versionnement, hachage de source) n’est pas éprouvé sur des données réelles.
 - La résolution d’identité des marchands par référentiel officiel reste ouverte : aucune source de ce type n’est enregistrée (test 21, reporté en G6).
@@ -91,9 +93,9 @@ Les tests de base sont **ignorés, et non silencieusement verts**, quand la pile
 
 ## Next founder action
 
-**S’inscrire sur PISTE** (`piste.gouv.fr`) et relever les quotas de l’API Légifrance — onglet Applications, gestion de l’application, « Consulter les quotas ». C’est le seul endroit où ils sont publiés, et l’inscription fait aussi accepter les CGU PISTE, dont le PDF est un scan illisible autrement.
+**Créer l’application sur PISTE** (`piste.gouv.fr`) et l’abonner à l’API Légifrance. Cela produit les identifiants OAuth — à placer dans `.env.local`, jamais ailleurs — et fait accepter les CGU PISTE, dont le PDF est un scan illisible autrement.
 
-Puis décider la stratégie de cache (OPEN-07) au vu de ces quotas. Les points 1, 2, 3 et 5 de la liste d’approbation sont franchis ; il reste 4, 6 et 7. Procédure : `docs/RUNBOOK_APPROBATION_SOURCE.md`. Tant qu’elle n’est pas franchie, la couche juridique du produit reste muette par conception.
+Les quotas ne sont **pas publiés** sur le portail. ADR-0018 rend ce point non bloquant : la stratégie est écrite pour ne dépendre d’aucun plafond connu. Il ne reste donc que le point 7 de la liste d’approbation, la date de vérification finale. Procédure : `docs/RUNBOOK_APPROBATION_SOURCE.md`. Tant qu’elle n’est pas franchie, la couche juridique du produit reste muette par conception.
 
 Puis ouvrir l’onglet Protection et juger : le produit vous dit ce qu’il ne sait pas. Est-ce compréhensible sans connaître le projet ?
 

@@ -42,7 +42,11 @@ Quorum par domaine, âge de compte minimal, cooldown avant certification, signau
 ## OPEN-07 — Stratégie de cache par source open data
 
 Le budget cible est de 0 € récurrent, mais aucune stratégie de fréquence, cache et quota n'est définie par source, alors que `docs/00` §24 la réclame.
-**Statut** : requis avant la première ingestion (G5).
+**Statut** : **TRANCHÉ le 2026-09-09 par ADR-0018**, pour Légifrance.
+
+Les quotas de l'API ne sont pas publiés sur PISTE et sont modifiables sans préavis. La stratégie est donc écrite pour ne dépendre d'aucun plafond connu : aucune requête sur le chemin utilisateur, une vérification quotidienne au plus, expiration par obsolescence juridique et non par minuterie, plafond appris depuis les réponses de la source et consigné au registre.
+
+Reste ouvert pour toute source future : chaque nouvelle source doit porter sa propre stratégie, ADR-0018 fixant le cadre et non les valeurs.
 
 ## OPEN-08 — Comptes partagés, foyers, mineurs
 

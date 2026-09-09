@@ -25,6 +25,7 @@ Règle : une décision verrouillée ne se modifie qu'en créant un ADR qui la re
 | [0015](0015_durees_de_retention.md)                           | Durées de rétention : quarantaine, extraction, audit   | D21, D22 | ACCEPTED         | oui        |
 | [0016](0016_navigation_et_statut_de_la_reference_visuelle.md) | Navigation primaire et statut de la référence visuelle | C-UX-1   | ACCEPTED         | oui        |
 | [0017](0017_kdf_scrypt_et_liaison_au_contexte.md)             | Dérivation par scrypt, chiffré lié à son contexte      | SEC-31   | ACCEPTED         | partiel    |
+| [0018](0018_strategie_de_cache_sous_plafond_inconnu.md)       | Cache et fréquence sous plafond de quota inconnu       | OPEN-07  | ACCEPTED         | oui        |
 
 ## Décisions appliquées sans ADR dédié
 
