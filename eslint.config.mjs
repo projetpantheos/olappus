@@ -18,7 +18,10 @@ export default tseslint.config(
       ],
       // SEC-34 : rien ne doit être journalisé sans passer par la rédaction.
       // `console` reste toléré dans tooling/, interdit ailleurs (voir override).
-      'no-console': 'warn',
+      // SEC-34 : la journalisation passe par `toLogRecord`, jamais par `console`.
+      // En erreur et non en avertissement — `eslint .` sort à 0 malgré les
+      // avertissements, un contrôle qui n'échoue pas n'en est pas un.
+      'no-console': 'error',
       eqeqeq: ['error', 'always'],
       'no-restricted-syntax': [
         'error',

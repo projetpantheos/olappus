@@ -6,7 +6,7 @@
 
 Statuts : **COUVERT** — une suite le vérifie · **PARTIEL** — vérifié en partie, la limite est dite · **À VENIR** — dépend d'une gate ultérieure · **NON COUVERT** — aucun plan à ce jour.
 
-Dernière mise à jour : 2026-09-09 (chiffrement L3, avant G6) · 280 tests exécutés.
+Dernière mise à jour : 2026-09-09 (rédaction des journaux, avant G6) · 318 tests exécutés.
 
 ## Produit
 
@@ -107,8 +107,10 @@ Les 40 tests d'acceptation de `RUN-24` ne couvrent pas tout ce que la matrice
 `SEC-23` exige. Ces suites-là n'ont donc pas de ligne dans le tableau
 ci-dessus, et se perdraient sans cette annexe.
 
-| Contrôle `SEC-23`          | Suite                                    | Ce qui est prouvé                                                                               |
-| -------------------------- | ---------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| Sensitive fields encrypted | `crypto.test.ts` (25 tests)              | Altération rejetée, cryptogramme déplacé refusé, rotation lisible, secret perdu = donnée perdue |
-| Sensitive fields encrypted | `encryption.test.ts` (20 tests)          | La **base** refuse le clair, à l'insertion comme à l'update ; aucune colonne de clé en clair    |
-| Sensitive fields encrypted | `data-registry.test.ts` (7 des 18 tests) | Tout champ L3/L4 déclare son sort au chiffrement ; toute dérogation porte sa justification      |
+| Contrôle `SEC-23`                       | Suite                                    | Ce qui est prouvé                                                                                        |
+| --------------------------------------- | ---------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| Sensitive fields encrypted              | `crypto.test.ts` (25 tests)              | Altération rejetée, cryptogramme déplacé refusé, rotation lisible, secret perdu = donnée perdue          |
+| Sensitive fields encrypted              | `encryption.test.ts` (20 tests)          | La **base** refuse le clair, à l'insertion comme à l'update ; aucune colonne de clé en clair             |
+| Sensitive fields encrypted              | `data-registry.test.ts` (7 des 18 tests) | Tout champ L3/L4 déclare son sort au chiffrement ; toute dérogation porte sa justification               |
+| No secrets in repo                      | `secret-scan.test.ts` (9 tests)          | Les règles du scanner sont éprouvées, y compris ce qu'elles ne prétendent pas couvrir                    |
+| Aucun jeton ni corps brut dans les logs | `logging.test.ts` (22 tests)             | Rédaction par nom de clé **et** par forme de valeur ; erreurs sur liste blanche ; `no-console` en erreur |

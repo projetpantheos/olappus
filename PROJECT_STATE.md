@@ -37,6 +37,7 @@ Le passage d’une source en `APPROVED` est une **action fondateur**, pas une ac
 - **Spécifications de sécurité** : `SEC-31`, `SEC-33`, `SEC-34`, `SEC-35`, `DAT-43`
 - **G3 Core contracts** : contrats CQE avec validation runtime stricte, idempotence portée par la base, Safe Mode, machine à états des actions, Detection/Evidence/Outcome/Merchant/règles juridiques, manifestes de modules, lint d'isolation, moteur de capacités `ARC-41`, `docs/TEST_MAP.md`
 - **G4 Demo Mode + Hélios** : moteurs déterministes, Demo Mode traversant les mêmes moteurs que la production, 14 catégories de fixtures adverses, navigation à quatre entrées, parcours de Case, écran de première valeur
+- **Journalisation et rédaction (`SEC-34`)** : point de passage unique, rédaction par nom de clé **et** par forme de valeur, erreurs structurées sur liste blanche, `no-console` passé d'avertissement à erreur — un contrôle qui n'échoue pas n'en est pas un
 - **Stratégie de cache (ADR-0018)** : OPEN-07 tranché sans dépendre d’un quota inconnu — aucune requête sur le chemin utilisateur, vérification quotidienne au plus, expiration par obsolescence juridique, plafond appris de la source
 - **G5 Muses + License Gate** : schéma `knowledge` (source, fact, proposal, review, certification, conflict), License Gate porté par déclencheur, contrainte rendant `APPROVED` impossible sans licence vérifiée, quorum compté par origine et non par compte, contradictions conservées, validité temporelle, suspension sans suppression, écran de provenance
 - **Chiffrement applicatif L3 (`SEC-31`, ADR-0017)** : AES-256-GCM, cryptogramme lié à `actor_id : entité : champ : ligne`, KEK dérivée par scrypt d'un secret utilisateur, DEK enveloppée en base, rotation versionnée, contrainte `is_ciphertext_envelope` refusant le clair à l'insertion **et** à la mise à jour
@@ -84,7 +85,7 @@ Isolation entre utilisateurs **démontrée** par 16 tests. Schémas sensibles in
 
 ## Test status
 
-**280 tests, chaîne CI à EXIT 0** : 257 côté paquets (vitest) et 23 côté application mobile (jest-expo).
+**318 tests, chaîne CI à EXIT 0** : 293 côté paquets (vitest) et 25 côté application mobile (jest-expo).
 Dont, pour le chiffrement : 25 tests de primitives, 20 tests exécutés **par accès direct à la base** — la base refuse le clair à l'insertion comme à la mise à jour — et 7 tests de gouvernance du registre.
 
 `docs/TEST_MAP.md` relie les 40 tests d'acceptation P0 : **28 couverts, 8 partiels, 4 à venir, 0 non couvert**.
@@ -101,4 +102,6 @@ Puis ouvrir l’onglet Protection et juger : le produit vous dit ce qu’il ne s
 
 ## Next Claude action
 
-**G6 — Hermès / connexions externes**, avec en préalable le parcours de recovery codes d'ADR-0008 : la clé de chiffrement existe, le moment produit qui la crée et qui prévient l'utilisateur n'existe pas encore.
+**G6 — Hermès / connexions externes.** La gate est **RED** dans la matrice d'autonomie (authentification, sécurité) : elle demande votre validation explicite avant d'être ouverte.
+
+Deux de ses conditions de sortie sont déjà tenues, délibérément écrites avant le connecteur : le chiffrement L3 (`SEC-31`) et la rédaction des journaux (`SEC-34`). Il reste, dans la gate elle-même : PKCE et `state`, échange côté serveur, scopes minimaux, purge à la déconnexion — plus le parcours de recovery codes d'ADR-0008, sans lequel la clé de chiffrement existe mais n'est jamais remise à l'utilisateur.
