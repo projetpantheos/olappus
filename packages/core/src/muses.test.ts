@@ -34,6 +34,7 @@ interface SourceRegistry {
     source_id: string;
     status: string;
     license_verified: boolean;
+    license_name?: string | null;
     blocking_conditions?: readonly string[];
   }[];
   readonly approval_checklist: readonly string[];
@@ -66,6 +67,16 @@ const available = await (async () => {
 })();
 
 let db: Client | undefined;
+
+/** Crée une source enregistrée mais non approuvée, licence non vérifiée. */
+async function reviewRequiredSource(id: string): Promise<string> {
+  await db!.query(
+    `insert into knowledge.source (source_id, name, jurisdiction, status)
+     values ($1, 'Source synthétique en revue', 'FR', 'REVIEW_REQUIRED')`,
+    [id],
+  );
+  return id;
+}
 
 /** Crée une source approuvée, licence vérifiée — le seul chemin légitime. */
 async function approvedSource(id: string): Promise<string> {
@@ -120,10 +131,20 @@ afterAll(async () => {
 
 describe.skipIf(!available)('License Gate — la condition de sortie de G5', () => {
   it('refuse toute ingestion depuis une source non approuvée', async () => {
-    // Légifrance est enregistrée et nécessaire, mais sa licence n'est pas
-    // vérifiée : elle est donc inerte. Un endpoint qui répondrait n'y
-    // changerait rien.
-    await expect(insertFact('legifrance')).rejects.toThrow(/License Gate/i);
+    // Une source enregistrée mais non approuvée est inerte. Un endpoint qui
+    // répondrait n'y changerait rien.
+    const id = await reviewRequiredSource(`src-revue-${randomUUID().slice(0, 8)}`);
+    await expect(insertFact(id)).rejects.toThrow(/License Gate/i);
+  });
+
+  it('refuse l’ingestion depuis les sources réelles du registre', async () => {
+    // Le contrôle qui compte vraiment : aucune source réelle n'est ingérable
+    // aujourd'hui. Il lit le registre au lieu de nommer une source en dur, pour
+    // ne pas devenir faux le jour où l'une d'elles sera approuvée.
+    for (const source of registry.sources) {
+      if (registry.ingestible_statuses.includes(source.status)) continue;
+      await expect(insertFact(source.source_id), source.source_id).rejects.toThrow(/License Gate/i);
+    }
   });
 
   it('refuse une source inconnue — default deny', async () => {
@@ -138,8 +159,14 @@ describe.skipIf(!available)('License Gate — la condition de sortie de G5', () 
   it('interdit d’approuver une source sans licence vérifiée', async () => {
     // Le cœur du gate : on ne peut pas contourner la vérification en passant
     // simplement le statut à APPROVED.
+    //
+    // Sur une source synthétique, jamais sur une source du registre : ce test
+    // écrit, et le 2026-09-09 il a réellement approuvé Légifrance en base parce
+    // que sa licence venait d'être vérifiée. Le test de dérive l'a rattrapé,
+    // mais un test qui modifie une donnée de gouvernance ne devrait pas exister.
+    const id = await reviewRequiredSource(`src-sans-licence-${randomUUID().slice(0, 8)}`);
     await expect(
-      db!.query(`update knowledge.source set status = 'APPROVED' where source_id = 'legifrance'`),
+      db!.query(`update knowledge.source set status = 'APPROVED' where source_id = $1`, [id]),
     ).rejects.toThrow();
   });
 
@@ -346,6 +373,49 @@ describe.skipIf(!available)('Registre des sources — la base et le YAML coïnci
     // Une source bloquée sans motif écrit est une source qu'on débloquera un
     // jour sans savoir ce qui manquait.
     for (const source of registry.sources) {
+      if (!registry.ingestible_statuses.includes(source.status)) {
+        expect(source.blocking_conditions?.length ?? 0, source.source_id).toBeGreaterThan(0);
+      }
+    }
+  });
+
+  it('porte en base la même vérification de licence que le registre', async () => {
+    // Deux vérités sur le même sujet en produisent toujours une fausse. Le
+    // jour où quelqu'un approuvera une source, c'est la base qui décidera —
+    // elle doit donc porter les mêmes valeurs que le YAML, pas des valeurs
+    // voisines.
+    const rows = await db!.query<{
+      source_id: string;
+      license_name: string | null;
+      license_verified: boolean;
+      last_checked_at: Date | null;
+    }>('select source_id, license_name, license_verified, last_checked_at from knowledge.source');
+
+    for (const source of registry.sources) {
+      const row = rows.rows.find((r) => r.source_id === source.source_id);
+      expect(row, source.source_id).toBeDefined();
+      expect(row?.license_verified, `${source.source_id} : license_verified divergent`).toBe(
+        source.license_verified,
+      );
+      expect(row?.license_name ?? null, `${source.source_id} : license_name divergent`).toBe(
+        source.license_name ?? null,
+      );
+      // Une licence déclarée vérifiée sans date n'est pas une vérification.
+      if (source.license_verified) {
+        expect(
+          row?.last_checked_at,
+          `${source.source_id} : date de vérification absente`,
+        ).not.toBeNull();
+      }
+    }
+  });
+
+  it('ne confond pas licence vérifiée et source approuvée', () => {
+    // Le piège de cette étape. Les deux licences sont vérifiées ; aucune source
+    // n'est ingérable, parce que les quotas et le cache restent ouverts.
+    const verified = registry.sources.filter((s) => s.license_verified);
+    expect(verified.length).toBeGreaterThan(0);
+    for (const source of verified) {
       if (!registry.ingestible_statuses.includes(source.status)) {
         expect(source.blocking_conditions?.length ?? 0, source.source_id).toBeGreaterThan(0);
       }

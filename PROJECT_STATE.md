@@ -64,7 +64,8 @@ Zones volontairement non définies : voir `compiled_decisions/00_OPEN_ITEMS.md`.
 - La suppression n'est vérifiée que sur 6 des 12 emplacements de `SEC-33` ; les autres n'existent pas encore (SQLite local, outbox, sauvegardes, journaux).
 - La rétention des sauvegardes reste ouverte (OPEN-06) : la durée après laquelle une donnée supprimée disparaît de toutes les copies est inconnue et ne doit pas être annoncée.
 - 14 vulnérabilités modérées transitives dans la chaîne Expo, aucune haute ni critique.
-- **Aucune source n’est approuvée.** Légifrance et RappelConso sont en `REVIEW_REQUIRED` : le produit ne peut rien affirmer sur les droits de l’utilisateur. Ce n’est pas une panne, c’est le License Gate qui fonctionne — mais c’est bloquant pour la valeur juridique du produit.
+- **Aucune source n’est approuvée.** Les deux licences sont **vérifiées** depuis le 2026-09-09 (Licence Ouverte 2.0, textes lus aux sources primaires), mais le droit de réutiliser n’est pas la capacité d’exploiter : les quotas de l’API Légifrance exigent une inscription sur PISTE, et la stratégie de cache (OPEN-07) en dépend. Le produit ne peut donc toujours rien affirmer sur les droits de l’utilisateur.
+- **Les données de l’API Légifrance ne sont pas opposables** (CGU art. VI.1 : seuls les PDF signés du JORF le sont), et la DILA ne garantit ni leur complétude ni leur fraîcheur, ni aucun niveau de disponibilité. Le cache et le silence gracieux cessent d’être des optimisations.
 - **Aucune ingestion réelle n’a eu lieu** : le chemin d’ingestion lui-même (parsing, versionnement, hachage de source) n’est pas éprouvé sur des données réelles.
 - La résolution d’identité des marchands par référentiel officiel reste ouverte : aucune source de ce type n’est enregistrée (test 21, reporté en G6).
 - Revue juridique/DPO requise avant tout pilote public.
@@ -90,7 +91,9 @@ Les tests de base sont **ignorés, et non silencieusement verts**, quand la pile
 
 ## Next founder action
 
-**Franchir la liste de contrôle d’approbation de Légifrance** — 7 points, à faire à la source primaire. Procédure : `docs/RUNBOOK_APPROBATION_SOURCE.md`, qui dit pour chaque point ce qu’il faut regarder et ce qui bloque. Tant qu’elle n’est pas franchie, la couche juridique du produit reste muette par conception.
+**S’inscrire sur PISTE** (`piste.gouv.fr`) et relever les quotas de l’API Légifrance — onglet Applications, gestion de l’application, « Consulter les quotas ». C’est le seul endroit où ils sont publiés, et l’inscription fait aussi accepter les CGU PISTE, dont le PDF est un scan illisible autrement.
+
+Puis décider la stratégie de cache (OPEN-07) au vu de ces quotas. Les points 1, 2, 3 et 5 de la liste d’approbation sont franchis ; il reste 4, 6 et 7. Procédure : `docs/RUNBOOK_APPROBATION_SOURCE.md`. Tant qu’elle n’est pas franchie, la couche juridique du produit reste muette par conception.
 
 Puis ouvrir l’onglet Protection et juger : le produit vous dit ce qu’il ne sait pas. Est-ce compréhensible sans connaître le projet ?
 
