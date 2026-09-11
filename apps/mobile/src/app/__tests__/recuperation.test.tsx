@@ -2,7 +2,7 @@ import { checkRecoverySecret } from '@olappus/core';
 import { fireEvent, render } from '@testing-library/react-native';
 
 import PerteScreen from '../recuperation/perte';
-import RecuperationScreen from '../recuperation/index';
+import RecuperationScreen from '../recuperation';
 
 /**
  * Parcours de récupération — `SEC-31`, ADR-0008.

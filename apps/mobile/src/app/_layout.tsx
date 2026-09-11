@@ -49,9 +49,12 @@ export default function RootLayout() {
         {/* Sans ces deux lignes, l'en-tête affiche « RECUPERATION/INDEX » —
             le nom de route brut. Défaut invisible aux tests, visible dès qu'on
             ouvre l'application. */}
-        <Stack.Screen name="recuperation/index" options={{ title: 'Récupération' }} />
+        <Stack.Screen name="recuperation" options={{ title: 'Récupération' }} />
         <Stack.Screen name="recuperation/perte" options={{ title: 'Secret perdu' }} />
         <Stack.Screen name="deverrouillage" options={{ title: 'Déverrouiller' }} />
+        <Stack.Screen name="controle/connexions" options={{ title: 'Services connectés' }} />
+        <Stack.Screen name="controle/donnees" options={{ title: 'Mes données' }} />
+        <Stack.Screen name="controle/permissions" options={{ title: 'Ce qu’Olappus peut faire' }} />
       </Stack>
       <StatusBar style="dark" />
     </>

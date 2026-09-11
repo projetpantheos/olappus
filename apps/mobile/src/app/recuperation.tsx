@@ -7,7 +7,7 @@ import {
 import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import { color, fontFamily, fontSize, radius, spacing } from '../../theme/tokens';
+import { color, fontFamily, fontSize, radius, spacing } from '../theme/tokens';
 
 /**
  * Création du secret de récupération — `SEC-31`, ADR-0008.

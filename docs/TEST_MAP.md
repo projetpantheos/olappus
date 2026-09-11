@@ -6,7 +6,7 @@
 
 Statuts : **COUVERT** — une suite le vérifie · **PARTIEL** — vérifié en partie, la limite est dite · **À VENIR** — dépend d'une gate ultérieure · **NON COUVERT** — aucun plan à ce jour.
 
-Dernière mise à jour : 2026-09-11 (coffre d’appareil et déverrouillage) · 447 tests exécutés.
+Dernière mise à jour : 2026-09-11 (parcours de confiance G, H, I) · 499 tests exécutés.
 
 ## Produit
 
@@ -121,3 +121,6 @@ ci-dessus, et se perdraient sans cette annexe.
 | Informer avant de collecter             | `recovery.test.ts` (22), `recuperation.test.tsx` (13) | La collecte est refusée tant que le secret n'est pas créé **et** confirmé                                       |
 | Matériel de clé dans le coffre natif    | `vault.test.ts` (15 tests)                            | Session expirée **purgée** et non seulement refusée ; le secret de récupération n'y a aucune place prévue       |
 | L'attente de dérivation est annoncée    | `deverrouillage.test.tsx` (10 tests)                  | La lenteur est expliquée, jamais excusée ; un mauvais secret et une clé qui n'ouvre pas donnent le même message |
+| Journey I — déconnexion                 | `controle.test.tsx` (7 tests)                         | « Se déconnecter n'est pas supprimer » est dit avant le choix ; aucune option présélectionnée                   |
+| Journey H — suppression                 | `controle.test.tsx` (6 tests)                         | Deux gestes pour une action sans retour ; ce qui est vérifié **et** ce qui ne peut pas l'être                   |
+| Journey G — permission                  | `controle.test.tsx` (7 tests)                         | Part d'une action bloquée ; `AUTO_EXECUTE` n'est jamais proposé                                                 |
