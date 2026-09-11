@@ -13,7 +13,7 @@ import {
   CryptoError,
   DEFAULT_KDF_PARAMS,
   ENVELOPE_VERSION,
-  bindingBytes,
+  bindingString,
   decryptField,
   deriveKek,
   encryptField,
@@ -151,7 +151,7 @@ describe('Liaison au contexte — un cryptogramme déplacé ne se lit pas', () =
   });
 
   it('lie l’enveloppe à un contexte lisible et stable', () => {
-    expect(bindingBytes(BINDING).toString('utf8')).toContain('core.action:prepared_payload');
+    expect(bindingString(BINDING)).toContain('core.action:prepared_payload');
   });
 });
 

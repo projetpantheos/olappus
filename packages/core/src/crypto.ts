@@ -21,67 +21,41 @@ import {
   timingSafeEqual,
 } from 'node:crypto';
 
-/** Version du format d'enveloppe. Change si la structure change, jamais l'algorithme seul. */
-export const ENVELOPE_VERSION = 1;
+import {
+  ALGORITHM,
+  CryptoError,
+  ENVELOPE_VERSION,
+  IV_BYTES,
+  KEY_BYTES,
+  SALT_BYTES,
+  bindingString,
+  bindingUtf8,
+  isCiphertext,
+  type Binding,
+  type Ciphertext,
+  type KdfParams,
+} from './crypto-envelope';
 
-export const ALGORITHM = 'AES-256-GCM' as const;
+// Le format, la liaison au contexte et la garde de forme vivent dans
+// `crypto-envelope.ts` : ce module dépend de `node:crypto`, son jumeau
+// `crypto-web.ts` ne le peut pas, et les deux doivent produire exactement la
+// même enveloppe. Les dupliquer aurait rendu la divergence inévitable.
+export {
+  ALGORITHM,
+  CryptoError,
+  ENVELOPE_VERSION,
+  bindingString,
+  bindingUtf8,
+  isCiphertext,
+  type Binding,
+  type Ciphertext,
+  type KdfParams,
+};
 
-/** Algorithme de dérivation. Voir ADR-0017 pour le choix de scrypt. */
+/** Algorithme de dérivation côté serveur. Voir ADR-0017 pour le choix de scrypt. */
 export const KDF = 'scrypt' as const;
 
-const KEY_BYTES = 32; // AES-256
-const IV_BYTES = 12; // taille recommandée pour GCM
-const TAG_BYTES = 16;
-const SALT_BYTES = 16;
-
-/**
- * Paramètres de dérivation. Stockés **avec** chaque clé enveloppée : sans eux,
- * durcir les paramètres demain rendrait les clés d'hier indéchiffrables.
- */
-export interface KdfParams {
-  readonly N: number;
-  readonly r: number;
-  readonly p: number;
-}
-
 export const DEFAULT_KDF_PARAMS: KdfParams = { N: 32768, r: 8, p: 1 };
-
-/**
- * Enveloppe chiffrée. Chaque valeur porte sa version de clé : **sans
- * versionnement, aucune rotation n'est possible** — seulement une réécriture
- * atomique de toute la base, c'est-à-dire une migration à risque.
- */
-export interface Ciphertext {
-  readonly v: number;
-  readonly alg: typeof ALGORITHM;
-  /** Version de clé. Permet de lire l'ancien pendant qu'on écrit le nouveau. */
-  readonly kv: number;
-  readonly iv: string;
-  readonly ct: string;
-  readonly tag: string;
-}
-
-/**
- * Contexte auquel une valeur chiffrée est liée cryptographiquement.
- *
- * Sans cette liaison, un attaquant ayant l'écriture en base peut **déplacer**
- * un cryptogramme d'une ligne à l'autre : il ne lit rien, mais il fait lire à
- * la victime la valeur de quelqu'un d'autre. GCM authentifie ces données
- * additionnelles gratuitement ; s'en passer serait un choix, pas une économie.
- */
-export interface Binding {
-  readonly actorId: string;
-  readonly entity: string;
-  readonly field: string;
-  readonly rowId: string;
-}
-
-export function bindingBytes(binding: Binding): Buffer {
-  return Buffer.from(
-    `olappus:v${String(ENVELOPE_VERSION)}:${binding.actorId}:${binding.entity}:${binding.field}:${binding.rowId}`,
-    'utf8',
-  );
-}
 
 /** Clé de données d'un utilisateur, accompagnée de sa version. */
 export interface VersionedKey {
@@ -91,8 +65,6 @@ export interface VersionedKey {
 
 /** Trousseau de déchiffrement : version de clé → clé. Une rotation en garde deux. */
 export type Keyring = ReadonlyMap<number, Buffer>;
-
-export class CryptoError extends Error {}
 
 /** Aléa cryptographique de la plateforme. Jamais `Math.random` (`SEC-31`). */
 export function randomDek(): Buffer {
@@ -118,16 +90,19 @@ export function deriveKek(
   if (secret.length === 0) {
     throw new CryptoError('Secret de dérivation vide.');
   }
+  const N = params.N ?? 32768;
+  const r = params.r ?? 8;
+  const p = params.p ?? 1;
   return scryptSync(Buffer.from(secret, 'utf8'), salt, KEY_BYTES, {
-    N: params.N,
-    r: params.r,
-    p: params.p,
+    N,
+    r,
+    p,
     // scrypt exige explicitement la mémoire qu'il va consommer : 128 * N * r.
-    maxmem: 256 * params.N * params.r,
+    maxmem: 256 * N * r,
   });
 }
 
-function seal(plaintext: Buffer, key: Buffer, keyVersion: number, aad: Buffer): Ciphertext {
+function seal(plaintext: Buffer, key: Buffer, keyVersion: number, aad: Uint8Array): Ciphertext {
   if (key.length !== KEY_BYTES) {
     throw new CryptoError(`Clé de ${String(key.length)} octets ; ${String(KEY_BYTES)} attendus.`);
   }
@@ -145,7 +120,7 @@ function seal(plaintext: Buffer, key: Buffer, keyVersion: number, aad: Buffer): 
   };
 }
 
-function open(envelope: Ciphertext, key: Buffer, aad: Buffer): Buffer {
+function open(envelope: Ciphertext, key: Buffer, aad: Uint8Array): Buffer {
   const decipher = createDecipheriv('aes-256-gcm', key, Buffer.from(envelope.iv, 'base64'));
   decipher.setAAD(aad);
   decipher.setAuthTag(Buffer.from(envelope.tag, 'base64'));
@@ -165,16 +140,16 @@ export function wrapDek(
   keyVersion: number,
   binding: Binding,
 ): Ciphertext {
-  return seal(dek, kek, keyVersion, bindingBytes(binding));
+  return seal(dek, kek, keyVersion, bindingUtf8(binding));
 }
 
 export function unwrapDek(envelope: Ciphertext, kek: Buffer, binding: Binding): Buffer {
-  return open(envelope, kek, bindingBytes(binding));
+  return open(envelope, kek, bindingUtf8(binding));
 }
 
 /** Chiffre une valeur de champ L3. La valeur en clair ne quitte jamais l'appelant. */
 export function encryptField(plaintext: string, key: VersionedKey, binding: Binding): Ciphertext {
-  return seal(Buffer.from(plaintext, 'utf8'), key.key, key.version, bindingBytes(binding));
+  return seal(Buffer.from(plaintext, 'utf8'), key.key, key.version, bindingUtf8(binding));
 }
 
 /**
@@ -197,29 +172,7 @@ export function decryptField(envelope: Ciphertext, keyring: Keyring, binding: Bi
     // ne tente pas les autres versions « au cas où ».
     throw new CryptoError(`Version de clé ${String(envelope.kv)} absente du trousseau.`);
   }
-  return open(envelope, key, bindingBytes(binding)).toString('utf8');
-}
-
-/**
- * Garde de forme, miroir exact de `core.is_ciphertext_envelope` en base.
- *
- * Les deux existent, et c'est voulu : la base refuse le clair même si le code
- * se trompe, le code refuse le clair sans aller jusqu'à la base. Un contrôle
- * porté uniquement par la discipline de l'appelant n'est pas un contrôle.
- */
-export function isCiphertext(value: unknown): value is Ciphertext {
-  if (typeof value !== 'object' || value === null) return false;
-  const candidate = value as Record<string, unknown>;
-  return (
-    candidate['v'] === ENVELOPE_VERSION &&
-    candidate['alg'] === ALGORITHM &&
-    typeof candidate['kv'] === 'number' &&
-    typeof candidate['iv'] === 'string' &&
-    typeof candidate['ct'] === 'string' &&
-    typeof candidate['tag'] === 'string' &&
-    Buffer.from(candidate['iv'], 'base64').length === IV_BYTES &&
-    Buffer.from(candidate['tag'], 'base64').length === TAG_BYTES
-  );
+  return open(envelope, key, bindingUtf8(binding)).toString('utf8');
 }
 
 /**

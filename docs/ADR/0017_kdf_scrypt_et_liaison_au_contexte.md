@@ -1,6 +1,6 @@
 # ADR-0017 — Dérivation de clé par scrypt, et liaison du chiffré à son contexte
 
-- **Statut** : ACCEPTED
+- **Statut** : ACCEPTED, **amendé le 2026-09-11** (§ « Amendement — PBKDF2 sur l'appareil »)
 - **Date** : 2026-09-09
 - **Décision d'origine** : mise en œuvre de `SEC-31`, sous ADR-0008
 - **Approuvé par** : Fondateur
@@ -45,6 +45,28 @@ Ce n'est pas un effet de bord à corriger : cela rejoint `EXECUTE_WITH_CONFIRMAT
 **Le déplacement d'identifiant de ligne devient un choix de conception.** Puisque `rowId` entre dans la liaison, ré-identifier une ligne (changer sa clé primaire) rend son contenu illisible. Les identifiants sont immuables ; cette ADR en fait une exigence et non une habitude.
 
 **Les paramètres scrypt coûtent environ 100 ms par déverrouillage.** C'est délibéré, et ce coût est celui de l'utilisateur légitime une fois par session, contre celui de l'attaquant à chaque essai.
+
+## Amendement du 2026-09-11 — PBKDF2 sur l'appareil
+
+L'implémentation du chiffrement côté appareil a révélé un fait que cette ADR n'avait pas anticipé : **WebCrypto ne propose pas scrypt.** Il propose PBKDF2, et rien d'autre qui convienne.
+
+Trois issues étaient possibles.
+
+Ajouter une implémentation de scrypt en JavaScript pur, ou un module natif : c'est du code cryptographique non audité embarqué dans l'application, pour aligner une fonction sur l'autre. Le remède serait pire que le mal.
+
+Dériver toutes les KEK côté serveur : cela obligerait le secret de l'utilisateur à transiter. **C'est exactement ce qu'ADR-0008 interdit**, et cela viderait l'implémentation appareil de sa raison d'être.
+
+**Retenu : la fonction de dérivation dépend de l'endroit où elle s'exécute, et chaque clé dit laquelle a servi.** Une KEK dérivée sur l'appareil porte `kdf = 'pbkdf2'`, une KEK dérivée côté serveur porte `kdf = 'scrypt'`. La colonne existait déjà, précisément pour que ce genre de divergence soit lisible plutôt que fatal.
+
+PBKDF2-SHA256, **600 000 itérations**. Le facteur atténuant déjà invoqué pour scrypt vaut ici aussi, et davantage : le secret d'entrée est un jeu de recovery codes généré par le système, à haute entropie, jamais un mot de passe choisi par un humain. C'est le cas où l'écart entre fonctions de dérivation pèse le moins.
+
+**Ce qui n'a pas bougé, et ne devait pas bouger** : le format d'enveloppe, l'algorithme de chiffrement et la liaison au contexte sont **identiques des deux côtés**. Ils vivent désormais dans un module unique, `crypto-envelope.ts`, partagé par les deux implémentations. Un test d'interopérabilité vérifie dans les deux sens que l'appareil ouvre ce que le serveur a scellé. Une divergence d'un seul octet dans les données authentifiées rendrait la donnée illisible pour toujours, sans réparation possible ; les dupliquer aurait rendu cette divergence inévitable.
+
+### Ce que cet amendement laisse ouvert
+
+**React Native n'expose pas `crypto.subtle` nativement.** Sur le web, l'implémentation fonctionne aujourd'hui. Sur iOS et Android, il faudra une implémentation — polyfill ou module natif — que le projet n'a pas encore choisie. Le fournisseur est donc **injecté**, et son absence lève une erreur explicite au lieu de se rabattre sur un aléa non cryptographique : un chiffrement dégradé serait pire qu'une absence de chiffrement, parce qu'il donnerait l'apparence d'une protection.
+
+Ce choix est à faire **avant G6b**, c'est-à-dire avant toute donnée réelle sur un appareil réel.
 
 ## Alternatives écartées
 

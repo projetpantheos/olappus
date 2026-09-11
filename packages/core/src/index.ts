@@ -48,6 +48,13 @@ export * from './capability';
 export * from './logging';
 export * from './oauth';
 
+// Le format d'enveloppe et l'implémentation WebCrypto ne dépendent d'aucun
+// module Node : ils entrent légitimement dans le bundle client, et c'est
+// même leur raison d'être — ADR-0008 veut que la DEK soit ouverte sur
+// l'appareil, jamais sur le serveur.
+export * from './crypto-envelope';
+export * from './crypto-web';
+
 // './crypto' n'est PAS réexporté ici, délibérément. Il dépend de `node:crypto`
 // et se retrouverait dans le bundle client, qui ne peut pas l’exécuter — du
 // code de chiffrement inerte est pire que pas de code de chiffrement : il

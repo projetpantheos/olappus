@@ -58,7 +58,8 @@ Zones volontairement non définies : voir `compiled_decisions/00_OPEN_ITEMS.md`.
 
 ## Known risks
 
-- **Le chiffrement L3 n'existe qu'en Node.** Il est prouvé par 52 tests et porté par la base, mais l'implémentation **client** (WebCrypto / expo-crypto) n'est pas écrite — or c'est elle qui rendra ADR-0008 vrai en pratique, puisque la DEK ne doit jamais atteindre le serveur. Tant qu'elle manque, la garantie « aucune clé maître serveur » tient par construction du schéma, pas encore par le chemin d'exécution réel. Livrable de G6.
+- **Le chiffrement L3 fonctionne des deux côtés** depuis le 2026-09-11 : un test d'interopérabilité vérifie dans les deux sens que l'appareil ouvre ce que le serveur a scellé. ADR-0008 cesse de tenir par la seule forme du schéma.
+- **Mais React Native n'expose pas `crypto.subtle` nativement.** L'implémentation fonctionne sur le web ; sur iOS et Android, il faut un polyfill ou un module natif, non encore choisi. Le fournisseur est injecté et son absence lève une erreur explicite — aucun repli sur un aléa non cryptographique. **À trancher avant G6b**, donc avant toute donnée réelle sur un appareil réel.
 - Le chiffrement L3 **n'a encore chiffré aucune donnée réelle** : il est prouvé par des tests, pas par l'usage. Le parcours produit qui manque est celui d'ADR-0008 — génération des recovery codes, information de l'utilisateur **avant** la première collecte, et distinction entre « retrouver son compte » et « retrouver ses données ». Il relève de G6.
 - Une action préparée ne peut pas être relue par le serveur seul (ADR-0017). Toute exécution différée devra être conçue avec cette contrainte, non contre elle.
 - scrypt est le repli assumé de `SEC-31` ; Argon2id reste la cible. Le schéma stocke l'algorithme par clé, donc la bascule se fera utilisateur par utilisateur.
