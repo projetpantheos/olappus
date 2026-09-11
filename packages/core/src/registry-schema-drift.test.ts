@@ -65,6 +65,10 @@ const INFRASTRUCTURE_TABLES = new Set([
   'core.retention_run',
   'core.safe_mode',
   'core.command_log',
+  // Liste de politique, sans aucune donnee utilisateur : elle declare quels
+  // scopes sont autorises, au meme titre que core.retention_policy declare des
+  // durees. Gouverner une politique par le registre des donnees n'aurait pas de sens.
+  'identity.provider_scope',
 ]);
 
 const available = await (async () => {

@@ -230,6 +230,168 @@ entities:
         rls_scope: self
 
   # --- core ------------------------------------------------------------------
+  - id: identity.connection
+    schema: identity
+    owner: Identity
+    access: owner_only
+    status: SPECIFIED
+    source_doc: SEC-35
+    note: >-
+      Connexion à un fournisseur externe (G6). Les jetons sont chiffrés par la
+      DEK de l'utilisateur : le serveur seul ne peut pas les relire. La purge à
+      la déconnexion est portée par une contrainte, pas par une tâche de
+      nettoyage — une connexion fermée ne PEUT pas détenir de jeton.
+    fields:
+      - name: connection_id
+        classification: L1
+        purpose: Identifiant opaque de la connexion.
+        source: system
+        normalized_form: opaque_id
+        retention: connection_lifetime
+        export: false
+        delete: cascade
+        ai_policy: AI_FORBIDDEN
+        provenance: false
+        rls_scope: self
+      - name: user_id
+        classification: L1
+        purpose: Propriétaire de la connexion.
+        source: system
+        normalized_form: opaque_id
+        retention: connection_lifetime
+        export: false
+        delete: cascade
+        ai_policy: AI_FORBIDDEN
+        provenance: false
+        rls_scope: self
+      - name: provider
+        classification: L1
+        purpose: Fournisseur externe. Ses scopes autorisés sont déclarés en base.
+        source: system
+        normalized_form: enum
+        retention: connection_lifetime
+        export: false
+        delete: cascade
+        ai_policy: AI_FORBIDDEN
+        provenance: false
+        rls_scope: self
+      - name: status
+        classification: L1
+        purpose: État de la connexion (DISCONNECTED à REVOKED). Machine à états contrainte en base.
+        source: system
+        normalized_form: enum
+        retention: connection_lifetime
+        export: false
+        delete: cascade
+        ai_policy: AI_FORBIDDEN
+        provenance: false
+        rls_scope: self
+      - name: scopes
+        classification: L1
+        purpose: Scopes réellement accordés. Un scope non déclaré est refusé par déclencheur.
+        source: system
+        normalized_form: structured_json
+        retention: connection_lifetime
+        export: false
+        delete: cascade
+        ai_policy: AI_FORBIDDEN
+        provenance: false
+        rls_scope: self
+      - name: access_token
+        classification: L4
+        purpose: Jeton d'accès au fournisseur. Chiffré, jamais en clair, jamais journalisé.
+        source: system
+        normalized_form: opaque_blob
+        retention: connection_lifetime
+        export: false
+        delete: cascade
+        ai_policy: AI_FORBIDDEN
+        provenance: false
+        rls_scope: self
+        encryption: APPLICATION_AES_256_GCM
+        encryption_note: En clair, il ouvrirait la boîte mail de l'utilisateur chez le fournisseur.
+      - name: refresh_token
+        classification: L4
+        purpose: Jeton de rafraîchissement. Plus durable que le jeton d'accès, donc plus dangereux.
+        source: system
+        normalized_form: opaque_blob
+        retention: connection_lifetime
+        export: false
+        delete: cascade
+        ai_policy: AI_FORBIDDEN
+        provenance: false
+        rls_scope: self
+        encryption: APPLICATION_AES_256_GCM
+        encryption_note: Sa duree de vie en fait la cible la plus interessante de toute la base.
+      - name: expires_at
+        classification: L1
+        purpose: Expiration du jeton d'accès. Au-delà, la connexion est inerte.
+        source: system
+        normalized_form: timestamp_utc
+        retention: connection_lifetime
+        export: false
+        delete: cascade
+        ai_policy: AI_FORBIDDEN
+        provenance: false
+        rls_scope: self
+      - name: external_account_ref
+        classification: L3
+        purpose: Référence pseudonyme du compte distant. JAMAIS l'adresse email (ADR-0012).
+        source: system
+        normalized_form: opaque_id
+        retention: connection_lifetime
+        export: false
+        delete: cascade
+        ai_policy: AI_FORBIDDEN
+        provenance: false
+        rls_scope: self
+        encryption: NOT_ENCRYPTED_OPAQUE_ID
+        encryption_note: Identifiant opaque du fournisseur, necessaire pour reconnaitre une reconnexion du meme compte. Purge a la deconnexion, comme les jetons.
+      - name: connected_at
+        classification: L1
+        purpose: Date de connexion effective.
+        source: system
+        normalized_form: timestamp_utc
+        retention: connection_lifetime
+        export: false
+        delete: cascade
+        ai_policy: AI_FORBIDDEN
+        provenance: false
+        rls_scope: self
+      - name: revoked_at
+        classification: L1
+        purpose: Date de révocation du consentement. Une révocation est un fait daté.
+        source: system
+        normalized_form: timestamp_utc
+        retention: connection_lifetime
+        export: false
+        delete: cascade
+        ai_policy: AI_FORBIDDEN
+        provenance: false
+        rls_scope: self
+      - name: disconnected_at
+        classification: L1
+        purpose: Date de déconnexion par l'utilisateur.
+        source: system
+        normalized_form: timestamp_utc
+        retention: connection_lifetime
+        export: false
+        delete: cascade
+        ai_policy: AI_FORBIDDEN
+        provenance: false
+        rls_scope: self
+      - name: created_at
+        classification: L1
+        purpose: Date de création de l'enregistrement.
+        source: system
+        normalized_form: timestamp_utc
+        retention: connection_lifetime
+        export: false
+        delete: cascade
+        ai_policy: AI_FORBIDDEN
+        provenance: false
+        rls_scope: self
+
   - id: identity.user_key
     schema: identity
     owner: Identity

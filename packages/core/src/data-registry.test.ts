@@ -261,9 +261,15 @@ describe('Data Registry — décision de chiffrement (SEC-31)', () => {
     expect(encryptedFields(registry)).toContain('core.action.prepared_payload');
   });
 
-  it('déclare la DEK enveloppée comme la seule autre valeur chiffrée', () => {
+  it('énumère exactement les champs chiffrés, sans ajout silencieux', () => {
+    // Liste exhaustive et volontairement rigide : tout nouveau champ chiffré
+    // fait échouer ce test. C'est le but — un champ chiffré est un champ dont
+    // la perte de clé perd la donnée, et cela ne s'ajoute pas sans y penser.
+    // Elle a rempli son rôle le 2026-09-11, à l'arrivée des jetons OAuth.
     expect(encryptedFields(registry)).toEqual([
       'core.action.prepared_payload',
+      'identity.connection.access_token',
+      'identity.connection.refresh_token',
       'identity.user_key.wrapped_dek',
     ]);
   });
