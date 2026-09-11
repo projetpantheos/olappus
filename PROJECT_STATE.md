@@ -63,7 +63,8 @@ Zones volontairement non définies : voir `compiled_decisions/00_OPEN_ITEMS.md`.
 ## Known risks
 
 - **Le chiffrement L3 fonctionne des deux côtés** depuis le 2026-09-11 : un test d'interopérabilité vérifie dans les deux sens que l'appareil ouvre ce que le serveur a scellé. ADR-0008 cesse de tenir par la seule forme du schéma.
-- **Mais React Native n'expose pas `crypto.subtle` nativement.** L'implémentation fonctionne sur le web ; sur iOS et Android, il faut un polyfill ou un module natif, non encore choisi. Le fournisseur est injecté et son absence lève une erreur explicite — aucun repli sur un aléa non cryptographique. **À trancher avant G6b**, donc avant toute donnée réelle sur un appareil réel.
+- **Le chemin de chiffrement iOS et Android n'est vérifié par aucun automate.** L'implémentation existe (`expo-crypto`, ADR-0019) et le format est partagé avec les deux autres ; mais son module AES est neutralisé sous jest, donc 3 tests sont **ignorés et annoncés** plutôt que faussement verts. La vérification sur appareil est un livrable de G6b.
+- **Résolu** : React Native n'expose pas `crypto.subtle`, mais `expo-crypto` fournit AES-256-GCM avec données authentifiées, inclus dans Expo Go — aucun build de développement requis (ADR-0019).
 - Le chiffrement L3 **n'a encore chiffré aucune donnée réelle** : il est prouvé par des tests, pas par l'usage. Le parcours produit qui manque est celui d'ADR-0008 — génération des recovery codes, information de l'utilisateur **avant** la première collecte, et distinction entre « retrouver son compte » et « retrouver ses données ». Il relève de G6.
 - Une action préparée ne peut pas être relue par le serveur seul (ADR-0017). Toute exécution différée devra être conçue avec cette contrainte, non contre elle.
 - scrypt est le repli assumé de `SEC-31` ; Argon2id reste la cible. Le schéma stocke l'algorithme par clé, donc la bascule se fera utilisateur par utilisateur.
@@ -90,7 +91,7 @@ Isolation entre utilisateurs **démontrée** par 16 tests. Schémas sensibles in
 
 ## Test status
 
-**447 tests, chaîne CI à EXIT 0** : 399 côté paquets (vitest) et 48 côté application mobile (jest-expo).
+**456 tests, chaîne CI à EXIT 0** : 399 côté paquets (vitest) et 57 côté application mobile (jest-expo), dont **3 ignorés et annoncés**.
 Dont, pour le chiffrement : 25 tests de primitives, 20 tests exécutés **par accès direct à la base** — la base refuse le clair à l'insertion comme à la mise à jour — et 7 tests de gouvernance du registre.
 
 `docs/TEST_MAP.md` relie les 40 tests d'acceptation P0 : **28 couverts, 8 partiels, 4 à venir, 0 non couvert**.
