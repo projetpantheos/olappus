@@ -1,9 +1,9 @@
 # ADR-0019 — Où s'exécute l'échange OAuth, et comment chiffrer sur l'appareil
 
-- **Statut** : PROPOSED — les deux décisions sont RED (sécurité, authentification)
+- **Statut** : ACCEPTED (2026-09-11)
 - **Date** : 2026-09-11
 - **Décision d'origine** : les deux points laissés ouverts à la clôture de G6a
-- **Approuvé par** : _en attente_
+- **Approuvé par** : Fondateur
 - **Réversible** : oui pour l'hébergement ; **partiellement** pour la cryptographie d'appareil
 
 ## Context
@@ -16,13 +16,13 @@ G6a s'est achevée sur deux questions que je ne pouvais pas trancher seul, et qu
 
 J'ai instruit les deux. Les faits ci-dessous ont été relevés le 2026-09-11 à la documentation Expo SDK 57 et au registre npm ; ils sont datés parce qu'ils périment.
 
-## Decision proposée
+## Decision
 
 ### 1. L'échange OAuth s'exécute dans une Edge Function Supabase
 
 **Ce qui décide** : aucun fournisseur nouveau. Supabase est déjà la base, sa CLI est déjà une dépendance de développement, et `supabase functions serve` tourne en local — le développement ne dépend donc d'aucun compte distant. Le runtime est Deno, qui expose WebCrypto nativement, donc le même format d'enveloppe que le reste du code.
 
-**Ce que cela ne décide pas**, et c'est délibéré : l'hébergement. Une Edge Function s'exécute aussi bien sur Supabase Cloud que sur une instance auto-hébergée. `OPEN-07` et le choix du magasin de secrets serveur restent ouverts, comme `SEC-31` le prévoit.
+**L'hébergement était laissé ouvert ici ; il est tranché par ADR-0020** — service géré, région européenne. Une Edge Function s'exécute aussi bien sur Supabase Cloud que sur une instance auto-hébergée. `OPEN-07` et le choix du magasin de secrets serveur restent ouverts, comme `SEC-31` le prévoit.
 
 Le `client_secret` du fournisseur ne quitte jamais cette fonction. Le client reçoit uniquement le résultat, et le `PISTE_CLIENT_SECRET` / `GOOGLE_OAUTH_CLIENT_SECRET` de `.env.example` n'a jamais de contrepartie préfixée `EXPO_PUBLIC_`.
 

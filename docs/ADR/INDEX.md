@@ -26,7 +26,8 @@ Règle : une décision verrouillée ne se modifie qu'en créant un ADR qui la re
 | [0016](0016_navigation_et_statut_de_la_reference_visuelle.md) | Navigation primaire et statut de la référence visuelle | C-UX-1   | ACCEPTED         | oui        |
 | [0017](0017_kdf_scrypt_et_liaison_au_contexte.md)             | Dérivation par scrypt, chiffré lié à son contexte      | SEC-31   | ACCEPTED, amendé | partiel    |
 | [0018](0018_strategie_de_cache_sous_plafond_inconnu.md)       | Cache et fréquence sous plafond de quota inconnu       | OPEN-07  | ACCEPTED         | oui        |
-| [0019](0019_execution_des_secrets_et_crypto_sur_appareil.md)  | Échange OAuth côté serveur, cryptographie sur appareil | G6a      | **PROPOSED**     | partiel    |
+| [0019](0019_execution_des_secrets_et_crypto_sur_appareil.md)  | Échange OAuth côté serveur, cryptographie sur appareil | G6a      | ACCEPTED         | partiel    |
+| [0020](0020_hebergement.md)                                   | Hébergement : service géré, en Europe                  | ADR-0019 | ACCEPTED         | oui        |
 
 ## Décisions appliquées sans ADR dédié
 

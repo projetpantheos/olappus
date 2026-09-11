@@ -13,10 +13,14 @@
  * nécessaires — et non N codes indépendants à usage unique comme pour une
  * double authentification.
  *
+ * **Confirmé par le fondateur le 2026-09-11**, après exposé de l'alternative.
+ *
  * Ce choix a une conséquence dure, et elle est voulue : perdre un segment,
  * c'est perdre les données. L'alternative — N copies de la DEK, chacune
  * enveloppée par un code — serait plus indulgente, mais multiplierait par N les
- * cibles à voler pour un même secret.
+ * cibles à voler pour un même secret. Le problème d'oubli est réel ; il est
+ * ergonomique, et se traite par une feuille à imprimer et un enregistrement en
+ * un geste — pas en affaiblissant la protection.
  *
  * ## Lisibilité
  *

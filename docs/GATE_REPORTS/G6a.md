@@ -60,7 +60,7 @@ Condition de sortie de G6 (`RUN-42`) : **PKCE + `state`, échange côté serveur
 3. **PBKDF2 en JavaScript pur se comptera en secondes** sur un téléphone d'entrée de gamme. Une fois par déverrouillage, et l'écran devra annoncer l'attente plutôt que paraître figé.
 4. **Le secret de récupération n'est encore stocké nulle part.** L'écran le produit et le fait confirmer ; sa persistance — `expo-secure-store`, Keychain et Keystore — relève de G6b.
 5. **Aucune donnée réelle n'a transité.** Tout ce qui précède est prouvé sur du synthétique. C'est voulu, et cela reste une limite.
-6. **Un choix de conception à confirmer** : les « recovery codes » de `SEC-31` sont implémentés comme les segments d'**un seul** secret, tous nécessaires. Plus sûr, moins indulgent que N codes indépendants. Se change encore aujourd'hui.
+6. ~~Un choix de conception à confirmer~~ — **confirmé le 2026-09-11** : les « recovery codes » de `SEC-31` restent les segments d'**un seul** secret. Le risque d'oubli demeure, et se traitera par l'ergonomie de sauvegarde, jamais en affaiblissant la protection.
 
 ## OPEN DECISIONS
 
