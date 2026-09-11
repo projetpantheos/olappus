@@ -39,7 +39,8 @@ Le passage d’une source en `APPROVED` est une **action fondateur**, pas une ac
 - **G4 Demo Mode + Hélios** : moteurs déterministes, Demo Mode traversant les mêmes moteurs que la production, 14 catégories de fixtures adverses, navigation à quatre entrées, parcours de Case, écran de première valeur
 - **G6a — mécanisme OAuth** : PKCE et `state` éprouvés par un contrôle négatif par mode d'échec, `identity.connection` avec purge portée par contrainte, scopes en deny by default côté code **et** côté base
 - **Chiffrement L3 côté appareil** : interopérabilité serveur ↔ appareil vérifiée dans les deux sens ; ADR-0008 cesse de tenir par la seule forme du schéma
-- **Les trois parcours de confiance (`PRD-14` Journeys G, H, I)** : déconnexion qui explique que se déconnecter n’est pas supprimer, suppression qui **énumère ce qu’elle a vérifié et ce qu’elle ne peut pas vérifier**, permission demandée au niveau exact et au moment où elle sert
+- **Les quatre parcours de confiance (`PRD-14` Journeys B, G, H, I)** : la connexion refuse d’avancer tant que le secret de récupération n’existe pas — l’ordre de `SEC-31` devient visible à l’écran, pas seulement vrai en code
+- **Les trois parcours de contrôle (Journeys G, H, I)** : déconnexion qui explique que se déconnecter n’est pas supprimer, suppression qui **énumère ce qu’elle a vérifié et ce qu’elle ne peut pas vérifier**, permission demandée au niveau exact et au moment où elle sert
 - **Composants `ActionSheet`, `PermissionRow`, `StatusBadge`** : les sept éléments de `PRD-15` sont des propriétés requises, pas des options
 - **Coffre d’appareil (`SEC-31`, `SEC-35`)** : Keychain et Keystore par `expo-secure-store`, clé ne quittant pas l’appareil et exclue des sauvegardes, session de 12 h **purgée** à l’expiration et non seulement refusée ; le web annonce qu’il n’a pas de coffre au lieu d’écrire ailleurs
 - **Parcours de récupération (`SEC-31`)** : secret de 195 bits recopiable à la main, caractère de contrôle distinguant une faute de saisie d'une perte réelle, collecte refusée tant que le secret n'est pas créé **et** confirmé
@@ -93,7 +94,7 @@ Isolation entre utilisateurs **démontrée** par 16 tests. Schémas sensibles in
 
 ## Test status
 
-**499 tests, chaîne CI à EXIT 0** : 399 côté paquets (vitest) et 100 côté application mobile (jest-expo), dont **3 ignorés et annoncés**.
+**512 tests, chaîne CI à EXIT 0** : 399 côté paquets (vitest) et 113 côté application mobile (jest-expo), dont **3 ignorés et annoncés**.
 Dont, pour le chiffrement : 25 tests de primitives, 20 tests exécutés **par accès direct à la base** — la base refuse le clair à l'insertion comme à la mise à jour — et 7 tests de gouvernance du registre.
 
 `docs/TEST_MAP.md` relie les 40 tests d'acceptation P0 : **28 couverts, 8 partiels, 4 à venir, 0 non couvert**.

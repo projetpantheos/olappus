@@ -52,6 +52,7 @@ export default function RootLayout() {
         <Stack.Screen name="recuperation" options={{ title: 'Récupération' }} />
         <Stack.Screen name="recuperation/perte" options={{ title: 'Secret perdu' }} />
         <Stack.Screen name="deverrouillage" options={{ title: 'Déverrouiller' }} />
+        <Stack.Screen name="controle/connecter" options={{ title: 'Connecter un service' }} />
         <Stack.Screen name="controle/connexions" options={{ title: 'Services connectés' }} />
         <Stack.Screen name="controle/donnees" options={{ title: 'Mes données' }} />
         <Stack.Screen name="controle/permissions" options={{ title: 'Ce qu’Olappus peut faire' }} />

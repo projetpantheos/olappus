@@ -72,11 +72,14 @@ Un même nom pour deux rôles, c'est le type de divergence qui coûte cher plus 
 - Écran de provenance (`PRD-14` Journey J) : source → fait → preuve → confiance → statut → contradiction
 - Composants `SourceChip`, `StatusBadge`, `Timeline`
 
-### G6 — Connecteur
+### G6 — Connecteur — **FAIT le 2026-09-11**
 
-- Journey B complet : expliquer pourquoi, montrer le scope minimal, consentement, test de connexion
-- `PermissionRow`, `ActionSheet` complet (destinataire, données, impact, réversibilité, permission)
-- Journeys G (permission), H (suppression), I (déconnexion) — les trois écrans qui portent la promesse de confiance
+- ~~Journey B complet~~ : expliquer pourquoi, scope minimal, consentement, test de connexion. **Ajout non prévu au plan** : l'écran refuse de connecter tant que le secret de récupération n'est pas créé et confirmé, ce qui rend visible l'ordre imposé par `SEC-31`.
+- ~~`PermissionRow`, `ActionSheet` complet~~ : les sept éléments de `PRD-15` sont des propriétés **requises**, pas des options — un ActionSheet amputé ne compile pas.
+- ~~Journeys G, H, I~~ : les trois écrans de confiance. Journey H énumère ce que la suppression a vérifié **et** ce qu'elle ne peut pas vérifier — six emplacements sur douze existent.
+- Ajouté : `StatusBadge`, qui porte les quatre états du moteur de capacités.
+
+**6 composants sur 27.** Reste 21, répartis sur G7, G8 et G9.
 
 ### G7 — Modules domaine
 

@@ -15,6 +15,13 @@ import { color, fontFamily, fontSize, radius, spacing } from '../../theme/tokens
 
 const ENTREES = [
   {
+    href: '/controle/connecter',
+    titre: 'Connecter un service',
+    description:
+      'Ce qui sera demandé, ce qui restera impossible, et pourquoi votre secret de récupération doit exister avant.',
+    testID: 'entree-connecter',
+  },
+  {
     href: '/controle/connexions',
     titre: 'Services connectés',
     description:
