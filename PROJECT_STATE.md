@@ -39,6 +39,7 @@ Le passage d’une source en `APPROVED` est une **action fondateur**, pas une ac
 - **G4 Demo Mode + Hélios** : moteurs déterministes, Demo Mode traversant les mêmes moteurs que la production, 14 catégories de fixtures adverses, navigation à quatre entrées, parcours de Case, écran de première valeur
 - **G6a — mécanisme OAuth** : PKCE et `state` éprouvés par un contrôle négatif par mode d'échec, `identity.connection` avec purge portée par contrainte, scopes en deny by default côté code **et** côté base
 - **Chiffrement L3 côté appareil** : interopérabilité serveur ↔ appareil vérifiée dans les deux sens ; ADR-0008 cesse de tenir par la seule forme du schéma
+- **Coffre d’appareil (`SEC-31`, `SEC-35`)** : Keychain et Keystore par `expo-secure-store`, clé ne quittant pas l’appareil et exclue des sauvegardes, session de 12 h **purgée** à l’expiration et non seulement refusée ; le web annonce qu’il n’a pas de coffre au lieu d’écrire ailleurs
 - **Parcours de récupération (`SEC-31`)** : secret de 195 bits recopiable à la main, caractère de contrôle distinguant une faute de saisie d'une perte réelle, collecte refusée tant que le secret n'est pas créé **et** confirmé
 - **Journalisation et rédaction (`SEC-34`)** : point de passage unique, rédaction par nom de clé **et** par forme de valeur, erreurs structurées sur liste blanche, `no-console` passé d'avertissement à erreur — un contrôle qui n'échoue pas n'en est pas un
 - **Stratégie de cache (ADR-0018)** : OPEN-07 tranché sans dépendre d’un quota inconnu — aucune requête sur le chemin utilisateur, vérification quotidienne au plus, expiration par obsolescence juridique, plafond appris de la source
@@ -89,7 +90,7 @@ Isolation entre utilisateurs **démontrée** par 16 tests. Schémas sensibles in
 
 ## Test status
 
-**422 tests, chaîne CI à EXIT 0** : 384 côté paquets (vitest) et 38 côté application mobile (jest-expo).
+**447 tests, chaîne CI à EXIT 0** : 399 côté paquets (vitest) et 48 côté application mobile (jest-expo).
 Dont, pour le chiffrement : 25 tests de primitives, 20 tests exécutés **par accès direct à la base** — la base refuse le clair à l'insertion comme à la mise à jour — et 7 tests de gouvernance du registre.
 
 `docs/TEST_MAP.md` relie les 40 tests d'acceptation P0 : **28 couverts, 8 partiels, 4 à venir, 0 non couvert**.

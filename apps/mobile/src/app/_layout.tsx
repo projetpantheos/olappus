@@ -51,6 +51,7 @@ export default function RootLayout() {
             ouvre l'application. */}
         <Stack.Screen name="recuperation/index" options={{ title: 'Récupération' }} />
         <Stack.Screen name="recuperation/perte" options={{ title: 'Secret perdu' }} />
+        <Stack.Screen name="deverrouillage" options={{ title: 'Déverrouiller' }} />
       </Stack>
       <StatusBar style="dark" />
     </>

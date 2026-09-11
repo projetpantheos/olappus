@@ -6,7 +6,7 @@
 
 Statuts : **COUVERT** — une suite le vérifie · **PARTIEL** — vérifié en partie, la limite est dite · **À VENIR** — dépend d'une gate ultérieure · **NON COUVERT** — aucun plan à ce jour.
 
-Dernière mise à jour : 2026-09-11 (G6a — mécanisme OAuth, chiffrement client, récupération) · 422 tests exécutés.
+Dernière mise à jour : 2026-09-11 (coffre d’appareil et déverrouillage) · 447 tests exécutés.
 
 ## Produit
 
@@ -107,15 +107,17 @@ Les 40 tests d'acceptation de `RUN-24` ne couvrent pas tout ce que la matrice
 `SEC-23` exige. Ces suites-là n'ont donc pas de ligne dans le tableau
 ci-dessus, et se perdraient sans cette annexe.
 
-| Contrôle `SEC-23`                       | Suite                                                 | Ce qui est prouvé                                                                                        |
-| --------------------------------------- | ----------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| Sensitive fields encrypted              | `crypto.test.ts` (25 tests)                           | Altération rejetée, cryptogramme déplacé refusé, rotation lisible, secret perdu = donnée perdue          |
-| Sensitive fields encrypted              | `encryption.test.ts` (20 tests)                       | La **base** refuse le clair, à l'insertion comme à l'update ; aucune colonne de clé en clair             |
-| Sensitive fields encrypted              | `data-registry.test.ts` (7 des 18 tests)              | Tout champ L3/L4 déclare son sort au chiffrement ; toute dérogation porte sa justification               |
-| No secrets in repo                      | `secret-scan.test.ts` (9 tests)                       | Les règles du scanner sont éprouvées, y compris ce qu'elles ne prétendent pas couvrir                    |
-| Aucun jeton ni corps brut dans les logs | `logging.test.ts` (22 tests)                          | Rédaction par nom de clé **et** par forme de valeur ; erreurs sur liste blanche ; `no-console` en erreur |
-| PKCE + `state`                          | `oauth.test.ts` (31 tests)                            | Un contrôle négatif par mode d'échec ; `plain` jamais accepté ; rejeu et `state` inconnu indiscernables  |
-| Scopes minimaux                         | `connection.test.ts` (21 tests)                       | Deny by default en base ; un scope donnant accès au corps des messages ne peut pas être déclaré          |
-| Purge à la déconnexion                  | `connection.test.ts`                                  | Portée par contrainte : une connexion fermée **ne peut pas** détenir de jeton                            |
-| Chiffrement client (ADR-0008)           | `crypto-web.test.ts` (15 tests)                       | Interopérabilité serveur ↔ appareil dans les deux sens ; échec bruyant sans WebCrypto                    |
-| Informer avant de collecter             | `recovery.test.ts` (22), `recuperation.test.tsx` (13) | La collecte est refusée tant que le secret n'est pas créé **et** confirmé                                |
+| Contrôle `SEC-23`                       | Suite                                                 | Ce qui est prouvé                                                                                               |
+| --------------------------------------- | ----------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| Sensitive fields encrypted              | `crypto.test.ts` (25 tests)                           | Altération rejetée, cryptogramme déplacé refusé, rotation lisible, secret perdu = donnée perdue                 |
+| Sensitive fields encrypted              | `encryption.test.ts` (20 tests)                       | La **base** refuse le clair, à l'insertion comme à l'update ; aucune colonne de clé en clair                    |
+| Sensitive fields encrypted              | `data-registry.test.ts` (7 des 18 tests)              | Tout champ L3/L4 déclare son sort au chiffrement ; toute dérogation porte sa justification                      |
+| No secrets in repo                      | `secret-scan.test.ts` (9 tests)                       | Les règles du scanner sont éprouvées, y compris ce qu'elles ne prétendent pas couvrir                           |
+| Aucun jeton ni corps brut dans les logs | `logging.test.ts` (22 tests)                          | Rédaction par nom de clé **et** par forme de valeur ; erreurs sur liste blanche ; `no-console` en erreur        |
+| PKCE + `state`                          | `oauth.test.ts` (31 tests)                            | Un contrôle négatif par mode d'échec ; `plain` jamais accepté ; rejeu et `state` inconnu indiscernables         |
+| Scopes minimaux                         | `connection.test.ts` (21 tests)                       | Deny by default en base ; un scope donnant accès au corps des messages ne peut pas être déclaré                 |
+| Purge à la déconnexion                  | `connection.test.ts`                                  | Portée par contrainte : une connexion fermée **ne peut pas** détenir de jeton                                   |
+| Chiffrement client (ADR-0008)           | `crypto-web.test.ts` (15 tests)                       | Interopérabilité serveur ↔ appareil dans les deux sens ; échec bruyant sans WebCrypto                           |
+| Informer avant de collecter             | `recovery.test.ts` (22), `recuperation.test.tsx` (13) | La collecte est refusée tant que le secret n'est pas créé **et** confirmé                                       |
+| Matériel de clé dans le coffre natif    | `vault.test.ts` (15 tests)                            | Session expirée **purgée** et non seulement refusée ; le secret de récupération n'y a aucune place prévue       |
+| L'attente de dérivation est annoncée    | `deverrouillage.test.tsx` (10 tests)                  | La lenteur est expliquée, jamais excusée ; un mauvais secret et une clé qui n'ouvre pas donnent le même message |
