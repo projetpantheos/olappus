@@ -1,6 +1,6 @@
 # OLAPPUS — PROJECT STATE
 
-Dernière mise à jour : 2026-09-09 (chiffrement L3, avant G6)
+Dernière mise à jour : 2026-09-11 (G6a)
 Ce fichier est le **seul** porteur de l'état d'avancement. `project.manifest.json` ne porte que les invariants et les conventions.
 
 ## Current phase
@@ -37,6 +37,9 @@ Le passage d’une source en `APPROVED` est une **action fondateur**, pas une ac
 - **Spécifications de sécurité** : `SEC-31`, `SEC-33`, `SEC-34`, `SEC-35`, `DAT-43`
 - **G3 Core contracts** : contrats CQE avec validation runtime stricte, idempotence portée par la base, Safe Mode, machine à états des actions, Detection/Evidence/Outcome/Merchant/règles juridiques, manifestes de modules, lint d'isolation, moteur de capacités `ARC-41`, `docs/TEST_MAP.md`
 - **G4 Demo Mode + Hélios** : moteurs déterministes, Demo Mode traversant les mêmes moteurs que la production, 14 catégories de fixtures adverses, navigation à quatre entrées, parcours de Case, écran de première valeur
+- **G6a — mécanisme OAuth** : PKCE et `state` éprouvés par un contrôle négatif par mode d'échec, `identity.connection` avec purge portée par contrainte, scopes en deny by default côté code **et** côté base
+- **Chiffrement L3 côté appareil** : interopérabilité serveur ↔ appareil vérifiée dans les deux sens ; ADR-0008 cesse de tenir par la seule forme du schéma
+- **Parcours de récupération (`SEC-31`)** : secret de 195 bits recopiable à la main, caractère de contrôle distinguant une faute de saisie d'une perte réelle, collecte refusée tant que le secret n'est pas créé **et** confirmé
 - **Journalisation et rédaction (`SEC-34`)** : point de passage unique, rédaction par nom de clé **et** par forme de valeur, erreurs structurées sur liste blanche, `no-console` passé d'avertissement à erreur — un contrôle qui n'échoue pas n'en est pas un
 - **Stratégie de cache (ADR-0018)** : OPEN-07 tranché sans dépendre d’un quota inconnu — aucune requête sur le chemin utilisateur, vérification quotidienne au plus, expiration par obsolescence juridique, plafond appris de la source
 - **G5 Muses + License Gate** : schéma `knowledge` (source, fact, proposal, review, certification, conflict), License Gate porté par déclencheur, contrainte rendant `APPROVED` impossible sans licence vérifiée, quorum compté par origine et non par compte, contradictions conservées, validité temporelle, suspension sans suppression, écran de provenance
@@ -86,7 +89,7 @@ Isolation entre utilisateurs **démontrée** par 16 tests. Schémas sensibles in
 
 ## Test status
 
-**318 tests, chaîne CI à EXIT 0** : 293 côté paquets (vitest) et 25 côté application mobile (jest-expo).
+**422 tests, chaîne CI à EXIT 0** : 384 côté paquets (vitest) et 38 côté application mobile (jest-expo).
 Dont, pour le chiffrement : 25 tests de primitives, 20 tests exécutés **par accès direct à la base** — la base refuse le clair à l'insertion comme à la mise à jour — et 7 tests de gouvernance du registre.
 
 `docs/TEST_MAP.md` relie les 40 tests d'acceptation P0 : **28 couverts, 8 partiels, 4 à venir, 0 non couvert**.
@@ -103,6 +106,10 @@ Puis ouvrir l’onglet Protection et juger : le produit vous dit ce qu’il ne s
 
 ## Next Claude action
 
-**G6 — Hermès / connexions externes.** La gate est **RED** dans la matrice d'autonomie (authentification, sécurité) : elle demande votre validation explicite avant d'être ouverte.
+**G6b — le connecteur Google réel.** G6a est terminée : le mécanisme est éprouvé sans aucun compte externe ni donnée personnelle.
+
+Deux points restent à trancher avant d'ouvrir G6b, et ils sont à vous : **où s'exécute l'échange de code contre jeton** (`docs/15` impose un échange côté serveur, or il n'y a pas de serveur applicatif) et **comment obtenir WebCrypto sur iOS et Android**, où React Native ne l'expose pas.
+
+_Rappel :_ la gate G6 est **RED** dans la matrice d'autonomie (authentification, sécurité) : elle demande votre validation explicite avant d'être ouverte.
 
 Deux de ses conditions de sortie sont déjà tenues, délibérément écrites avant le connecteur : le chiffrement L3 (`SEC-31`) et la rédaction des journaux (`SEC-34`). Il reste, dans la gate elle-même : PKCE et `state`, échange côté serveur, scopes minimaux, purge à la déconnexion — plus le parcours de recovery codes d'ADR-0008, sans lequel la clé de chiffrement existe mais n'est jamais remise à l'utilisateur.

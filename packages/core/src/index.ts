@@ -54,6 +54,7 @@ export * from './oauth';
 // l'appareil, jamais sur le serveur.
 export * from './crypto-envelope';
 export * from './crypto-web';
+export * from './recovery';
 
 // './crypto' n'est PAS réexporté ici, délibérément. Il dépend de `node:crypto`
 // et se retrouverait dans le bundle client, qui ne peut pas l’exécuter — du

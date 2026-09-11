@@ -46,6 +46,11 @@ export default function RootLayout() {
         <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="case/[id]" options={{ title: 'Situation' }} />
+        {/* Sans ces deux lignes, l'en-tête affiche « RECUPERATION/INDEX » —
+            le nom de route brut. Défaut invisible aux tests, visible dès qu'on
+            ouvre l'application. */}
+        <Stack.Screen name="recuperation/index" options={{ title: 'Récupération' }} />
+        <Stack.Screen name="recuperation/perte" options={{ title: 'Secret perdu' }} />
       </Stack>
       <StatusBar style="dark" />
     </>

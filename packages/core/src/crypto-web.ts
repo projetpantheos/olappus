@@ -68,6 +68,27 @@ export function platformCrypto(): WebCryptoLike {
   return candidate as WebCryptoLike;
 }
 
+/**
+ * Aléa cryptographique seul, sans exiger `subtle`.
+ *
+ * Générer un secret de récupération ne demande que des octets imprévisibles.
+ * Exiger `subtle` pour cela couplerait deux capacités sans rapport, et
+ * rendrait le parcours de récupération indisponible sur une plateforme où le
+ * chiffrement, lui, le serait par un autre chemin.
+ */
+export function platformRandom(): (length: number) => Uint8Array {
+  const candidate = (globalThis as { crypto?: Partial<WebCryptoLike> }).crypto;
+  if (candidate === undefined || typeof candidate.getRandomValues !== 'function') {
+    throw new CryptoError(
+      'Aucun générateur cryptographique sur cette plateforme. ' +
+        'Aucun repli n’est tenté : un secret tiré d’un aléa faible donnerait ' +
+        'l’apparence d’une protection.',
+    );
+  }
+  const getRandomValues = candidate.getRandomValues.bind(candidate);
+  return (length) => getRandomValues(new Uint8Array(length));
+}
+
 function base64UrlSafeEncode(bytes: Uint8Array): string {
   let binary = '';
   for (const byte of bytes) binary += String.fromCharCode(byte);
