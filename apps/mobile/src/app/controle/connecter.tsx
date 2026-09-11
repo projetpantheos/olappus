@@ -1,8 +1,19 @@
 import { ALLOWED_SCOPES, canCollectSensitiveData, missingBeforeCollection } from '@olappus/core';
 import { Link } from 'expo-router';
 import { useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text } from 'react-native';
 
+import {
+  Body,
+  Bullet,
+  Button,
+  Caption,
+  Card,
+  Label,
+  Page,
+  Strong,
+  Title,
+} from '../../components/layout';
 import { StatusBadge } from '../../components/status-badge';
 import { color, fontFamily, fontSize, radius, spacing } from '../../theme/tokens';
 
@@ -19,9 +30,6 @@ import { color, fontFamily, fontSize, radius, spacing } from '../../theme/tokens
  * connecter quoi que ce soit tant que le secret de récupération n'est pas créé
  * **et** confirmé — et il dit ce qui manque plutôt que de griser un bouton
  * sans explication.
- *
- * C'est le même ordre que celui tenu depuis le début : construire la
- * protection avant la chose qu'elle protège.
  *
  * ## Le test de connexion
  *
@@ -52,227 +60,129 @@ export default function ConnecterScreen({
   const [teste, setTeste] = useState(false);
 
   const pret = canCollectSensitiveData(recovery);
-  const manquant = missingBeforeCollection(recovery);
 
   return (
-    <ScrollView style={styles.screen} contentContainerStyle={styles.content} testID="connecter">
-      <View style={styles.notice} accessibilityRole="summary" testID="pourquoi">
-        <Text style={styles.noticeTitre}>Pourquoi connecter votre messagerie</Text>
-        <Text style={styles.body}>
+    <Page testID="connecter">
+      <Card testID="pourquoi">
+        <Title>Pourquoi connecter votre messagerie</Title>
+        <Body>
           Vos droits de consommateur naissent d’un achat : garantie, rétractation, résiliation. La
           trace d’un achat arrive presque toujours par courriel.
-        </Text>
-        <Text style={styles.body}>
+        </Body>
+        <Body>
           Sans cette connexion, Olappus ne peut que vous montrer des exemples. Avec elle, il regarde
           vos propres situations — et rien d’autre.
-        </Text>
-      </View>
+        </Body>
+      </Card>
 
       {!pret && (
-        <View style={styles.prealable} accessibilityRole="alert" testID="prealable">
-          <Text style={styles.prealableTitre}>Une chose doit être faite avant</Text>
-          <Text style={styles.body}>
+        <Card tone="warning" emphasis accessibilityRole="alert" testID="prealable">
+          <Title>Une chose doit être faite avant</Title>
+          <Body>
             Vos données seront chiffrées avec une clé qui n’appartient qu’à vous. Il faut donc
             qu’elle existe avant qu’elles arrivent — être prévenu après coup ne sert à rien.
-          </Text>
-          {manquant.map((phrase) => (
-            <Text key={phrase} style={styles.manque}>
-              • {phrase}
-            </Text>
+          </Body>
+          {missingBeforeCollection(recovery).map((phrase) => (
+            <Bullet key={phrase}>{phrase}</Bullet>
           ))}
           <Link href="/recuperation" asChild>
             <Pressable
-              style={styles.cta}
+              style={styles.lien}
               accessibilityRole="link"
               accessibilityLabel="Créer mon secret de récupération"
               testID="cta-recuperation"
             >
-              <Text style={styles.ctaLabel}>Créer mon secret de récupération</Text>
+              <Text style={styles.lienLabel}>Créer mon secret de récupération</Text>
             </Pressable>
           </Link>
-        </View>
+        </Card>
       )}
 
-      <Text style={styles.sectionTitre} accessibilityRole="header">
-        Ce que nous demandons, et rien de plus
-      </Text>
+      <Title level="section">Ce que nous demandons, et rien de plus</Title>
 
-      <View style={styles.scope} accessibilityRole="summary" testID="scope">
-        <Text style={styles.scopeTitre}>
+      <Card testID="scope">
+        <Strong>
           {SCOPES_DEMANDES.length === 1
             ? 'Une seule autorisation'
             : `${String(SCOPES_DEMANDES.length)} autorisations`}
-        </Text>
+        </Strong>
         {SCOPES_DEMANDES.map((scope) => (
-          <Text key={scope} style={styles.scopeCode}>
-            {scope}
-          </Text>
+          <Caption key={scope}>{scope}</Caption>
         ))}
 
-        <Text style={styles.libelle}>Ce que cela permet</Text>
+        <Label>Ce que cela permet</Label>
         {CE_QUE_CELA_PERMET.map((element) => (
-          <Text key={element} style={styles.detail}>
-            • {element}
-          </Text>
+          <Bullet key={element}>{element}</Bullet>
         ))}
 
-        <Text style={styles.libelle}>Ce qui reste impossible</Text>
+        <Label>Ce qui reste impossible</Label>
         {CE_QUI_RESTE_IMPOSSIBLE.map((element) => (
-          <Text key={element} style={styles.detail}>
-            • {element}
-          </Text>
+          <Bullet key={element}>{element}</Bullet>
         ))}
-      </View>
+      </Card>
 
-      <Text style={styles.footnote}>
+      <Caption>
         Cette liste n’est pas une intention : demander davantage est refusé par le code et par la
         base. Un accès plus large ne peut pas être enregistré, même par erreur.
-      </Text>
+      </Caption>
 
       {pret && !consenti && (
-        <Pressable
-          style={styles.cta}
+        <Button
+          label="Autoriser cet accès"
           onPress={() => {
             setConsenti(true);
           }}
-          accessibilityRole="button"
           accessibilityLabel="Autoriser cet accès et connecter"
           testID="cta-consentir"
-        >
-          <Text style={styles.ctaLabel}>Autoriser cet accès</Text>
-        </Pressable>
+        />
       )}
 
       {consenti && !teste && (
-        <View style={styles.epreuve} accessibilityRole="summary" testID="epreuve">
-          <Text style={styles.sectionTitre}>Éprouvons la connexion</Text>
-          <Text style={styles.body}>
+        <Card testID="epreuve">
+          <Title>Éprouvons la connexion</Title>
+          <Body>
             Nous n’annonçons pas « connecté » avant d’avoir vérifié. Un succès annoncé sans preuve
             reporte simplement la déception au premier usage.
-          </Text>
-          <Pressable
-            style={styles.cta}
+          </Body>
+          <Button
+            label="Vérifier la connexion"
             onPress={() => {
               setTeste(true);
             }}
-            accessibilityRole="button"
             accessibilityLabel="Vérifier que la connexion fonctionne"
             testID="cta-tester"
-          >
-            <Text style={styles.ctaLabel}>Vérifier la connexion</Text>
-          </Pressable>
-        </View>
+          />
+        </Card>
       )}
 
       {teste && (
-        <View style={styles.resultat} accessibilityRole="summary" testID="resultat-test">
+        <Card testID="resultat-test">
           <StatusBadge
             state="UNKNOWN"
             reason="Aucun fournisseur réel n’est encore branché : la vérification ne peut pas conclure."
             testID="etat-connexion"
           />
-          <Text style={styles.body}>
+          <Body>
             Le mécanisme fonctionne, la connexion réelle arrive avec le connecteur. Olappus préfère
             vous dire qu’il ne sait pas plutôt que d’afficher un succès qui n’en est pas un.
-          </Text>
-        </View>
+          </Body>
+        </Card>
       )}
-    </ScrollView>
+    </Page>
   );
 }
 
+/** Un lien d'apparence de bouton : `Button` ne sait pas naviguer. */
 const styles = StyleSheet.create({
-  screen: { backgroundColor: color.surface.ivory, flex: 1 },
-  content: { gap: spacing.lg, padding: spacing.lg },
-  notice: {
-    backgroundColor: color.surface.white,
-    borderColor: color.border.default,
-    borderRadius: radius.lg,
-    borderWidth: 1,
-    gap: spacing.sm,
-    padding: spacing.lg,
-  },
-  noticeTitre: {
-    color: color.text.primary,
-    fontFamily: fontFamily.bodyStrong,
-    fontSize: fontSize.subtitle,
-  },
-  prealable: {
-    backgroundColor: color.surface.white,
-    borderColor: color.semantic.warning,
-    borderRadius: radius.lg,
-    borderWidth: 2,
-    gap: spacing.sm,
-    padding: spacing.lg,
-  },
-  prealableTitre: {
-    color: color.text.primary,
-    fontFamily: fontFamily.bodyStrong,
-    fontSize: fontSize.subtitle,
-  },
-  manque: { color: color.text.primary, fontFamily: fontFamily.body, fontSize: fontSize.body },
-  sectionTitre: {
-    color: color.text.primary,
-    fontFamily: fontFamily.bodyStrong,
-    fontSize: fontSize.body,
-  },
-  scope: {
-    backgroundColor: color.surface.white,
-    borderColor: color.border.default,
-    borderRadius: radius.md,
-    borderWidth: 1,
-    gap: spacing.xs,
-    padding: spacing.lg,
-  },
-  scopeTitre: {
-    color: color.text.primary,
-    fontFamily: fontFamily.bodyStrong,
-    fontSize: fontSize.body,
-  },
-  scopeCode: {
-    color: color.text.secondary,
-    fontFamily: fontFamily.body,
-    fontSize: fontSize.caption,
-  },
-  libelle: {
-    color: color.text.secondary,
-    fontFamily: fontFamily.body,
-    fontSize: fontSize.caption,
-    marginTop: spacing.sm,
-    textTransform: 'uppercase',
-  },
-  detail: { color: color.text.primary, fontFamily: fontFamily.body, fontSize: fontSize.body },
-  footnote: {
-    color: color.text.secondary,
-    fontFamily: fontFamily.body,
-    fontSize: fontSize.caption,
-  },
-  cta: {
+  lien: {
     alignItems: 'center',
     backgroundColor: color.semantic.attention,
     borderRadius: radius.md,
     padding: spacing.lg,
   },
-  ctaLabel: {
+  lienLabel: {
     color: color.surface.white,
     fontFamily: fontFamily.bodyStrong,
     fontSize: fontSize.body,
   },
-  epreuve: {
-    backgroundColor: color.surface.white,
-    borderColor: color.border.default,
-    borderRadius: radius.md,
-    borderWidth: 1,
-    gap: spacing.sm,
-    padding: spacing.lg,
-  },
-  resultat: {
-    backgroundColor: color.surface.white,
-    borderColor: color.border.default,
-    borderRadius: radius.md,
-    borderWidth: 1,
-    gap: spacing.sm,
-    padding: spacing.lg,
-  },
-  body: { color: color.text.secondary, fontFamily: fontFamily.body, fontSize: fontSize.body },
 });

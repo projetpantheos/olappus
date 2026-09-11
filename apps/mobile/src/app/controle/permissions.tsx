@@ -1,11 +1,10 @@
 import type { PermissionLevel } from '@olappus/core';
 import { useState } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { ActionSheet } from '../../components/action-sheet';
+import { Body, Caption, Card, Page, Title } from '../../components/layout';
 import { PermissionRow } from '../../components/permission-row';
 import { NIVEAUX_PROPOSES } from '../../demo/controle';
-import { color, fontFamily, fontSize, radius, spacing } from '../../theme/tokens';
 
 /**
  * Permission — `PRD-14` Journey G.
@@ -24,26 +23,24 @@ export default function PermissionsScreen() {
   const [execute, setExecute] = useState(false);
 
   return (
-    <ScrollView style={styles.screen} contentContainerStyle={styles.content} testID="permissions">
-      <View style={styles.blocage} accessibilityRole="alert" testID="action-bloquee">
-        <Text style={styles.blocageTitre}>Cette action est bloquée</Text>
-        <Text style={styles.body}>
+    <Page testID="permissions">
+      <Card tone="warning" emphasis accessibilityRole="alert" testID="action-bloquee">
+        <Title>Cette action est bloquée</Title>
+        <Body>
           Olappus a repéré un abonnement dont le prix a augmenté, et sait rédiger la demande de
           résiliation. Il ne peut rien faire de plus sans votre accord.
-        </Text>
-      </View>
+        </Body>
+      </Card>
 
-      <View style={styles.pourquoi} accessibilityRole="summary" testID="pourquoi">
-        <Text style={styles.sectionTitre}>Pourquoi cet accord est nécessaire</Text>
-        <Text style={styles.body}>
+      <Card testID="pourquoi">
+        <Title>Pourquoi cet accord est nécessaire</Title>
+        <Body>
           Envoyer une demande engage quelque chose en votre nom. Nous ne le ferons jamais sans que
           vous ayez dit jusqu’où vous allez.
-        </Text>
-      </View>
+        </Body>
+      </Card>
 
-      <Text style={styles.sectionTitre} accessibilityRole="header">
-        Jusqu’où Olappus peut aller
-      </Text>
+      <Title level="section">Jusqu’où Olappus peut aller</Title>
 
       {NIVEAUX_PROPOSES.map((option) => (
         <PermissionRow
@@ -61,10 +58,10 @@ export default function PermissionsScreen() {
         />
       ))}
 
-      <Text style={styles.footnote} testID="auto-execute-absent">
+      <Caption testID="auto-execute-absent">
         L’exécution automatique, sans confirmation, n’est pas proposée. Olappus n’engage jamais une
         démarche que vous n’avez pas vue partir.
-      </Text>
+      </Caption>
 
       {accorde !== null && !execute && (
         <ActionSheet
@@ -85,60 +82,15 @@ export default function PermissionsScreen() {
       )}
 
       {execute && (
-        <View style={styles.journal} accessibilityRole="summary" testID="journal-audit">
-          <Text style={styles.sectionTitre}>Inscrit au journal</Text>
-          <Text style={styles.body}>
+        <Card tone="success" testID="journal-audit">
+          <Title>Inscrit au journal</Title>
+          <Body>
             La demande est partie, et la trace en est conservée : quoi, quand, sur quelle
             autorisation. Ce journal est anonymisé à la clôture et ne peut pas être réécrit — il
             existe pour vous, pas pour nous.
-          </Text>
-        </View>
+          </Body>
+        </Card>
       )}
-    </ScrollView>
+    </Page>
   );
 }
-
-const styles = StyleSheet.create({
-  screen: { backgroundColor: color.surface.ivory, flex: 1 },
-  content: { gap: spacing.lg, padding: spacing.lg },
-  blocage: {
-    backgroundColor: color.surface.white,
-    borderColor: color.semantic.warning,
-    borderRadius: radius.lg,
-    borderWidth: 2,
-    gap: spacing.sm,
-    padding: spacing.lg,
-  },
-  blocageTitre: {
-    color: color.text.primary,
-    fontFamily: fontFamily.bodyStrong,
-    fontSize: fontSize.subtitle,
-  },
-  pourquoi: {
-    backgroundColor: color.surface.white,
-    borderColor: color.border.default,
-    borderRadius: radius.md,
-    borderWidth: 1,
-    gap: spacing.sm,
-    padding: spacing.lg,
-  },
-  sectionTitre: {
-    color: color.text.primary,
-    fontFamily: fontFamily.bodyStrong,
-    fontSize: fontSize.body,
-  },
-  footnote: {
-    color: color.text.secondary,
-    fontFamily: fontFamily.body,
-    fontSize: fontSize.caption,
-  },
-  journal: {
-    backgroundColor: color.surface.white,
-    borderColor: color.semantic.success,
-    borderRadius: radius.md,
-    borderWidth: 1,
-    gap: spacing.sm,
-    padding: spacing.lg,
-  },
-  body: { color: color.text.secondary, fontFamily: fontFamily.body, fontSize: fontSize.body },
-});

@@ -33,12 +33,39 @@ export const spacing = { xs: 4, sm: 8, md: 12, lg: 16, xl: 24, xxl: 32 } as cons
 
 export const radius = { sm: 8, md: 12, lg: 16, xl: 24 } as const;
 
+/**
+ * Échelle typographique — reprise de `PRD-16`, qui en propose huit degrés.
+ *
+ * Cinq seulement sont exposés ici, et c'est délibéré : une échelle qu'on
+ * n'utilise pas n'est pas une échelle. `section` (20) a été ajoutée le
+ * 2026-09-11 parce que les écrans faisaient porter les titres de section par
+ * `body` — l'œil n'avait alors aucun palier entre le titre d'écran et le
+ * texte courant, et toute la page paraissait plate.
+ */
 export const fontSize = {
   caption: 12,
   body: 16,
   subtitle: 18,
+  section: 20,
   title: 24,
   display: 34,
+} as const;
+
+/**
+ * Profondeur — `docs/04` : « ombre très légère, jamais noire dure ».
+ *
+ * Une seule élévation, appliquée aux surfaces qui portent une décision.
+ * Multiplier les niveaux d'ombre reviendrait à hiérarchiser par la lumière ce
+ * que la typographie hiérarchise déjà.
+ */
+export const elevation = {
+  card: {
+    shadowColor: '#17252A',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 3,
+    elevation: 1,
+  },
 } as const;
 
 /**

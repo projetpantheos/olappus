@@ -1,6 +1,17 @@
 import { useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
+import {
+  Body,
+  Bullet,
+  Button,
+  Caption,
+  Card,
+  Label,
+  Page,
+  Strong,
+  Title,
+} from '../../components/layout';
 import { CATEGORIES, VERIFICATION_SUPPRESSION } from '../../demo/controle';
 import { color, fontFamily, fontSize, radius, spacing } from '../../theme/tokens';
 
@@ -30,14 +41,14 @@ export default function DonneesScreen() {
   const selection = CATEGORIES.filter((c) => choisies.includes(c.id));
 
   return (
-    <ScrollView style={styles.screen} contentContainerStyle={styles.content} testID="donnees">
-      <View style={styles.notice} accessibilityRole="summary">
-        <Text style={styles.noticeTitre}>Vos données, catégorie par catégorie</Text>
-        <Text style={styles.body}>
+    <Page testID="donnees">
+      <Card>
+        <Title>Vos données, catégorie par catégorie</Title>
+        <Body>
           Choisissez ce que vous voulez supprimer. Chaque catégorie dit ce qu’elle contient et ce
           que sa disparition change.
-        </Text>
-      </View>
+        </Body>
+      </Card>
 
       {CATEGORIES.map((categorie) => (
         <Pressable
@@ -51,45 +62,41 @@ export default function DonneesScreen() {
           accessibilityLabel={`${categorie.titre}. ${choisies.includes(categorie.id) ? 'Sélectionnée' : 'Non sélectionnée'}.`}
           testID={`categorie-${categorie.id}`}
         >
-          <Text style={styles.titre}>{categorie.titre}</Text>
-          <Text style={styles.body}>{categorie.contenu}</Text>
-          <Text style={styles.libelle}>Ce que la suppression change</Text>
+          <Strong>{categorie.titre}</Strong>
+          <Body>{categorie.contenu}</Body>
+          <Label>Ce que la suppression change</Label>
           <Text style={styles.impact}>{categorie.impactSuppression}</Text>
-          <Text style={styles.export}>
+          <Caption>
             {categorie.exportable
               ? 'Exportable avant suppression.'
               : 'Non exportable : il n’y a rien de lisible à emporter.'}
-          </Text>
+          </Caption>
         </Pressable>
       ))}
 
       {selection.length > 0 && !supprime && (
-        <View style={styles.confirmation} testID="confirmation">
-          <Text style={styles.titre}>Avant de supprimer</Text>
-          <Text style={styles.body}>
+        <Card tone="critical" emphasis testID="confirmation">
+          <Title>Avant de supprimer</Title>
+          <Body>
             {selection.length === 1
               ? 'Une catégorie sera supprimée :'
               : `${String(selection.length)} catégories seront supprimées :`}
-          </Text>
+          </Body>
           {selection.map((categorie) => (
-            <Text key={categorie.id} style={styles.impact}>
-              • {categorie.impactSuppression}
-            </Text>
+            <Bullet key={categorie.id}>{categorie.impactSuppression}</Bullet>
           ))}
 
-          <Pressable
-            style={styles.secondaire}
+          <Button
+            label="Exporter d’abord"
+            variant="secondary"
             onPress={() => undefined}
-            accessibilityRole="button"
-            accessibilityLabel="Exporter d’abord"
             accessibilityHint="Emporter une copie lisible avant de supprimer"
             testID="cta-exporter"
-          >
-            <Text style={styles.secondaireLabel}>Exporter d’abord</Text>
-          </Pressable>
+          />
 
-          <Pressable
-            style={[styles.cta, confirme && styles.ctaDanger]}
+          <Button
+            label={confirme ? 'Confirmer : c’est sans retour' : 'Supprimer'}
+            variant={confirme ? 'danger' : 'secondary'}
             onPress={() => {
               if (confirme) {
                 setSupprime(true);
@@ -99,61 +106,46 @@ export default function DonneesScreen() {
                 setConfirme(true);
               }
             }}
-            accessibilityRole="button"
             accessibilityLabel={
               confirme ? 'Supprimer définitivement, sans retour possible' : 'Supprimer'
             }
             testID="cta-supprimer"
-          >
-            <Text style={styles.ctaLabel}>
-              {confirme ? 'Confirmer : c’est sans retour' : 'Supprimer'}
-            </Text>
-          </Pressable>
-        </View>
+          />
+        </Card>
       )}
 
       {supprime && (
-        <View style={styles.verification} accessibilityRole="summary" testID="verification">
-          <Text style={styles.titre}>Ce qui a été vérifié</Text>
-          <Text style={styles.body}>
+        <Card testID="verification">
+          <Title>Ce qui a été vérifié</Title>
+          <Body>
             La suppression n’est pas annoncée, elle est constatée. Voici où nous avons vérifié qu’il
             ne reste rien.
-          </Text>
+          </Body>
           {VERIFICATION_SUPPRESSION.verifies.map((emplacement) => (
             <Text key={emplacement} style={styles.verifie}>
               ✓ {emplacement}
             </Text>
           ))}
 
-          <Text style={styles.titre}>Ce que nous ne pouvons pas encore vérifier</Text>
+          <Title>Ce que nous ne pouvons pas encore vérifier</Title>
           {VERIFICATION_SUPPRESSION.nonVerifiables.map((element) => (
-            <View key={element.emplacement} style={styles.nonVerifie}>
-              <Text style={styles.nonVerifieTitre}>{element.emplacement}</Text>
-              <Text style={styles.body}>{element.pourquoi}</Text>
+            <View key={element.emplacement}>
+              <Text style={styles.nonVerifie}>{element.emplacement}</Text>
+              <Body>{element.pourquoi}</Body>
             </View>
           ))}
-        </View>
+        </Card>
       )}
-    </ScrollView>
+    </Page>
   );
 }
 
+/**
+ * Ne subsistent ici que la carte sélectionnable — un composant à part entière
+ * le jour où un second écran en aura besoin — et les deux marques de
+ * vérification, propres à ce parcours.
+ */
 const styles = StyleSheet.create({
-  screen: { backgroundColor: color.surface.ivory, flex: 1 },
-  content: { gap: spacing.lg, padding: spacing.lg },
-  notice: {
-    backgroundColor: color.surface.white,
-    borderColor: color.border.default,
-    borderRadius: radius.lg,
-    borderWidth: 1,
-    gap: spacing.sm,
-    padding: spacing.lg,
-  },
-  noticeTitre: {
-    color: color.text.primary,
-    fontFamily: fontFamily.bodyStrong,
-    fontSize: fontSize.subtitle,
-  },
   carte: {
     backgroundColor: color.surface.white,
     borderColor: color.border.default,
@@ -163,71 +155,11 @@ const styles = StyleSheet.create({
     padding: spacing.lg,
   },
   carteChoisie: { borderColor: color.semantic.critical, borderWidth: 2 },
-  titre: {
-    color: color.text.primary,
-    fontFamily: fontFamily.bodyStrong,
-    fontSize: fontSize.body,
-    marginTop: spacing.sm,
-  },
-  libelle: {
-    color: color.text.secondary,
-    fontFamily: fontFamily.body,
-    fontSize: fontSize.caption,
-    marginTop: spacing.sm,
-    textTransform: 'uppercase',
-  },
   impact: { color: color.text.primary, fontFamily: fontFamily.body, fontSize: fontSize.body },
-  export: {
-    color: color.text.secondary,
-    fontFamily: fontFamily.body,
-    fontSize: fontSize.caption,
-  },
-  confirmation: {
-    backgroundColor: color.surface.white,
-    borderColor: color.semantic.critical,
-    borderRadius: radius.lg,
-    borderWidth: 2,
-    gap: spacing.sm,
-    padding: spacing.lg,
-  },
-  secondaire: {
-    alignItems: 'center',
-    borderColor: color.border.default,
-    borderRadius: radius.md,
-    borderWidth: 1,
-    padding: spacing.lg,
-  },
-  secondaireLabel: {
-    color: color.text.primary,
-    fontFamily: fontFamily.body,
-    fontSize: fontSize.body,
-  },
-  cta: {
-    alignItems: 'center',
-    backgroundColor: color.semantic.neutral,
-    borderRadius: radius.md,
-    padding: spacing.lg,
-  },
-  ctaDanger: { backgroundColor: color.semantic.critical },
-  ctaLabel: {
-    color: color.surface.white,
-    fontFamily: fontFamily.bodyStrong,
-    fontSize: fontSize.body,
-  },
-  verification: {
-    backgroundColor: color.surface.white,
-    borderColor: color.border.default,
-    borderRadius: radius.lg,
-    borderWidth: 1,
-    gap: spacing.xs,
-    padding: spacing.lg,
-  },
   verifie: { color: color.semantic.success, fontFamily: fontFamily.body, fontSize: fontSize.body },
-  nonVerifie: { gap: spacing.xs, marginTop: spacing.sm },
-  nonVerifieTitre: {
+  nonVerifie: {
     color: color.semantic.warning,
     fontFamily: fontFamily.bodyStrong,
     fontSize: fontSize.body,
   },
-  body: { color: color.text.secondary, fontFamily: fontFamily.body, fontSize: fontSize.body },
 });
