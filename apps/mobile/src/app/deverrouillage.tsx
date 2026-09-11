@@ -1,15 +1,8 @@
 import { checkRecoverySecret } from '@olappus/core';
 import { useState } from 'react';
-import {
-  ActivityIndicator,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
+import { ActivityIndicator, StyleSheet, TextInput, View } from 'react-native';
 
+import { Body, Button, Card, Page, Strong, Title } from '../components/layout';
 import { hasDeviceVault } from '../vault/secure-store';
 import { color, fontFamily, fontSize, radius, spacing } from '../theme/tokens';
 
@@ -26,12 +19,10 @@ import { color, fontFamily, fontSize, radius, spacing } from '../theme/tokens';
  * écran qui prévient passe pour un travail.
  *
  * **Dire où va la clé.** Sur téléphone, elle est rangée dans le coffre du
- * système et l'utilisateur n'aura pas à ressaisir son secret avant douze
- * heures. Sur le web, il n'y a pas de coffre : le secret sera redemandé, et
+ * système. Sur le web, il n'y a pas de coffre : le secret sera redemandé, et
  * l'écran le dit plutôt que de le laisser découvrir.
  */
 
-/** Ce qui ne va pas dans la saisie. Jamais un code d'erreur. */
 const RAISONS: Readonly<Record<string, string>> = {
   length: 'Il manque des caractères, ou il y en a trop. Le secret en compte 40, en 8 groupes.',
   alphabet: 'Un caractère n’appartient pas au secret. Vérifiez votre recopie.',
@@ -85,21 +76,17 @@ export default function DeverrouillageScreen({ onUnlock = NO_OP }: Deverrouillag
   }
 
   return (
-    <ScrollView
-      style={styles.screen}
-      contentContainerStyle={styles.content}
-      testID="deverrouillage-screen"
-    >
-      <View style={styles.notice} accessibilityRole="summary">
-        <Text style={styles.noticeTitle}>Vos données sont verrouillées</Text>
-        <Text style={styles.body}>
+    <Page testID="deverrouillage-screen">
+      <Card>
+        <Title>Vos données sont verrouillées</Title>
+        <Body>
           Saisissez votre secret de récupération pour les rouvrir. Personne d’autre ne peut le faire
           à votre place — nous non plus.
-        </Text>
-      </View>
+        </Body>
+      </Card>
 
       <TextInput
-        style={styles.input}
+        style={styles.champ}
         value={saisie}
         onChangeText={setSaisie}
         placeholder="ABCDE-FGHJK-…"
@@ -112,72 +99,53 @@ export default function DeverrouillageScreen({ onUnlock = NO_OP }: Deverrouillag
       />
 
       {erreur !== null && (
-        <View style={styles.erreur} accessibilityRole="alert" testID="erreur-saisie">
-          <Text style={styles.body}>{erreur}</Text>
-        </View>
+        <Card tone="warning" accessibilityRole="alert" testID="erreur-saisie">
+          <Body>{erreur}</Body>
+        </Card>
       )}
 
-      <Pressable
-        style={[styles.cta, enCours && styles.ctaAttente]}
+      <Button
+        label={enCours ? 'Déverrouillage…' : 'Déverrouiller'}
         onPress={() => void deverrouiller()}
-        disabled={enCours}
-        accessibilityRole="button"
-        accessibilityState={{ disabled: enCours, busy: enCours }}
+        busy={enCours}
         accessibilityLabel="Déverrouiller mes données"
         testID="cta-deverrouiller"
-      >
-        <Text style={styles.ctaLabel}>{enCours ? 'Déverrouillage…' : 'Déverrouiller'}</Text>
-      </Pressable>
+      />
 
       {enCours && (
         <View style={styles.attente} accessibilityRole="alert" testID="attente">
           <ActivityIndicator color={color.semantic.attention} />
-          <Text style={styles.body}>
+          <Body>
             Quelques secondes. Cette lenteur est voulue : c’est elle qui rend une attaque par essais
             successifs hors de portée.
-          </Text>
+          </Body>
         </View>
       )}
 
-      <View style={styles.destination} accessibilityRole="summary" testID="destination-cle">
-        <Text style={styles.statusTitle}>
+      <Card testID="destination-cle">
+        <Strong>
           {coffre
             ? 'La clé restera dans le coffre de l’appareil'
             : 'Aucun coffre sur cette version'}
-        </Text>
-        <Text style={styles.body}>
+        </Strong>
+        <Body>
           {coffre
             ? 'Rangée dans le coffre du système, elle ne quitte pas cet appareil et ne part dans aucune sauvegarde. Votre secret ne vous sera pas redemandé avant douze heures.'
             : 'La version web ne dispose d’aucun coffre sécurisé. Olappus n’y range pas de clé dans un stockage non protégé : votre secret vous sera redemandé à chaque session.'}
-        </Text>
-      </View>
+        </Body>
+      </Card>
 
       {ouvert && (
-        <View style={styles.ouvert} accessibilityRole="summary" testID="ouvert">
-          <Text style={styles.statusTitle}>Données déverrouillées</Text>
-        </View>
+        <Card tone="success" testID="ouvert">
+          <Strong>Données déverrouillées</Strong>
+        </Card>
       )}
-    </ScrollView>
+    </Page>
   );
 }
 
 const styles = StyleSheet.create({
-  screen: { backgroundColor: color.surface.ivory, flex: 1 },
-  content: { gap: spacing.lg, padding: spacing.lg },
-  notice: {
-    backgroundColor: color.surface.white,
-    borderColor: color.border.default,
-    borderRadius: radius.lg,
-    borderWidth: 1,
-    gap: spacing.sm,
-    padding: spacing.lg,
-  },
-  noticeTitle: {
-    color: color.text.primary,
-    fontFamily: fontFamily.bodyStrong,
-    fontSize: fontSize.subtitle,
-  },
-  input: {
+  champ: {
     backgroundColor: color.surface.white,
     borderColor: color.border.default,
     borderRadius: radius.md,
@@ -188,49 +156,5 @@ const styles = StyleSheet.create({
     letterSpacing: 2,
     padding: spacing.lg,
   },
-  erreur: {
-    backgroundColor: color.surface.white,
-    borderColor: color.semantic.warning,
-    borderRadius: radius.md,
-    borderWidth: 1,
-    padding: spacing.lg,
-  },
-  cta: {
-    alignItems: 'center',
-    backgroundColor: color.semantic.attention,
-    borderRadius: radius.md,
-    padding: spacing.lg,
-  },
-  ctaAttente: { backgroundColor: color.semantic.neutral },
-  ctaLabel: {
-    color: color.surface.white,
-    fontFamily: fontFamily.bodyStrong,
-    fontSize: fontSize.body,
-  },
-  attente: {
-    alignItems: 'center',
-    gap: spacing.sm,
-    paddingHorizontal: spacing.lg,
-  },
-  destination: {
-    backgroundColor: color.surface.white,
-    borderColor: color.border.default,
-    borderRadius: radius.md,
-    borderWidth: 1,
-    gap: spacing.sm,
-    padding: spacing.lg,
-  },
-  ouvert: {
-    backgroundColor: color.surface.white,
-    borderColor: color.semantic.success,
-    borderRadius: radius.md,
-    borderWidth: 1,
-    padding: spacing.lg,
-  },
-  statusTitle: {
-    color: color.text.primary,
-    fontFamily: fontFamily.bodyStrong,
-    fontSize: fontSize.body,
-  },
-  body: { color: color.text.secondary, fontFamily: fontFamily.body, fontSize: fontSize.body },
+  attente: { alignItems: 'center', gap: spacing.sm, paddingHorizontal: spacing.lg },
 });

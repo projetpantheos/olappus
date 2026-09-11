@@ -1,17 +1,12 @@
 import { useLocalSearchParams } from 'expo-router';
+import type { ReactNode } from 'react';
 import { useMemo } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
+import { Body, Bullet, Caption, Card, Page, Title } from '../../components/layout';
 import { ScreenState } from '../../components/screen-state';
 import { explain, findAttentionItem } from '../../demo/attention';
-import {
-  attentionStyle,
-  color,
-  confidenceLabel,
-  fontSize,
-  radius,
-  spacing,
-} from '../../theme/tokens';
+import { attentionStyle, confidenceLabel, fontFamily, fontSize } from '../../theme/tokens';
 
 /**
  * Détail d'une situation — parcours `WHY → PROOF → OPTIONS → ACTION`
@@ -44,89 +39,63 @@ export default function CaseScreen() {
   const style = attentionStyle[item.level];
 
   return (
-    <ScrollView style={styles.screen} contentContainerStyle={styles.content} testID="case-screen">
-      <View style={styles.header}>
-        <Text style={[styles.level, { color: style.color }]}>{style.label}</Text>
-        <Text style={styles.title}>{item.title}</Text>
-        <Text style={styles.confidence}>
-          Confiance : {confidenceLabel[item.detection.confidence]}
-        </Text>
+    <Page testID="case-screen">
+      <View>
+        {/* Le niveau d'attention est écrit, jamais réduit à sa couleur (`PRD-15`). */}
+        <Text style={[styles.niveau, { color: style.color }]}>{style.label}</Text>
+        <Title level="page">{item.title}</Title>
+        <Caption>Confiance : {confidenceLabel[item.detection.confidence]}</Caption>
       </View>
 
-      <Section title="Pourquoi">
-        <Text style={styles.body}>{explain(item.detection)}</Text>
+      <Section titre="Pourquoi">
+        <Body>{explain(item.detection)}</Body>
       </Section>
 
-      <Section title="Preuves">
+      <Section titre="Preuves">
         {item.detection.evidence_refs.map((ref) => (
-          <Text key={ref} style={styles.body} testID={`evidence-${ref}`}>
+          <Body key={ref} testID={`evidence-${ref}`}>
             • {ref}
-          </Text>
+          </Body>
         ))}
-        <Text style={styles.provenance}>
+        <Caption>
           Règle {item.detection.rule_id} (version {item.detection.rule_version})
-        </Text>
+        </Caption>
       </Section>
 
-      <Section title="Ce que cela implique">
-        <Text style={styles.body}>{item.scenario.what_the_user_should_understand}</Text>
+      <Section titre="Ce que cela implique">
+        <Body>{item.scenario.what_the_user_should_understand}</Body>
       </Section>
 
-      <Section title="Options">
-        <Text style={styles.body}>• Préparer une démarche</Text>
-        <Text style={styles.body}>• Reporter à plus tard</Text>
-        <Text style={styles.body}>• Ignorer cette situation</Text>
+      <Section titre="Options">
+        <Bullet>Préparer une démarche</Bullet>
+        <Bullet>Reporter à plus tard</Bullet>
+        <Bullet>Ignorer cette situation</Bullet>
       </Section>
 
-      {/* PRD-15 : ne jamais présenter une action comme exécutable si elle ne
-          l'est pas. En G4, aucune action externe n'existe : le dire est plus
+      {/* `PRD-15` : ne jamais présenter une action comme exécutable si elle ne
+          l'est pas. Aucune action externe n'existe encore : le dire est plus
           honnête que d'afficher un bouton inerte. */}
-      <View style={styles.actionNotice} accessibilityRole="summary">
-        <Text style={styles.actionTitle}>Aucune action n’est exécutée à ce stade</Text>
-        <Text style={styles.body}>
+      <Card>
+        <Title>Aucune action n’est exécutée à ce stade</Title>
+        <Body>
           Olappus prépare, vous confirmez. En mode démonstration, aucune démarche n’est réellement
           engagée.
-        </Text>
-      </View>
-    </ScrollView>
+        </Body>
+      </Card>
+    </Page>
   );
 }
 
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
+function Section({ titre, children }: { titre: string; children: ReactNode }) {
   return (
-    <View style={styles.section}>
-      <Text style={styles.sectionTitle} accessibilityRole="header">
-        {title}
-      </Text>
+    <Card>
+      <Title>{titre}</Title>
       {children}
-    </View>
+    </Card>
   );
 }
 
+/** Le seul style propre à cet écran : le niveau d'attention, en tête. */
 const styles = StyleSheet.create({
-  screen: { backgroundColor: color.surface.ivory, flex: 1 },
-  content: { gap: spacing.lg, padding: spacing.lg },
-  header: { gap: spacing.xs },
-  level: { fontSize: fontSize.caption, fontWeight: '600' },
-  title: { color: color.text.primary, fontSize: fontSize.title, fontWeight: '600' },
-  confidence: { color: color.text.secondary, fontSize: fontSize.caption },
-  section: {
-    backgroundColor: color.surface.white,
-    borderColor: color.border.default,
-    borderRadius: radius.lg,
-    borderWidth: 1,
-    gap: spacing.sm,
-    padding: spacing.lg,
-  },
-  sectionTitle: { color: color.text.primary, fontSize: fontSize.subtitle, fontWeight: '600' },
-  body: { color: color.text.primary, fontSize: fontSize.body },
-  provenance: { color: color.text.secondary, fontSize: fontSize.caption },
-  actionNotice: {
-    borderColor: color.border.default,
-    borderRadius: radius.lg,
-    borderWidth: 1,
-    gap: spacing.sm,
-    padding: spacing.lg,
-  },
-  actionTitle: { color: color.text.primary, fontSize: fontSize.body, fontWeight: '600' },
+  niveau: { fontFamily: fontFamily.bodyStrong, fontSize: fontSize.caption },
 });

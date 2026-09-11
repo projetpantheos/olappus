@@ -1,12 +1,13 @@
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
+import { Body, Caption, Card, Page, Strong, Title } from '../../components/layout';
 import {
   KNOWLEDGE_SOURCES,
   isIngestible,
   legalKnowledgeAvailable,
   type KnowledgeSourceState,
 } from '../../demo/knowledge';
-import { color, fontFamily, fontSize, radius, spacing } from '../../theme/tokens';
+import { color, fontFamily, fontSize } from '../../theme/tokens';
 
 /**
  * Protection — provenance de la connaissance (`PRD-14` Journey J).
@@ -22,37 +23,31 @@ export default function ProtectionScreen() {
   const available = legalKnowledgeAvailable();
 
   return (
-    <ScrollView
-      style={styles.screen}
-      contentContainerStyle={styles.content}
-      testID="protection-screen"
-    >
-      <View style={styles.notice} accessibilityRole="summary">
-        <Text style={styles.noticeTitle}>
+    <Page testID="protection-screen">
+      <Card>
+        <Title>
           {available
             ? 'Connaissances juridiques disponibles'
             : 'Aucune connaissance juridique disponible'}
-        </Text>
-        <Text style={styles.body}>
+        </Title>
+        <Body>
           {available
             ? 'Olappus s’appuie sur des sources officielles vérifiées.'
             : 'Olappus ne vous dira rien sur vos droits tant qu’aucune source officielle n’a été vérifiée. Il préfère se taire qu’affirmer une chose incertaine.'}
-        </Text>
-      </View>
+        </Body>
+      </Card>
 
-      <Text style={styles.sectionTitle} accessibilityRole="header">
-        Sources
-      </Text>
+      <Title level="section">Sources</Title>
 
       {KNOWLEDGE_SOURCES.map((source) => (
         <SourceRow key={source.id} source={source} />
       ))}
 
-      <Text style={styles.footnote}>
+      <Caption>
         Une source n’est utilisée qu’après vérification de sa licence et de ses conditions. Tant que
         ce n’est pas fait, elle reste inactive.
-      </Text>
-    </ScrollView>
+      </Caption>
+    </Page>
   );
 }
 
@@ -62,75 +57,24 @@ function SourceRow({ source }: { source: KnowledgeSourceState }) {
   const label = usable ? 'Vérifiée' : 'Non vérifiée';
 
   return (
-    <View
-      style={styles.source}
-      accessibilityRole="summary"
-      accessibilityLabel={`${source.name}. ${label}.`}
-      testID={`source-${source.id}`}
-    >
-      <View style={styles.sourceHeader}>
-        <Text style={styles.sourceName}>{source.name}</Text>
-        <Text style={[styles.sourceStatus, usable ? styles.statusOk : styles.statusPending]}>
+    <Card accessibilityLabel={`${source.name}. ${label}.`} testID={`source-${source.id}`}>
+      <View style={styles.entete}>
+        <Strong>{source.name}</Strong>
+        <Text style={[styles.statut, usable ? styles.statutOk : styles.statutAttente]}>
           {label}
         </Text>
       </View>
       {source.blocking.map((reason) => (
-        <Text key={reason} style={styles.blocking}>
-          • {reason}
-        </Text>
+        <Caption key={reason}>• {reason}</Caption>
       ))}
-    </View>
+    </Card>
   );
 }
 
+/** La ligne titre/statut est propre à cet écran : elle aligne deux rôles. */
 const styles = StyleSheet.create({
-  screen: { backgroundColor: color.surface.ivory, flex: 1 },
-  content: { gap: spacing.lg, padding: spacing.lg },
-  notice: {
-    backgroundColor: color.surface.white,
-    borderColor: color.border.default,
-    borderRadius: radius.lg,
-    borderWidth: 1,
-    gap: spacing.sm,
-    padding: spacing.lg,
-  },
-  noticeTitle: {
-    color: color.text.primary,
-    fontFamily: fontFamily.bodyStrong,
-    fontSize: fontSize.subtitle,
-  },
-  sectionTitle: {
-    color: color.text.primary,
-    fontFamily: fontFamily.bodyStrong,
-    fontSize: fontSize.body,
-  },
-  source: {
-    backgroundColor: color.surface.white,
-    borderColor: color.border.default,
-    borderRadius: radius.md,
-    borderWidth: 1,
-    gap: spacing.xs,
-    padding: spacing.lg,
-  },
-  sourceHeader: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' },
-  sourceName: {
-    color: color.text.primary,
-    fontFamily: fontFamily.bodyStrong,
-    fontSize: fontSize.body,
-  },
-  sourceStatus: { fontFamily: fontFamily.body, fontSize: fontSize.caption },
-  statusOk: { color: color.semantic.success },
-  statusPending: { color: color.semantic.warning },
-  blocking: {
-    color: color.text.secondary,
-    fontFamily: fontFamily.body,
-    fontSize: fontSize.caption,
-  },
-  body: { color: color.text.secondary, fontFamily: fontFamily.body, fontSize: fontSize.body },
-  footnote: {
-    color: color.text.secondary,
-    fontFamily: fontFamily.body,
-    fontSize: fontSize.caption,
-    textAlign: 'center',
-  },
+  entete: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' },
+  statut: { fontFamily: fontFamily.body, fontSize: fontSize.caption },
+  statutOk: { color: color.semantic.success },
+  statutAttente: { color: color.semantic.warning },
 });

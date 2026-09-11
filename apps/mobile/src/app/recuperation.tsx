@@ -5,9 +5,10 @@ import {
   platformRandom,
 } from '@olappus/core';
 import { useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text } from 'react-native';
 
-import { color, fontFamily, fontSize, radius, spacing } from '../theme/tokens';
+import { Body, Button, Caption, Card, Page, Strong, Title } from '../components/layout';
+import { color, fontFamily, fontSize, spacing } from '../theme/tokens';
 
 /**
  * Création du secret de récupération — `SEC-31`, ADR-0008.
@@ -45,161 +46,81 @@ export default function RecuperationScreen() {
   }
 
   return (
-    <ScrollView
-      style={styles.screen}
-      contentContainerStyle={styles.content}
-      testID="recuperation-screen"
-    >
-      <View style={styles.notice} accessibilityRole="summary">
-        <Text style={styles.noticeTitle}>Votre secret de récupération</Text>
-        <Text style={styles.body}>
+    <Page testID="recuperation-screen">
+      <Card>
+        <Title>Votre secret de récupération</Title>
+        <Body>
           Vos données sensibles sont chiffrées avec une clé dérivée de ce secret. Il n’en existe
           aucune copie chez nous, même chiffrée.
-        </Text>
-        <Text style={styles.body}>
+        </Body>
+        <Body>
           Si vous le perdez, ces données sont définitivement perdues. Nous ne pouvons pas les
           restaurer — c’est précisément ce qui empêche quiconque d’y accéder sans vous.
-        </Text>
-      </View>
+        </Body>
+      </Card>
 
       {unavailable !== null && (
-        <View style={styles.blocked} accessibilityRole="alert">
-          <Text style={styles.body}>{unavailable}</Text>
-        </View>
+        <Card tone="critical" accessibilityRole="alert">
+          <Body>{unavailable}</Body>
+        </Card>
       )}
 
       {secret === null ? (
-        <Pressable
-          style={styles.cta}
+        <Button
+          label="Créer mon secret de récupération"
           onPress={creer}
-          accessibilityRole="button"
-          accessibilityLabel="Créer mon secret de récupération"
           accessibilityHint="Affiche un secret à noter et à conserver hors de l’appareil"
           testID="cta-creer"
-        >
-          <Text style={styles.ctaLabel}>Créer mon secret de récupération</Text>
-        </Pressable>
+        />
       ) : (
         <>
-          <View style={styles.secretBox} accessibilityRole="summary" testID="secret">
-            <Text style={styles.secretLabel}>
-              Notez ces {RECOVERY_GROUPS} groupes, dans l’ordre
-            </Text>
+          <Card tone="attention" emphasis testID="secret">
+            <Caption>Notez ces {RECOVERY_GROUPS} groupes, dans l’ordre</Caption>
             {secret.split('-').map((groupe, index) => (
-              <Text key={groupe} style={styles.group}>
+              <Text key={groupe} style={styles.groupe}>
                 {`${String(index + 1)}. ${groupe}`}
               </Text>
             ))}
-          </View>
+          </Card>
 
-          <Text style={styles.footnote}>
+          <Caption>
             Sur papier, ou dans un gestionnaire de mots de passe. Pas dans une capture d’écran, pas
             dans un message : ces endroits ne sont pas faits pour ça.
-          </Text>
+          </Caption>
 
-          <Pressable
-            style={[styles.cta, acknowledgedAt !== null && styles.ctaDone]}
+          <Button
+            label={acknowledgedAt !== null ? 'Confirmé' : 'J’ai mis mon secret en sécurité'}
+            variant={acknowledgedAt !== null ? 'secondary' : 'primary'}
             onPress={() => {
               setAcknowledgedAt(new Date().toISOString());
             }}
-            accessibilityRole="button"
-            accessibilityState={{ checked: acknowledgedAt !== null }}
             accessibilityLabel="J’ai mis mon secret en sécurité"
             testID="cta-confirmer"
-          >
-            <Text style={styles.ctaLabel}>
-              {acknowledgedAt !== null ? 'Confirmé' : 'J’ai mis mon secret en sécurité'}
-            </Text>
-          </Pressable>
+          />
         </>
       )}
 
-      <View style={styles.status} accessibilityRole="summary" testID="statut-collecte">
-        <Text style={styles.statusTitle}>
+      <Card tone={pret ? 'success' : 'neutral'} testID="statut-collecte">
+        <Strong>
           {pret ? 'Vous pouvez connecter un service' : 'Aucun service ne peut être connecté'}
-        </Text>
-        <Text style={styles.body}>
+        </Strong>
+        <Body>
           {pret
             ? 'Vos données sensibles seront chiffrées dès leur arrivée.'
             : 'Olappus ne collecte aucune donnée sensible tant que votre secret n’est pas créé et mis en sécurité. L’ordre compte : être prévenu après la perte ne sert à rien.'}
-        </Text>
-      </View>
-    </ScrollView>
+        </Body>
+      </Card>
+    </Page>
   );
 }
 
+/** Les groupes du secret : espacés pour être recopiés à la main sans erreur. */
 const styles = StyleSheet.create({
-  screen: { backgroundColor: color.surface.ivory, flex: 1 },
-  content: { gap: spacing.lg, padding: spacing.lg },
-  notice: {
-    backgroundColor: color.surface.white,
-    borderColor: color.border.default,
-    borderRadius: radius.lg,
-    borderWidth: 1,
-    gap: spacing.sm,
-    padding: spacing.lg,
-  },
-  noticeTitle: {
-    color: color.text.primary,
-    fontFamily: fontFamily.bodyStrong,
-    fontSize: fontSize.subtitle,
-  },
-  blocked: {
-    backgroundColor: color.surface.white,
-    borderColor: color.semantic.critical,
-    borderRadius: radius.md,
-    borderWidth: 1,
-    padding: spacing.lg,
-  },
-  secretBox: {
-    backgroundColor: color.surface.white,
-    borderColor: color.semantic.attention,
-    borderRadius: radius.lg,
-    borderWidth: 2,
-    gap: spacing.xs,
-    padding: spacing.lg,
-  },
-  secretLabel: {
-    color: color.text.secondary,
-    fontFamily: fontFamily.body,
-    fontSize: fontSize.caption,
-    marginBottom: spacing.sm,
-  },
-  group: {
+  groupe: {
     color: color.text.primary,
     fontFamily: fontFamily.bodyStrong,
     fontSize: fontSize.subtitle,
     letterSpacing: 2,
-  },
-  cta: {
-    alignItems: 'center',
-    backgroundColor: color.semantic.attention,
-    borderRadius: radius.md,
-    padding: spacing.lg,
-  },
-  ctaDone: { backgroundColor: color.semantic.success },
-  ctaLabel: {
-    color: color.surface.white,
-    fontFamily: fontFamily.bodyStrong,
-    fontSize: fontSize.body,
-  },
-  status: {
-    backgroundColor: color.surface.white,
-    borderColor: color.border.default,
-    borderRadius: radius.md,
-    borderWidth: 1,
-    gap: spacing.sm,
-    padding: spacing.lg,
-  },
-  statusTitle: {
-    color: color.text.primary,
-    fontFamily: fontFamily.bodyStrong,
-    fontSize: fontSize.body,
-  },
-  body: { color: color.text.secondary, fontFamily: fontFamily.body, fontSize: fontSize.body },
-  footnote: {
-    color: color.text.secondary,
-    fontFamily: fontFamily.body,
-    fontSize: fontSize.caption,
+    marginTop: spacing.xs,
   },
 });

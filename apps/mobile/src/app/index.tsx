@@ -1,7 +1,8 @@
 import { useRouter } from 'expo-router';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import { color, fontFamily, fontSize, radius, spacing } from '../theme/tokens';
+import { Body, Button, Strong } from '../components/layout';
+import { color, fontFamily, fontSize, spacing } from '../theme/tokens';
 
 /**
  * Première valeur — `PRD-14` Journey A.
@@ -48,16 +49,14 @@ export default function AccueilScreen() {
         />
       </View>
 
-      <Pressable
-        onPress={() => router.replace('/aujourdhui')}
-        accessibilityRole="button"
-        accessibilityLabel="Voir un exemple concret"
+      <Button
+        label="Voir un exemple concret"
+        onPress={() => {
+          router.replace('/aujourdhui');
+        }}
         accessibilityHint="Ouvre le mode démonstration, sans connexion ni permission"
-        style={styles.cta}
         testID="cta-demo"
-      >
-        <Text style={styles.ctaLabel}>Voir un exemple concret</Text>
-      </Pressable>
+      />
 
       <Text style={styles.reassurance}>
         Aucune connexion, aucune permission, aucune donnée personnelle à ce stade.
@@ -69,8 +68,8 @@ export default function AccueilScreen() {
 function Principle({ title, body }: { title: string; body: string }) {
   return (
     <View style={styles.principle}>
-      <Text style={styles.principleTitle}>{title}</Text>
-      <Text style={styles.principleBody}>{body}</Text>
+      <Strong>{title}</Strong>
+      <Body>{body}</Body>
     </View>
   );
 }
@@ -105,27 +104,6 @@ const styles = StyleSheet.create({
   },
   principles: { gap: spacing.lg },
   principle: { gap: spacing.xs },
-  principleTitle: {
-    color: color.text.primary,
-    fontFamily: fontFamily.bodyStrong,
-    fontSize: fontSize.body,
-  },
-  principleBody: {
-    color: color.text.secondary,
-    fontFamily: fontFamily.body,
-    fontSize: fontSize.body,
-  },
-  cta: {
-    alignItems: 'center',
-    backgroundColor: color.semantic.attention,
-    borderRadius: radius.md,
-    padding: spacing.lg,
-  },
-  ctaLabel: {
-    color: color.surface.white,
-    fontFamily: fontFamily.bodyStrong,
-    fontSize: fontSize.body,
-  },
   reassurance: {
     color: color.text.secondary,
     fontFamily: fontFamily.body,

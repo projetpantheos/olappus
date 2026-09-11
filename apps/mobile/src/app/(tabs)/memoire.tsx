@@ -1,30 +1,19 @@
-import { StyleSheet, View } from 'react-native';
-
 import { ScreenState } from '../../components/screen-state';
-import { color, spacing } from '../../theme/tokens';
+import { Page } from '../../components/layout';
 
 /**
  * Onglet « Mémoire » — navigation primaire de PRD-14 §2.
  *
- * En G4, l'onglet existe et déclare son état vide plutôt que d'afficher une
- * page blanche : PRD-14 §15 exige que chaque écran définisse ses états.
+ * L'onglet existe et déclare son état vide plutôt que d'afficher une page
+ * blanche : PRD-14 §15 exige que chaque écran définisse ses états.
  */
 export default function MemoireScreen() {
   return (
-    <View style={styles.screen} testID="memoire-screen">
+    <Page testID="memoire-screen">
       <ScreenState
         kind="empty"
         reason="Vos documents et evidences apparaîtront ici, en lecture seule (ADR-0004)."
       />
-    </View>
+    </Page>
   );
 }
-
-const styles = StyleSheet.create({
-  screen: {
-    backgroundColor: color.surface.ivory,
-    flex: 1,
-    gap: spacing.lg,
-    padding: spacing.lg,
-  },
-});

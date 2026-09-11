@@ -1,7 +1,8 @@
 import { checkRecoverySecret, recoveryOutcome } from '@olappus/core';
 import { useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { StyleSheet, TextInput } from 'react-native';
 
+import { Body, Button, Card, Page, Strong, Title } from '../../components/layout';
 import { color, fontFamily, fontSize, radius, spacing } from '../../theme/tokens';
 
 /**
@@ -42,27 +43,20 @@ export default function PerteScreen() {
     setResultat(recoveryOutcome(true));
   }
 
-  function sansSecret(): void {
-    setErreur(null);
-    setResultat(recoveryOutcome(false));
-  }
-
   return (
-    <ScrollView style={styles.screen} contentContainerStyle={styles.content} testID="perte-screen">
-      <View style={styles.notice} accessibilityRole="summary">
-        <Text style={styles.noticeTitle}>Retrouver son compte, retrouver ses données</Text>
-        <Text style={styles.body}>
+    <Page testID="perte-screen">
+      <Card>
+        <Title>Retrouver son compte, retrouver ses données</Title>
+        <Body>
           Ce sont deux choses différentes. Vous pouvez toujours retrouver votre compte. Vos données
           chiffrées, elles, n’existent que par votre secret de récupération.
-        </Text>
-      </View>
+        </Body>
+      </Card>
 
-      <Text style={styles.sectionTitle} accessibilityRole="header">
-        Si vous avez votre secret
-      </Text>
+      <Title level="section">Si vous avez votre secret</Title>
 
       <TextInput
-        style={styles.input}
+        style={styles.champ}
         value={saisie}
         onChangeText={setSaisie}
         placeholder="ABCDE-FGHJK-…"
@@ -74,73 +68,42 @@ export default function PerteScreen() {
       />
 
       {erreur !== null && (
-        <View style={styles.erreur} accessibilityRole="alert" testID="erreur-saisie">
-          <Text style={styles.body}>{erreur}</Text>
-        </View>
+        <Card tone="warning" accessibilityRole="alert" testID="erreur-saisie">
+          <Body>{erreur}</Body>
+        </Card>
       )}
 
-      <Pressable
-        style={styles.cta}
-        onPress={verifier}
-        accessibilityRole="button"
-        accessibilityLabel="Vérifier mon secret"
-        testID="cta-verifier"
-      >
-        <Text style={styles.ctaLabel}>Vérifier mon secret</Text>
-      </Pressable>
+      <Button label="Vérifier mon secret" onPress={verifier} testID="cta-verifier" />
 
-      <Text style={styles.sectionTitle} accessibilityRole="header">
-        Si vous l’avez perdu
-      </Text>
+      <Title level="section">Si vous l’avez perdu</Title>
 
-      <Pressable
-        style={styles.secondary}
-        onPress={sansSecret}
-        accessibilityRole="button"
-        accessibilityLabel="Continuer sans mon secret"
+      <Button
+        label="Continuer sans mon secret"
+        variant="secondary"
+        onPress={() => {
+          setErreur(null);
+          setResultat(recoveryOutcome(false));
+        }}
         accessibilityHint="Vous retrouverez votre compte, mais pas vos données chiffrées"
         testID="cta-sans-secret"
-      >
-        <Text style={styles.secondaryLabel}>Continuer sans mon secret</Text>
-      </Pressable>
+      />
 
       {resultat !== null && (
-        <View style={styles.resultat} accessibilityRole="summary" testID="resultat">
-          <Text style={styles.statusLine}>
-            Compte : {resultat.account_recovered ? 'récupéré' : 'non récupéré'}
-          </Text>
-          <Text style={styles.statusLine}>
+        <Card testID="resultat">
+          <Strong>Compte : {resultat.account_recovered ? 'récupéré' : 'non récupéré'}</Strong>
+          <Strong tone={resultat.data_recovered ? 'neutral' : 'critical'}>
             Données chiffrées : {resultat.data_recovered ? 'récupérées' : 'définitivement perdues'}
-          </Text>
-          <Text style={styles.body}>{resultat.message}</Text>
-        </View>
+          </Strong>
+          <Body>{resultat.message}</Body>
+        </Card>
       )}
-    </ScrollView>
+    </Page>
   );
 }
 
+/** La saisie du secret : espacée, sans correction automatique, sans casse. */
 const styles = StyleSheet.create({
-  screen: { backgroundColor: color.surface.ivory, flex: 1 },
-  content: { gap: spacing.lg, padding: spacing.lg },
-  notice: {
-    backgroundColor: color.surface.white,
-    borderColor: color.border.default,
-    borderRadius: radius.lg,
-    borderWidth: 1,
-    gap: spacing.sm,
-    padding: spacing.lg,
-  },
-  noticeTitle: {
-    color: color.text.primary,
-    fontFamily: fontFamily.bodyStrong,
-    fontSize: fontSize.subtitle,
-  },
-  sectionTitle: {
-    color: color.text.primary,
-    fontFamily: fontFamily.bodyStrong,
-    fontSize: fontSize.body,
-  },
-  input: {
+  champ: {
     backgroundColor: color.surface.white,
     borderColor: color.border.default,
     borderRadius: radius.md,
@@ -151,48 +114,4 @@ const styles = StyleSheet.create({
     letterSpacing: 2,
     padding: spacing.lg,
   },
-  erreur: {
-    backgroundColor: color.surface.white,
-    borderColor: color.semantic.warning,
-    borderRadius: radius.md,
-    borderWidth: 1,
-    padding: spacing.lg,
-  },
-  cta: {
-    alignItems: 'center',
-    backgroundColor: color.semantic.attention,
-    borderRadius: radius.md,
-    padding: spacing.lg,
-  },
-  ctaLabel: {
-    color: color.surface.white,
-    fontFamily: fontFamily.bodyStrong,
-    fontSize: fontSize.body,
-  },
-  secondary: {
-    alignItems: 'center',
-    borderColor: color.border.default,
-    borderRadius: radius.md,
-    borderWidth: 1,
-    padding: spacing.lg,
-  },
-  secondaryLabel: {
-    color: color.text.primary,
-    fontFamily: fontFamily.body,
-    fontSize: fontSize.body,
-  },
-  resultat: {
-    backgroundColor: color.surface.white,
-    borderColor: color.border.default,
-    borderRadius: radius.md,
-    borderWidth: 1,
-    gap: spacing.sm,
-    padding: spacing.lg,
-  },
-  statusLine: {
-    color: color.text.primary,
-    fontFamily: fontFamily.bodyStrong,
-    fontSize: fontSize.body,
-  },
-  body: { color: color.text.secondary, fontFamily: fontFamily.body, fontSize: fontSize.body },
 });

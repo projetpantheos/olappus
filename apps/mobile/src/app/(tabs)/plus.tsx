@@ -1,13 +1,14 @@
 import { Link } from 'expo-router';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet } from 'react-native';
 
-import { color, fontFamily, fontSize, radius, spacing } from '../../theme/tokens';
+import { Body, Card, Page, Strong, Title } from '../../components/layout';
+import { color, radius, spacing } from '../../theme/tokens';
 
 /**
- * « Plus » — point d'entrée de « Mon contrôle » (`PRD-14` Journeys G, H, I).
+ * « Plus » — point d'entrée de « Mon contrôle » (`PRD-14` Journeys B, G, H, I).
  *
- * Ces trois parcours ne sont pas des réglages avancés à enterrer sous deux
- * niveaux de menu. Ce sont **les écrans qui décident de la confiance**, et
+ * Ces parcours ne sont pas des réglages avancés à enterrer sous deux niveaux
+ * de menu. Ce sont **les écrans qui décident de la confiance**, et
  * `docs/UX_DESIGN_PLAN` §6 le dit sans détour. Ils sont donc au premier niveau,
  * chacun accompagné de ce qu'il permet réellement de faire — pas d'un intitulé
  * abstrait dont on ne sait pas s'il vaut la peine d'être ouvert.
@@ -53,13 +54,11 @@ const ENTREES = [
 
 export default function PlusScreen() {
   return (
-    <ScrollView style={styles.screen} contentContainerStyle={styles.content} testID="plus-screen">
-      <View style={styles.notice} accessibilityRole="summary">
-        <Text style={styles.noticeTitre}>Mon contrôle</Text>
-        <Text style={styles.body}>
-          Ce qu’Olappus sait, ce qu’il peut faire, et comment le lui retirer.
-        </Text>
-      </View>
+    <Page testID="plus-screen">
+      <Card>
+        <Title>Mon contrôle</Title>
+        <Body>Ce qu’Olappus sait, ce qu’il peut faire, et comment le lui retirer.</Body>
+      </Card>
 
       {ENTREES.map((entree) => (
         <Link key={entree.href} href={entree.href} asChild>
@@ -69,31 +68,17 @@ export default function PlusScreen() {
             accessibilityLabel={`${entree.titre}. ${entree.description}`}
             testID={entree.testID}
           >
-            <Text style={styles.titre}>{entree.titre}</Text>
-            <Text style={styles.body}>{entree.description}</Text>
+            <Strong>{entree.titre}</Strong>
+            <Body>{entree.description}</Body>
           </Pressable>
         </Link>
       ))}
-    </ScrollView>
+    </Page>
   );
 }
 
+/** Une entrée de menu est cliquable : `Card` ne l'est pas, et ne doit pas l'être. */
 const styles = StyleSheet.create({
-  screen: { backgroundColor: color.surface.ivory, flex: 1 },
-  content: { gap: spacing.lg, padding: spacing.lg },
-  notice: {
-    backgroundColor: color.surface.white,
-    borderColor: color.border.default,
-    borderRadius: radius.lg,
-    borderWidth: 1,
-    gap: spacing.sm,
-    padding: spacing.lg,
-  },
-  noticeTitre: {
-    color: color.text.primary,
-    fontFamily: fontFamily.bodyStrong,
-    fontSize: fontSize.subtitle,
-  },
   entree: {
     backgroundColor: color.surface.white,
     borderColor: color.border.default,
@@ -102,10 +87,4 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
     padding: spacing.lg,
   },
-  titre: {
-    color: color.text.primary,
-    fontFamily: fontFamily.bodyStrong,
-    fontSize: fontSize.body,
-  },
-  body: { color: color.text.secondary, fontFamily: fontFamily.body, fontSize: fontSize.body },
 });
