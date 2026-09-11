@@ -20,7 +20,7 @@ Taxonomie applicable : `compiled_decisions/runbooks/RUN-42_GATE_MAP.md` (G0–G9
 
 ## Status
 
-G5_COMPLETE / L3_ENCRYPTION_IMPLEMENTED / PENDING_SOURCE_APPROVAL
+G6A_COMPLETE / PENDING_ADR_0019 / PENDING_SOURCE_APPROVAL
 
 Le passage d’une source en `APPROVED` est une **action fondateur**, pas une action d’agent : la licence se lit à la source primaire, pas dans une note du kit.
 
@@ -56,7 +56,7 @@ Rien. La pile Supabase locale doit tourner (`npx supabase start`) pour que les t
 
 ## Open decisions
 
-Aucune décision RED ouverte.
+**ADR-0019 est `PROPOSED` et bloque G6b.** Deux volets RED : où s’exécute l’échange OAuth, et comment chiffrer sur iOS et Android. Les deux sont instruits et recommandés ; ils attendent une validation.
 Zones volontairement non définies : voir `compiled_decisions/00_OPEN_ITEMS.md`.
 
 ## Known risks
